@@ -11,6 +11,10 @@ spec:
     server: {{ .Values.spec.destination.server }}
   project: default
   source:
-    path: cert-manager
-    repoURL: https://github.com/rubenhensen/k8scd.git
-    targetRevision: HEAD
+    chart: cert-manager
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
+    helm:
+      fileParameters:
+        - name: crds.enabled
+          value: true

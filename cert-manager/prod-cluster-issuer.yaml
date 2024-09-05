@@ -2,8 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: prod-cluster-issuer
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   acme:
     # The ACME server URL

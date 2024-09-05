@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: longhorn
+  name: helm-longhorn
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io

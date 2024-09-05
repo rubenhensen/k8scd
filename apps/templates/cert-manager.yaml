@@ -19,3 +19,6 @@ spec:
       parameters:
         - name: crds.enabled
           value: 'true'
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true

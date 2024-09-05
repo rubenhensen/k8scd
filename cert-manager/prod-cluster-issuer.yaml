@@ -16,9 +16,3 @@ spec:
       - http01:
           ingress:
             ingressClassName: nginx
-    syncPolicy:
-      syncOptions:
-      - CreateNamespace=true
-      automated:
-        prune: true
-        selfHeal: true

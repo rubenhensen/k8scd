@@ -12,5 +12,5 @@ spec:
   project: default
   source:
     path: cert-manager
-    repoURL: https://github.com/rubenhensen/argocd.git
+    repoURL: https://github.com/rubenhensen/k8scd.git
     targetRevision: HEAD

@@ -3,23 +3,18 @@ kind: Application
 metadata:
   name: cert-manager
   namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
 spec:
-  destination:
-    namespace: cert-manager
-    server: {{ .Values.spec.destination.server }}
   project: default
   source:
-    path: ''
-    repoURL: https://charts.jetstack.io
-    targetRevision: v1.15.3
-    chart: cert-manager
-    helm:
-      parameters:
-        - name: crds.enabled
-          value: 'true'
+    repoURL: https://github.com/rubenhensen/k8scd.git
+    targetRevision: HEAD
+    path: cert-manager
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true

@@ -3,15 +3,7 @@ kind: Application
 metadata:
   name: vault
   namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
 spec:
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true 
-    automated:
-      prune: true
-      selfHeal: true
   project: default
   sources:
     - chart: vault
@@ -40,6 +32,7 @@ spec:
                   readOnly: true
             standalone:
                 enabled: false
+            affinity: {}
             ha:
                 enabled: true
                 replicas: 3

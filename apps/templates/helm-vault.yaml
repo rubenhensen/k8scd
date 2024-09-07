@@ -40,7 +40,7 @@ spec:
                   readOnly: true
             standalone:
                 enabled: false
-            affinity: ""
+            affinity: {}
             ha:
                 enabled: true
                 replicas: 3

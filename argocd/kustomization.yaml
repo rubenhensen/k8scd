@@ -7,6 +7,7 @@ namespace: argocd
 # additional resources like ingress rules, cluster and repository secrets.
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml?ref=stable
+- ingress.yaml
 # - cmp-plugin.yaml
 
 # changes to config maps

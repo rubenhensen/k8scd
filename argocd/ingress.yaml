@@ -4,6 +4,7 @@ metadata:
   name: argocd-server-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: lets-encrypt
   namespace: argocd
 spec:
   ingressClassName: nginx

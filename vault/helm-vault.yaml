@@ -26,3 +26,8 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      jqPathExpressions:
+      - .webhooks[]?.clientConfig.caBundle

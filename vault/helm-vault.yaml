@@ -19,7 +19,7 @@ spec:
       targetRevision: 0.28.1
       helm:
         valueFiles:
-          - $values/overrides.yaml
+          - $values/vault/overrides.yaml
     - repoURL: https://github.com/rubenhensen/k8scd.git
       path: vault
       targetRevision: HEAD

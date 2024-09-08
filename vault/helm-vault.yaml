@@ -21,9 +21,8 @@ spec:
         valueFiles:
           - $values/vault/overrides.yaml
     - repoURL: https://github.com/rubenhensen/k8scd.git
-      path: vault
       targetRevision: HEAD
       ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: vault-system
+    namespace: vault

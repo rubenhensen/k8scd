@@ -3,7 +3,6 @@ resources:
 - github.com/argoproj/argo-cd//manifests/cluster-install?ref=stable
 - cmp-plugin.yaml
 
-namespace: argocd
 # changes to config maps
 patches:
 - path: overlays/cmp-plugin-patch.yaml

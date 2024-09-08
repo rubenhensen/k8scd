@@ -17,12 +17,13 @@ spec:
     - chart: vault
       repoURL: https://helm.releases.hashicorp.com
       targetRevision: 0.28.1
+      helm:
+        valueFiles:
+          - $values/overrides.yaml
     - repoURL: https://github.com/rubenhensen/k8scd
       path: vault
       targetRevision: HEAD
-      helm:
-        valueFiles:
-          - $values/override.yaml
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: vault-system

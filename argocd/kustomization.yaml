@@ -6,4 +6,4 @@ resources:
 namespace: argocd
 # changes to config maps
 patches:
-- path: overlays/cmp-plugin-pathc.yaml
+- path: overlays/cmp-plugin-patch.yaml

@@ -1,6 +1,6 @@
 # additional resources like ingress rules, cluster and repository secrets.
 resources:
-- github.com/argoproj/argo-cd//manifests/cluster-install?ref=stable
+- github.com/argoproj/argo-cd/manifests/cluster-install?ref=stable
 # - cmp-plugin.yaml
 
 # changes to config maps

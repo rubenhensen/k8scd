@@ -1,6 +1,6 @@
 tenant:
   pools:
-    servers: 1
+    - servers: 1
   ingress:
     api: 
       enabled: true

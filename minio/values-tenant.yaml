@@ -28,10 +28,10 @@ tenant:
   #       pullPolicy: IfNotPresent
   #
   #
-  image:
-    repository: quay.io/minio/minio
-    tag: RELEASE.2024-08-17T01-24-54Z
-    pullPolicy: IfNotPresent
+  # image:
+  #   repository: quay.io/minio/minio
+  #   tag: RELEASE.2024-08-17T01-24-54Z
+  #   pullPolicy: IfNotPresent
   ###
   #
   # An array of Kubernetes secrets to use for pulling images from a private ``image.repository``.

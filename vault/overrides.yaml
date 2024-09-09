@@ -54,4 +54,4 @@ server:
             hosts:
               - vault.hensen.io
       hosts: 
-        host: "vault.hensen.io"
+        - host: "vault.hensen.io"

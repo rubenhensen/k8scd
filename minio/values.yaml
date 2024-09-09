@@ -10,7 +10,7 @@ ingress:
   # TLS secretName used on ClusterIssuer
   - secretName:  letsencrypt-prod
     hosts:
-      - argocd.hensen.io
+      - minio.hensen.io
 
   host: minio.hensen.io
   path: /

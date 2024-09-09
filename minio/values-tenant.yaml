@@ -444,25 +444,25 @@ tenant:
 # Configures `Ingress <https://kubernetes.io/docs/concepts/services-networking/ingress/>`__ for the Tenant S3 API and Console.
 #
 # Set the keys to conform to the Ingress controller and configuration of your choice.
-ingress:
-  api:
-    enabled: false
-    ingressClassName: ""
-    labels: { }
-    annotations: { }
-    tls: [ ]
-    host: minio.local
-    path: /
-    pathType: Prefix
-  console:
-    enabled: false
-    ingressClassName: ""
-    labels: { }
-    annotations: { }
-    tls: [ ]
-    host: minio-console.local
-    path: /
-    pathType: Prefix
+# ingress:
+#   api:
+#     enabled: false
+#     ingressClassName: ""
+#     labels: { }
+#     annotations: { }
+#     tls: [ ]
+#     host: minio.local
+#     path: /
+#     pathType: Prefix
+#   console:
+#     enabled: false
+#     ingressClassName: ""
+#     labels: { }
+#     annotations: { }
+#     tls: [ ]
+#     host: minio-console.local
+#     path: /
+#     pathType: Prefix
 # Use an extraResources template section to include additional Kubernetes resources
 # with the Helm deployment.
 #extraResources:

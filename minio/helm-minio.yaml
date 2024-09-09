@@ -17,12 +17,12 @@ spec:
     - chart: operator
       repoURL: https://operator.min.io
       targetRevision: 6.0.3
-    #   helm:
-    #     valueFiles:
-    #       - $values/minio/values.yaml
-    # - repoURL: https://github.com/rubenhensen/k8scd.git
-    #   targetRevision: HEAD
-    #   ref: values
+      helm:
+        valueFiles:
+          - $values/minio/values.yaml
+    - repoURL: https://github.com/rubenhensen/k8scd.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: minio

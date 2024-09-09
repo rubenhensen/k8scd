@@ -1,6 +1,6 @@
 tenant:
-  api: 
-    ingress:
+  ingress:
+    api: 
       enabled: true
       ingressClassName: nginx
       labels: { }
@@ -17,8 +17,7 @@ tenant:
       host: minio.hensen.io
       path: /
       pathType: Prefix
-  console:
-    ingress:
+    console:
       enabled: true
       ingressClassName: nginx
       labels: { }

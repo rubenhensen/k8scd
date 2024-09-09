@@ -94,13 +94,13 @@ tenant:
     # The number of MinIO Tenant Pods / Servers in this pool.
     # For standalone mode, supply 1. For distributed mode, supply 4 or more.
     # Note that the operator does not support upgrading from standalone to distributed mode.
-    - servers: 4
+    - servers: 1
       ###
       # Custom name for the pool
       name: pool-0
       ###
       # The number of volumes attached per MinIO Tenant Pod / Server.
-      volumesPerServer: 4
+      volumesPerServer: 1
       ###
       # The capacity per volume requested per MinIO Tenant Pod.
       size: 10Gi
@@ -350,12 +350,19 @@ tenant:
 # Set the keys to conform to the Ingress controller and configuration of your choice.
 ingress:
   api:
-    enabled: false
-    ingressClassName: ""
+    enabled: true
+    ingressClassName: nginx
     labels: { }
-    annotations: { }
-    tls: [ ]
-    host: minio.local
+    annotations: 
+      cert-manager.io/cluster-issuer: prod-cluster-issuer
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    tls: 
+      # TLS secretName used on ClusterIssuer
+      - secretName:  letsencrypt-prod
+        hosts:
+          - minio.hensen.io
+    host: minio.hensen.io
     path: /
     pathType: Prefix
   console:

@@ -52,7 +52,6 @@ server:
       tls:
           - secretName:  letsencrypt-prod
             hosts:
-              - vault.hensen.io   
+              - vault.hensen.io
       hosts: 
         host: "vault.hensen.io"
-        

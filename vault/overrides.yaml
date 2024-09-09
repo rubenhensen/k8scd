@@ -42,3 +42,17 @@ server:
             }
             disable_mlock = true
             service_registration "kubernetes" {}
+   ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: prod-cluster-issuer
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      ingressClassName: nginx
+      tls:
+          - secretName:  letsencrypt-prod
+            hosts:
+              - vault.hensen.io   
+      hosts: 
+        host: "vault.hensen.io"
+        

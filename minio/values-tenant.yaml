@@ -248,3 +248,84 @@ tenant:
     bucketDNS: false
     domains: { }
     enableSFTP: false
+  ###
+  # Array of objects describing one or more buckets to create during tenant provisioning.
+  # Example:
+  # 
+  # .. code-block:: yaml
+  #
+  #    - name: my-minio-bucket
+  #         objectLock: false        # optional
+  #         region: us-east-1        # optional
+  buckets: [ ]
+  ###
+  # Array of Kubernetes secrets from which the Operator generates MinIO users during tenant provisioning.
+  #
+  # Each secret should specify the ``CONSOLE_ACCESS_KEY`` and ``CONSOLE_SECRET_KEY`` as the access key and secret key for that user.
+  users: [ ]
+  ###
+  # The `PodManagement <https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#pod-management-policy>`__ policy for MinIO Tenant Pods. 
+  # Can be "OrderedReady" or "Parallel"
+  podManagementPolicy: Parallel
+  # The `Liveness Probe <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes>`__ for monitoring Tenant pod liveness. 
+  # Tenant pods will be restarted if the probe fails.
+  liveness: { }
+  ###
+  # `Readiness Probe <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/>`__ for monitoring Tenant container readiness.
+  # Tenant pods will be removed from service endpoints if the probe fails.
+  readiness: { }
+  ###
+  # `Startup Probe <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/>`__ for monitoring container startup. 
+  # Tenant pods will be restarted if the probe fails.
+  # Refer 
+  startup: { }
+  ###
+  # The `Lifecycle hooks <https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/>`__ for container.
+  lifecycle: { }
+  ###
+  # Directs the Operator to deploy the MinIO S3 API and Console services as LoadBalancer objects.
+  #
+  # If the Kubernetes cluster has a configured LoadBalancer, it can attempt to route traffic to those services automatically.
+  #
+  # - Specify ``minio: true`` to expose the MinIO S3 API.
+  # - Specify ``console: true`` to expose the Console.
+  #
+  # Both fields default to ``false``.
+  exposeServices: { }
+  ###
+  # The `Kubernetes Service Account <https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/>`__ associated with the Tenant.
+  serviceAccountName: ""
+  ###
+  # Directs the Operator to add the Tenant's metric scrape configuration to an existing Kubernetes Prometheus deployment managed by the Prometheus Operator.
+  prometheusOperator: false
+  ###
+  # Configure pod logging configuration for the MinIO Tenant.
+  #
+  # - Specify ``json`` for JSON-formatted logs.
+  # - Specify ``anonymous`` for anonymized logs.
+  # - Specify ``quiet`` to supress logging.
+  #
+  # An example of JSON-formatted logs is as follows:
+  #
+  # .. code-block:: shell
+  #
+  #    $ k logs myminio-pool-0-0 -n default
+  #    {"level":"INFO","errKind":"","time":"2022-04-07T21:49:33.740058549Z","message":"All MinIO sub-systems initialized successfully"}
+  logging: { }
+  ###
+  # serviceMetadata allows passing additional labels and annotations to MinIO and Console specific
+  # services created by the operator.
+  serviceMetadata: { }
+  ###
+  # Add environment variables to be set in MinIO container (https://github.com/minio/minio/tree/master/docs/config)
+  env: [ ]
+  ###
+  # PriorityClassName indicates the Pod priority and hence importance of a Pod relative to other Pods.
+  # This is applied to MinIO pods only.
+  # Refer Kubernetes documentation for details https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass/
+  priorityClassName: ""
+  ###
+  # An array of `Volumes <https://kubernetes.io/docs/concepts/storage/volumes/>`__ which the Operator can mount to Tenant pods.
+  #
+  # The volumes must exist *and* be accessible to the Tenant pods.
+  additionalVolumes: [ ]

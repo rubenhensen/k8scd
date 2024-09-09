@@ -32,3 +32,40 @@ tenant:
     repository: quay.io/minio/minio
     tag: RELEASE.2024-08-17T01-24-54Z
     pullPolicy: IfNotPresent
+  ###
+  #
+  # An array of Kubernetes secrets to use for pulling images from a private ``image.repository``.
+  # Only one array element is supported at this time.
+  imagePullSecret: { }
+  ###
+  # The Kubernetes `Scheduler <https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/>`__ to use for dispatching Tenant pods.
+  #
+  # Specify an empty dictionary ``{}`` to dispatch pods with the default scheduler.
+  scheduler: { }
+  ###
+  # The Kubernetes secret name that contains MinIO environment variable configurations.
+  # The secret is expected to have a key named config.env containing environment variables exports.
+  configuration:
+    name: myminio-env-configuration
+  ###
+  # Root key for dynamically creating a secret for use with configuring root MinIO User
+  # Specify the ``name`` and then a list of environment variables.
+  #
+  # .. important::
+  #
+  #    Do not use this in production environments.
+  #    This field is intended for use with rapid development or testing only.
+  #
+  # For example:
+  #
+  # .. code-block:: yaml
+  #
+  #    name: myminio-env-configuration
+  #    accessKey: minio
+  #    secretKey: minio123
+  #
+  configSecret:
+    name: myminio-env-configuration
+    accessKey: minio
+    secretKey: minio123
+    #existingSecret: true

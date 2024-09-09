@@ -4,7 +4,7 @@ tenant:
   # The Tenant name
   #
   # Change this to match your preferred MinIO Tenant name.
-  name: minio-tenant-0
+  name: myminio
   ###
   # Specify the Operator container image to use for the deployment.
   # ``image.tag`` 
@@ -68,6 +68,8 @@ tenant:
     name: myminio-env-configuration
     accessKey: minio
     secretKey: minio123
+    #existingSecret: true
+
   ###
   # If this variable is set to true, then enable the usage of an existing Kubernetes secret to set environment variables for the Tenant.
   # The existing Kubernetes secret name must be placed under .tenant.configuration.name e.g. existing-minio-env-configuration
@@ -92,13 +94,13 @@ tenant:
     # The number of MinIO Tenant Pods / Servers in this pool.
     # For standalone mode, supply 1. For distributed mode, supply 4 or more.
     # Note that the operator does not support upgrading from standalone to distributed mode.
-    - servers: 1
+    - servers: 4
       ###
       # Custom name for the pool
       name: pool-0
       ###
       # The number of volumes attached per MinIO Tenant Pod / Server.
-      volumesPerServer: 1
+      volumesPerServer: 4
       ###
       # The capacity per volume requested per MinIO Tenant Pod.
       size: 10Gi
@@ -442,75 +444,35 @@ tenant:
 # Configures `Ingress <https://kubernetes.io/docs/concepts/services-networking/ingress/>`__ for the Tenant S3 API and Console.
 #
 # Set the keys to conform to the Ingress controller and configuration of your choice.
-# ingress:
-#   api:
-#     enabled: false
-#     ingressClassName: ""
-#     labels: { }
-#     annotations: { }
-#     tls: [ ]
-#     host: minio.local
-#     path: /
-#     pathType: Prefix
-#   console:
-#     enabled: false
-#     ingressClassName: ""
-#     labels: { }
-#     annotations: { }
-#     tls: [ ]
-#     host: minio-console.local
-#     path: /
-#     pathType: Prefix
-# # Use an extraResources template section to include additional Kubernetes resources
-# # with the Helm deployment.
-# #extraResources:
-# #  - |
-# #    apiVersion: v1
-# #    kind: Secret
-# #    type: Opaque
-# #    metadata:
-# #      name: {{ dig "tenant" "configSecret" "name" "" (.Values | merge (dict)) }}
-# #    stringData:
-# #      config.env: |-
-# #        export MINIO_ROOT_USER='minio'
-# #        export MINIO_ROOT_PASSWORD='minio123'
-# tenant:
-#   pools:
-#     - servers: 1
-#       name: pool-0
-#       volumesPerServer: 1
-#   ingress:
-#     api: 
-#       enabled: true
-#       ingressClassName: nginx
-#       labels: { }
-#       annotations:     
-#         cert-manager.io/cluster-issuer: prod-cluster-issuer
-#         nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-#         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-#       tls: 
-#       # TLS secretName used on ClusterIssuer
-#       - secretName:  letsencrypt-prod
-#         hosts:
-#           - minio.hensen.io
-
-#       host: minio.hensen.io
-#       path: /
-#       pathType: Prefix
-#     console:
-#       enabled: true
-#       ingressClassName: nginx
-#       labels: { }
-#       annotations:     
-#         cert-manager.io/cluster-issuer: prod-cluster-issuer
-#         nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-#         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-#       tls: 
-#       # TLS secretName used on ClusterIssuer
-#       - secretName:  letsencrypt-prod
-#         hosts:
-#           - minio-console.hensen.io
-
-#       host: minio-console.hensen.io
-#       path: /
-#       pathType: Prefix
+ingress:
+  api:
+    enabled: false
+    ingressClassName: ""
+    labels: { }
+    annotations: { }
+    tls: [ ]
+    host: minio.local
+    path: /
+    pathType: Prefix
+  console:
+    enabled: false
+    ingressClassName: ""
+    labels: { }
+    annotations: { }
+    tls: [ ]
+    host: minio-console.local
+    path: /
+    pathType: Prefix
+# Use an extraResources template section to include additional Kubernetes resources
+# with the Helm deployment.
+#extraResources:
+#  - |
+#    apiVersion: v1
+#    kind: Secret
+#    type: Opaque
+#    metadata:
+#      name: {{ dig "tenant" "configSecret" "name" "" (.Values | merge (dict)) }}
+#    stringData:
+#      config.env: |-
+#        export MINIO_ROOT_USER='minio'
+#        export MINIO_ROOT_PASSWORD='minio123'

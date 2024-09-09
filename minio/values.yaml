@@ -1,17 +1,18 @@
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  labels: { }
-  annotations:     
-    cert-manager.io/cluster-issuer: prod-cluster-issuer
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-  tls: 
-  # TLS secretName used on ClusterIssuer
-  - secretName:  letsencrypt-prod
-    hosts:
-      - minio.hensen.io
+console:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    labels: { }
+    annotations:     
+      cert-manager.io/cluster-issuer: prod-cluster-issuer
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    tls: 
+    # TLS secretName used on ClusterIssuer
+    - secretName:  letsencrypt-prod
+      hosts:
+        - minio.hensen.io
 
-  host: minio.hensen.io
-  path: /
-  pathType: Prefix
+    host: minio.hensen.io
+    path: /
+    pathType: Prefix

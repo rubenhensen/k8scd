@@ -1,4 +1,4 @@
-console:
+tenant:
   api: 
     ingress:
       enabled: true

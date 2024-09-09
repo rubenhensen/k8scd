@@ -19,7 +19,7 @@ spec:
       targetRevision: 6.0.3
       helm:
         valueFiles:
-          - $values/minio/values.yaml
+          - $values/minio/values-tenant.yaml
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       ref: values

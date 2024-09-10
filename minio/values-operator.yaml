@@ -278,22 +278,22 @@ console:
   # Configures `Ingress <https://kubernetes.io/docs/concepts/services-networking/ingress/>`__ for the Operator Console.
   #
   # Set the keys to conform to the Ingress controller and configuration of your choice.
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    labels: { }
-    annotations: 
-      cert-manager.io/cluster-issuer: prod-cluster-issuer
-      # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    tls: 
-      # TLS secretName used on ClusterIssuer
-      - secretName:  letsencrypt-prod
-        hosts:
-          - minio-console.hensen.io
-    host: minio-console.hensen.io
-    path: /
-    pathType: Prefix
+  # ingress:
+  #   enabled: true
+  #   ingressClassName: nginx
+  #   labels: { }
+  #   annotations: 
+  #     cert-manager.io/cluster-issuer: prod-cluster-issuer
+  #     # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  #     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  #   tls: 
+  #     # TLS secretName used on ClusterIssuer
+  #     - secretName:  letsencrypt-prod
+  #       hosts:
+  #         - minio-console.hensen.io
+  #   host: minio-console.hensen.io
+  #   path: /
+  #   pathType: Prefix
   ###
   # An array of `Volumes <https://kubernetes.io/docs/concepts/storage/volumes/>`__ which the Operator Console can mount to pods.
   #

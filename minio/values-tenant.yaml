@@ -10,10 +10,10 @@ tenant:
   configuration:
     name: myminio-env-configuration
   
-  configSecret:
-    name: myminio-env-configuration
-    accessKey: minio
-    secretKey: minio123
+  # configSecret:
+  #   name: myminio-env-configuration
+  #   accessKey: minio
+  #   secretKey: minio123
   
   pools:
     - servers: 1

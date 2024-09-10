@@ -8,8 +8,8 @@ namespace: argocd
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml?ref=stable
 - ingress.yaml
-- cmp-plugin.yaml
+# - cmp-plugin.yaml
 
-# changes to config maps
-patches:
-- path: overlays/argocd-repo-server-patch.yaml
+# # changes to config maps
+# patches:
+# - path: overlays/argocd-repo-server-patch.yaml

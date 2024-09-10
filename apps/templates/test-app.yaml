@@ -28,6 +28,3 @@ spec:
               ports:
                 - name: http
                   value: 8080
-              envs:
-                - name: PASS
-                  value: <path:kv/argocd#password> # (4)

@@ -12,4 +12,4 @@ resources:
 
 # changes to config maps
 patches:
-- path: overlays/cmp-plugin-patch.yaml
+- path: overlays/argocd-repo-server-patch.yaml

@@ -10,8 +10,9 @@ spec:
   target:
     name: myminio-env-configuration
   dataFrom:
-    - key: minio-tenant-root
-      property: config.env
+    - extract:
+        key: minio-tenant-root
+        property: config.env
 
   # # metadataPolicy to fetch all the labels in JSON format
   # - secretKey: tags

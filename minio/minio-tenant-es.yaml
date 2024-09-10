@@ -9,10 +9,11 @@ spec:
     kind: ClusterSecretStore
   target:
     name: myminio-env-configuration
-  dataFrom:
-    - extract:
-        key: minio-tenant-root
-        property: config.env
+  data:
+  - secretKey: foobar
+    remoteRef:
+      key: minio-tenant-root
+      property: config.env
 
   # # metadataPolicy to fetch all the labels in JSON format
   # - secretKey: tags

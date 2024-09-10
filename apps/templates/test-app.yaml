@@ -30,4 +30,4 @@ spec:
                   value: 8080
               envs:
                 - name: PASS
-                  value: <path:kv/argocd#password> # (4)
+                  value: <path:kv/data/argocd#password> # (4)

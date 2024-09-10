@@ -12,7 +12,7 @@ spec:
   data:
   - secretKey: foobar
     remoteRef:
-      key: kv/minio-tenant-root
+      key: minio-tenant-root
       property: config.env
 
   # # metadataPolicy to fetch all the labels in JSON format

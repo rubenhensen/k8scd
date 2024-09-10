@@ -32,4 +32,4 @@ spec:
                   value: 8080
               envs:
                 - name: PASS
-                  value: <password> # (4)
+                  value: <password> 

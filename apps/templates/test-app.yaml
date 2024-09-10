@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: simple-helm
   namespace: argocd
-  annotations:
-    avp.kubernetes.io/path: "/v1/kv/data/argocd"
 spec:
   destination:
     name: ''
@@ -32,4 +30,4 @@ spec:
                   value: 8080
               envs:
                 - name: PASS
-                  value: <password> 
+                  value: <path:v1/kv/data/argocd#password>

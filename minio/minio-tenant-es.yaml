@@ -12,7 +12,7 @@ spec:
     name: myminio-env-configuration
     
   data:
-  - secretKey: foobar
+  - secretKey: config.env
     remoteRef:
       key: minio-tenant-root
       property: config.env

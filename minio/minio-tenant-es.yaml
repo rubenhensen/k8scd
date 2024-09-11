@@ -9,7 +9,7 @@ spec:
     name: vault-backend
     kind: ClusterSecretStore
   target:
-    name: myminio-env-configuration
+    name: minio-env-configuration
     
   data:
   - secretKey: config.env

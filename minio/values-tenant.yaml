@@ -10,7 +10,7 @@ tenant:
   configuration:
     name: myminio-env-configuration
   
-  configSecret: {}
+  # configSecret: {}
   
   pools:
     - servers: 1

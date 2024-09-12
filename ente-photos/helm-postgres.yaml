@@ -16,7 +16,7 @@ spec:
       targetRevision: 15.5.29
       helm:
         valueFiles:
-          - $values/ente-phots/postgres-values.yaml
+          - $values/ente-photos/postgres-values.yaml
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       ref: values

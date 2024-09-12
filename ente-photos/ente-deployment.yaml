@@ -15,7 +15,10 @@ spec:
         app: ente
     spec:
       containers:
-        - image: ghcr.io/ente-io/server
+        - env:
+          - name: ENTE_CREDENTIALS_FILE
+            value: /credentials.yaml
+          image: ghcr.io/ente-io/server
           name: museum
           command: [ "sh", "-c"]
           # loop forever, outputting "yo" every 5 seconds

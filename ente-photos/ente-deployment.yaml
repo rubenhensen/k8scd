@@ -15,13 +15,7 @@ spec:
         app: ente
     spec:
       containers:
-        - env:
-          - name: ENTE_CREDENTIALS_FILE
-            valueFrom:
-              secretKeyRef:
-                name: ente-photos-config
-                key: config
-          image: ghcr.io/ente-io/server
+        - image: ghcr.io/ente-io/server
           name: museum
           command: [ "sh", "-c"]
           # loop forever, outputting "yo" every 5 seconds

@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
         - name: ente-web
-          image: hebury/ente-web:latest
+          image: hebury/ente-web:0.1

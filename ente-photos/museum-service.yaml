@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    io.kompose.service: museum
   name: museum
 spec:
+  selector:
+    matchLabels:
+      app: ente
   ports:
     - name: "8080"
       port: 8080
@@ -12,5 +13,3 @@ spec:
     - name: "2112"
       port: 2112
       targetPort: 2112
-  selector:
-    io.kompose.service: museum

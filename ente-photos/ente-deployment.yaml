@@ -1,20 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    io.kompose.service: museum
   name: museum
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: museum
+      app: ente
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        io.kompose.service: museum
+        app: ente
     spec:
       containers:
         - env:

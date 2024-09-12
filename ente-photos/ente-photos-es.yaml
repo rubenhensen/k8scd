@@ -18,7 +18,7 @@ spec:
             port: 5432
             name: ente_db
             user: pguser
-            password: {{ .pgpass }}
+            password: "{{ .pgpass }}"
             sslmode: disable
 
           s3:

@@ -20,9 +20,9 @@ spec:
             value: /credentials/credentials.yaml
           image: ghcr.io/ente-io/server
           name: museum
-          command: [ "sh", "-c"]
-          # loop forever, outputting "yo" every 5 seconds
-          args: ["while true; do echo 'yo' && sleep 5; done;"]
+          # command: [ "sh", "-c"]
+          # # loop forever, outputting "yo" every 5 seconds
+          # args: ["while true; do echo 'yo' && sleep 5; done;"]
           ports:
             - containerPort: 8080
               protocol: TCP

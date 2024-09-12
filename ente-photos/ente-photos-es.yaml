@@ -14,7 +14,7 @@ spec:
       data:
         config: |
           db:
-              host: postgres
+              host: helm-postgresql
               port: 5432
               name: ente_db
               user: pguser

@@ -13,7 +13,13 @@ spec:
   sources:
     - chart: postgresql
       repoURL: registry-1.docker.io/bitnamicharts
-      targetRevision: 16.4.0
+      targetRevision: 15.5.29
+      helm:
+        valueFiles:
+          - $values/ente-phots/postgres-values.yaml
+    - repoURL: https://github.com/rubenhensen/k8scd.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: ente-photos

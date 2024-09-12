@@ -1,0 +1,41 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: template
+spec:
+  refreshInterval: "15s"
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: ente-photos-config
+    template:
+      engineVersion: v2
+      data:
+        config: |
+          db:
+              host: postgres
+              port: 5432
+              name: ente_db
+              user: pguser
+              password: "{{ .pgpass }}"
+
+          s3:
+              are_local_buckets: false
+              ente-photos:
+                  key: ente-photos-user
+                  secret: "{{ .ente-pass }}"
+                  endpoint: minio.hensen.io:3200
+                  region: nl
+                  bucket: ente-photos
+
+  data:
+  - secretKey: pgpass
+    remoteRef:
+      key: ente-photos-postgres
+      property: password
+  - secretKey: ente-pass
+    remoteRef:
+      key: minio-ente-photos-user
+      property: password
+

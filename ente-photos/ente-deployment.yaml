@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: museum
+  name: museum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: museum
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: museum
+    spec:
+      containers:
+        - env:
+          - name: ENTE_CREDENTIALS_FILE
+            valueFrom:
+              secretKeyRef:
+                name: ente-photos-config
+                key: config
+          image: ghcr.io/ente-io/server
+          name: museum
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 2112
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/logs
+              name: custom-logs
+            - mountPath: /museum.yaml
+              name: museum-claim1
+              readOnly: true
+            - mountPath: /credentials.yaml
+              name: museum-claim2
+              readOnly: true
+            - mountPath: /data
+              name: museum-claim3
+              readOnly: true
+        # - args:
+        #     - TCP-LISTEN:3200,fork,reuseaddr
+        #     - TCP:minio:3200
+        #   image: alpine/socat
+        #   name: socat
+      restartPolicy: Always
+      volumes:
+        - name: custom-logs
+          persistentVolumeClaim:
+            claimName: custom-logs
+        - name: museum-claim1
+          persistentVolumeClaim:
+            claimName: museum-claim1
+            readOnly: true
+        - name: museum-claim2
+          persistentVolumeClaim:
+            claimName: museum-claim2
+            readOnly: true
+        - name: museum-claim3
+          persistentVolumeClaim:
+            claimName: museum-claim3
+            readOnly: true

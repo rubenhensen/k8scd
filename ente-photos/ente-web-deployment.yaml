@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ente-web
+  labels:
+    app: ente-web
+# docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ente-web
+  template:
+    metadata:
+      labels:
+        app: ente-web
+    spec:
+      containers:
+        - name: ente-web
+          image: hebury/ente-web:latest

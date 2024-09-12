@@ -16,22 +16,30 @@ spec:
     spec:
       containers:
         - env:
-          - name: ENTE_CREDENTIALS_FILE
-            value: /credentials/credentials.yaml
+          - name: ENTE_DB_HOST
+            value: helm-postgresql
+          - name: ENTE_DB_PORT
+            value: 5432
+          - name: ENTE_DB_NAME
+            value: ente_db
+          - name: ENTE_DB_USER
+            value: pguser
+          - name: ENTE_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ente-photos-config
+                key: pgpass
           image: ghcr.io/ente-io/server
           name: museum
-          command: [ "sh", "-c"]
-          # loop forever, outputting "yo" every 5 seconds
-          args: ["while true; do echo 'yo' && sleep 5; done;"]
+          # command: [ "sh", "-c"]
+          # # loop forever, outputting "yo" every 5 seconds
+          # args: ["while true; do echo 'yo' && sleep 5; done;"]
           ports:
             - containerPort: 8080
               protocol: TCP
             - containerPort: 2112
               protocol: TCP
           volumeMounts:
-            - name: credentials
-              mountPath: /credentials
-              readOnly: true
             - mountPath: /var/logs
               name: custom-logs
             - mountPath: /museum.yaml
@@ -47,9 +55,6 @@ spec:
         #   name: socat
       restartPolicy: Always
       volumes:
-        - name: credentials
-          secret:
-            secretName: ente-photos-config
         - name: custom-logs
           persistentVolumeClaim:
             claimName: custom-logs

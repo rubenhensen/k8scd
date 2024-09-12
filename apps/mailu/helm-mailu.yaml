@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: helm-external-secrets
+  name: helm-mailu
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io

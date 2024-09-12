@@ -29,6 +29,21 @@ spec:
               secretKeyRef:
                 name: ente-photos-config
                 key: pgpass
+          - name: ENTE_S3_ARE_LOCAL_BUCKETS
+            value: "false"
+          - name: ENTE_S3_ENTE-PHOTOS_KEY
+            value: "ente-photos-user"
+          - name: ENTE_S3_ENTE-PHOTOS_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: ente-photos-config
+                key: miniopass
+          - name: ENTE_S3_ENTE-PHOTOS_ENDPOINT
+            value: "minio.hensen.io:3200"
+          - name: ENTE_S3_ENTE-PHOTOS_REGION
+            value: "nl"
+          - name: ENTE_S3_ENTE-PHOTOS_BUCKET
+            value: "ente-photos"
           image: ghcr.io/ente-io/server
           name: museum
           # command: [ "sh", "-c"]

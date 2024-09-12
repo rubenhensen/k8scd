@@ -32,6 +32,9 @@ spec:
             - containerPort: 2112
               protocol: TCP
           volumeMounts:
+            - name: credentials
+              mountPath: "/"
+              readOnly: true
             - mountPath: /var/logs
               name: custom-logs
             - mountPath: /museum.yaml
@@ -52,7 +55,7 @@ spec:
             secretName: ente-photos-config
             items:
             - key: credentials.yaml
-              path: /
+              path: credentials.yaml
         - name: custom-logs
           persistentVolumeClaim:
             claimName: custom-logs

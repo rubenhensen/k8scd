@@ -100,7 +100,7 @@ ingress:
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     tls: 
-      - secretName:  letsencrypt-prod
+      - secretName:  letsencrypt-prod-2
         hosts:
           - minio-console.hensen.io
     host: minio-console.hensen.io

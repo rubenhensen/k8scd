@@ -79,7 +79,7 @@ ingress:
   api:
     enabled: true
     ingressClassName: nginx
-    labels: { }
+    # labels: { }
     annotations: 
       cert-manager.io/cluster-issuer: prod-cluster-issuer
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"
@@ -94,7 +94,7 @@ ingress:
   console:
     enabled: true
     ingressClassName: nginx
-    labels: { }
+    # labels: { }
     annotations: 
       cert-manager.io/cluster-issuer: prod-cluster-issuer
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"

@@ -18,13 +18,13 @@ spec:
               port: 5432
               name: ente_db
               user: pguser
-              password: "{{ .pgpass }}"
+              password: {{ .pgpass }}
 
           s3:
               are_local_buckets: false
               ente-photos:
                   key: ente-photos-user
-                  secret: "{{ .entepass }}"
+                  secret: {{ .entepass }}
                   endpoint: minio.hensen.io:3200
                   region: nl
                   bucket: ente-photos

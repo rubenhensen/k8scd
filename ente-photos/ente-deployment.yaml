@@ -30,7 +30,8 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: credentials
-              mountPath: /
+              mountPath: /credentials.yaml
+              readOnly: true
             - mountPath: /var/logs
               name: custom-logs
             - mountPath: /museum.yaml
@@ -49,9 +50,6 @@ spec:
         - name: credentials
           secret:
             secretName: ente-photos-config
-            items:
-            - key: credentials.yaml
-              path: credentials.yaml
         - name: custom-logs
           persistentVolumeClaim:
             claimName: custom-logs

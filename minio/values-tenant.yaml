@@ -85,7 +85,6 @@ ingress:
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     tls: 
-      
       - secretName:  letsencrypt-prod
         hosts:
           - minio.hensen.io
@@ -101,7 +100,6 @@ ingress:
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     tls: 
-      # TLS secretName used on ClusterIssuer
       - secretName:  letsencrypt-prod
         hosts:
           - minio-console.hensen.io

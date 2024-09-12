@@ -5,6 +5,8 @@ metadata:
     io.kompose.service: museum-claim1
   name: museum-claim1
 spec:
+  accessModes:
+    - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi

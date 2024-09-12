@@ -23,10 +23,6 @@ spec:
                 key: config
           image: ghcr.io/ente-io/server
           name: museum
-          command: ["bash", "-c"]
-          args:
-            - >-
-              sleep 600;
           ports:
             - containerPort: 8080
               protocol: TCP

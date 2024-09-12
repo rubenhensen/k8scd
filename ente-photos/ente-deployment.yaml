@@ -37,9 +37,6 @@ spec:
             - mountPath: /museum.yaml
               name: museum-claim1
               readOnly: true
-            - mountPath: /credentials.yaml
-              name: museum-claim2
-              readOnly: true
             - mountPath: /data
               name: museum-claim3
               readOnly: true
@@ -50,16 +47,18 @@ spec:
         #   name: socat
       restartPolicy: Always
       volumes:
+        - name: credentials
+          secret:
+            secretName: ente-photos-config
+            items:
+            - key: credentials.yaml
+              path: /
         - name: custom-logs
           persistentVolumeClaim:
             claimName: custom-logs
         - name: museum-claim1
           persistentVolumeClaim:
             claimName: museum-claim1
-            readOnly: true
-        - name: museum-claim2
-          persistentVolumeClaim:
-            claimName: museum-claim2
             readOnly: true
         - name: museum-claim3
           persistentVolumeClaim:

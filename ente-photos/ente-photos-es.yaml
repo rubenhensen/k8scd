@@ -12,7 +12,7 @@ spec:
     template:
       engineVersion: v2
       data:
-        config: |
+        credentials.yaml: |
           db:
             host: helm-postgresql
             port: 5432

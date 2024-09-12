@@ -14,20 +14,21 @@ spec:
       data:
         config: |
           db:
-              host: helm-postgresql
-              port: 5432
-              name: ente_db
-              user: pguser
-              password: {{ .pgpass }}
+            host: helm-postgresql
+            port: 5432
+            name: ente_db
+            user: pguser
+            password: {{ .pgpass }}
+            sslmode: disable
 
           s3:
-              are_local_buckets: false
-              ente-photos:
-                  key: ente-photos-user
-                  secret: {{ .entepass }}
-                  endpoint: minio.hensen.io:3200
-                  region: nl
-                  bucket: ente-photos
+            are_local_buckets: false
+            ente-photos:
+                key: ente-photos-user
+                secret: {{ .entepass }}
+                endpoint: minio.hensen.io:3200
+                region: nl
+                bucket: ente-photos
 
   data:
   - secretKey: pgpass

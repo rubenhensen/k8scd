@@ -23,7 +23,7 @@ spec:
           service:
             name: ente-service
             port: 
-              name: "8080"
+              name: 8080
             
   # TLS configuration for HTTPS
   tls:

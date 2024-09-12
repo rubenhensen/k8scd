@@ -6,7 +6,7 @@ spec:
   selector:
     app: ente
   ports:
-    - name: "8080"
+    - name: "eightyeighty"
       port: 8080
       targetPort: 8080
     - name: "2112"

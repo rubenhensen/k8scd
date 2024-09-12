@@ -8,10 +8,10 @@ spec:
     name: vault-backend
     kind: ClusterSecretStore
   target:
-    name: mailu_init_pass
+    name: mailu-init-pass
   data:
   - secretKey: password
     remoteRef:
-      key: mailu_init_pass
+      key: mailu-init-pass
       property: password
 

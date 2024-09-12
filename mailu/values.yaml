@@ -96,7 +96,7 @@ initialAccount:
   username: "ruben"
   domain: "hensen.io"
   # password: ""
-  existingSecret: "mailu_init_pass"
+  existingSecret: "mailu-init-pass"
   existingSecretPasswordKey: "password"
   mode: "update"
 

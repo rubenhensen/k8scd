@@ -24,7 +24,7 @@ spec:
               are_local_buckets: false
               ente-photos:
                   key: ente-photos-user
-                  secret: "{{ .ente-pass }}"
+                  secret: "{{ .entepass }}"
                   endpoint: minio.hensen.io:3200
                   region: nl
                   bucket: ente-photos
@@ -34,7 +34,7 @@ spec:
     remoteRef:
       key: ente-photos-postgres
       property: password
-  - secretKey: ente-pass
+  - secretKey: entepass
     remoteRef:
       key: minio-ente-photos-user
       property: password

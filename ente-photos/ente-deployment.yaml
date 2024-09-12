@@ -30,8 +30,7 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: credentials
-              mountPath: "/"
-              readOnly: true
+              mountPath: /
             - mountPath: /var/logs
               name: custom-logs
             - mountPath: /museum.yaml

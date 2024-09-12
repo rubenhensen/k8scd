@@ -4,8 +4,7 @@ metadata:
   name: museum
 spec:
   selector:
-    matchLabels:
-      app: ente
+    app: ente
   ports:
     - name: "8080"
       port: 8080

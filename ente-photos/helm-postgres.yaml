@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-postgresql
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true 
+  project: default
+  sources:
+    - chart: postgresql
+      repoURL: registry-1.docker.io/bitnamicharts
+      targetRevision: 16.4.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ente-photos

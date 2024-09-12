@@ -1,4 +1,3 @@
-
 tenant:
   name: myminio
   image:

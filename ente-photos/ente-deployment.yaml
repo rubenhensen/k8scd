@@ -17,13 +17,13 @@ spec:
       containers:
         - env:
           - name: ENTE_DB_HOST
-            value: helm-postgresql
+            value: "helm-postgresql"
           - name: ENTE_DB_PORT
-            value: 5432
+            value: "5432"
           - name: ENTE_DB_NAME
-            value: ente_db
+            value: "ente_db"
           - name: ENTE_DB_USER
-            value: pguser
+            value: "pguser"
           - name: ENTE_DB_PASSWORD
             valueFrom:
               secretKeyRef:

@@ -1,3 +1,2 @@
-- op: replace
+- op: delete
   path: "spec/template/spec/containers/0/livenessProbe"
-  value: {}

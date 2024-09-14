@@ -1,2 +1,2 @@
 - $patch: delete
-  path: "spec/template/spec/containers[name=argocd-notifications-controller]/livenessProbe"
+  path: "spec/template/spec/containers[0]/livenessProbe"

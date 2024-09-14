@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-          $patch: replace
+        - $patch: replace
           livenessProbe: {}
             # failureThreshold: 3
             # periodSeconds: 10

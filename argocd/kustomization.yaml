@@ -9,5 +9,5 @@ resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml?ref=stable
 - ingress.yaml
 
-patches:
-  - path: ./overlays/argocd-notifications-controller-patch.yaml
+# patches:
+#   - path: ./overlays/argocd-notifications-controller-patch.yaml

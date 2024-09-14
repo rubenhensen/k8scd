@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: argocd-notifications-controller
   namespace: argocd
-$patch: replace
+$patch: merge
 spec:
   template:
     spec:

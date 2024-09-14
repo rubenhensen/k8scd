@@ -10,4 +10,4 @@ resources:
 - ingress.yaml
 
 patches:
-  - overlays/argocd-notifications-controller-patch.yaml
+  - path: ./overlays/argocd-notifications-controller-patch.yaml

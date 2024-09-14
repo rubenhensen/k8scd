@@ -15,4 +15,4 @@ patches:
       version: v1
       kind: ReplicaSet
       name: argocd-notifications-controller
-    path: argocd-notifications-controller-patch.yaml
+    path: overlays/argocd-notifications-controller-patch.yaml

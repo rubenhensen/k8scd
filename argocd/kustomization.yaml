@@ -10,4 +10,9 @@ resources:
 - ingress.yaml
 
 patches:
-  - path: ./overlays/argocd-notifications-controller-patch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployments
+      name: argocd-notifications-controller
+    path: argocd-notifications-controller-patch.yaml

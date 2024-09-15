@@ -32,10 +32,10 @@ spec:
     name: helm-mailu-secret
     namespace: mailu
     jqPathExpressions:
-    - ".data.secret-key"
+    - .data
   - group: ""
     kind: Secret
     name: mailu-roundcube
     namespace: mailu
     jqPathExpressions:
-    - ".data.roundcube-db-password"
+    - .data

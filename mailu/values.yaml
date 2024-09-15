@@ -92,8 +92,8 @@ domain: "hensen.io"
 # ## @param initialAccount.existingSecretPasswordKey Name of the key in the existing secret to use for the initial account's password
 # ## @param initialAccount.mode How to treat the creationg of the initial account. Possible values: "create", "update" or "ifmissing"
 initialAccount:
-  enabled: false
-  username: "ruben"
+  enabled: true
+  username: "admin"
   domain: "hensen.io"
   # password: ""
   existingSecret: "mailu-init-pass"

@@ -23,3 +23,14 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: mailu
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: helm-mailu-secret
+    jqPathExpressions:
+    - .data.secret-key
+  - group: ""
+    kind: Secret
+    name: mailu-roundcube
+    jqPathExpressions:
+    - .data.roundcube-db-password

@@ -1,27 +1,36 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: longhorn-ingress
-#   namespace: longhorn-system
-#   annotations:
-#     # type of authentication
-#     # nginx.ingress.kubernetes.io/auth-type: basic
-#     # prevent the controller from redirecting (308) to HTTPS
-#     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
-#     # name of the secret that contains the user/password definitions
-#     # nginx.ingress.kubernetes.io/auth-secret: basic-auth
-#     # message to display with an appropriate context why the authentication is required
-#     # nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
-#     # custom max body size for file uploading like backing image uploading
-#     nginx.ingress.kubernetes.io/proxy-body-size: 10000m
-# spec:
-#   rules:
-#   - http:
-#       paths:
-#       - pathType: Prefix
-#         path: "/"
-#         backend:
-#           service:
-#             name: longhorn-frontend
-#             port:
-#               number: 80
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: longhorn-ingress
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000/"
+    # nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
+    # If you encounter a redirect loop or are getting a 307 response code
+    # then you need to force the nginx ingress to connect to the backend using HTTPS.
+    #
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  # namespace: ente-photos
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: longhorn.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: longhorn-service
+            port: 
+              number: 80
+            
+  # TLS configuration for HTTPS
+  tls:
+    # TLS secretName used on ClusterIssuer
+    - secretName:  letsencrypt-prod
+      hosts:
+        - longhorn.hensen.io

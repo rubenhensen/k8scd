@@ -16,7 +16,7 @@ spec:
   sources:
     - chart: immich
       repoURL: https://immich-app.github.io/immich-charts
-      targetRevision: 1.119.0 # Replace with the Longhorn version you'd like to install or upgrade to
+      targetRevision: v1.119.0 # Replace with the Longhorn version you'd like to install or upgrade to
       helm:
         values: |
           env:

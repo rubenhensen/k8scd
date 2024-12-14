@@ -89,7 +89,10 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-server
               pullPolicy: IfNotPresent
-            startupProbe: {}
+            startupProbe:
+              httpGet: null
+              exec: null
+              tcpSocket: null
             ingress:
               main:
                 enabled: true

@@ -1,129 +1,233 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: helm-immich
-  namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true 
-    automated:
-      prune: true
-      selfHeal: true
-  project: default
-  sources:
-    - chart: immich
-      repoURL: https://immich-app.github.io/immich-charts
-      targetRevision: 0.8.5 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
-      helm:
-        values: |
-          env:
-            REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
-            DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
-            DB_USERNAME: "{{ .Values.postgresql.global.postgresql.auth.username }}"
-            DB_DATABASE_NAME: "{{ .Values.postgresql.global.postgresql.auth.database }}"
-            # -- You should provide your own secret outside of this helm-chart and use `postgresql.global.postgresql.auth.existingSecret` to provide credentials to the postgresql instance
-            DB_PASSWORD: "{{ .Values.postgresql.global.postgresql.auth.password }}"
-            IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: helm-immich
+#   namespace: argocd
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+# spec:
+#   syncPolicy:
+#     syncOptions:
+#       - CreateNamespace=true 
+#     automated:
+#       prune: true
+#       selfHeal: true
+#   project: default
+#   sources:
+#     - chart: immich
+#       repoURL: https://immich-app.github.io/immich-charts
+#       targetRevision: 0.8.5 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
+#       helm:
+#         values: |
+#           env:
+#             REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
+#             DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
+#             DB_USERNAME: "{{ .Values.postgresql.global.postgresql.auth.username }}"
+#             DB_DATABASE_NAME: "{{ .Values.postgresql.global.postgresql.auth.database }}"
+#             # -- You should provide your own secret outside of this helm-chart and use `postgresql.global.postgresql.auth.existingSecret` to provide credentials to the postgresql instance
+#             DB_PASSWORD: "{{ .Values.postgresql.global.postgresql.auth.password }}"
+#             IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
 
-          image:
-            tag: v1.119.0
-            startupProbe: {}
+#           image:
+#             tag: v1.119.0
 
-          immich:
-            metrics:
-              # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
-              enabled: false
-            persistence:
-              # Main data store for all photos shared between different components.
-              library:
-                # Automatically creating the library volume is not supported by this chart
-                # You have to specify an existing PVC to use
-                existingClaim: immich-claim
+#           immich:
+#             metrics:
+#               # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
+#               enabled: false
+#             persistence:
+#               # Main data store for all photos shared between different components.
+#               library:
+#                 # Automatically creating the library volume is not supported by this chart
+#                 # You have to specify an existing PVC to use
+#                 existingClaim: immich-claim
             
-            # configuration is immich-config.json converted to yaml
-            # ref: https://immich.app/docs/install/config-file/
-            #
-            configuration: {}
-              # trash:
-              #   enabled: false
-              #   days: 30
-              # storageTemplate:
-              #   enabled: true
-              #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
+#             # configuration is immich-config.json converted to yaml
+#             # ref: https://immich.app/docs/install/config-file/
+#             #
+#             configuration: {}
+#               # trash:
+#               #   enabled: false
+#               #   days: 30
+#               # storageTemplate:
+#               #   enabled: true
+#               #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
 
-          # Dependencies
+#           # Dependencies
 
-          postgresql:
-            enabled: true
-            image:
-              repository: tensorchord/pgvecto-rs
-              tag: pg14-v0.2.0
-            global:
-              postgresql:
-                auth:
-                  username: immich
-                  database: immich
-                  password: immich
-            primary:
-              containerSecurityContext:
-                readOnlyRootFilesystem: false
-              initdb:
-                scripts:
-                  create-extensions.sql: |
-                    CREATE EXTENSION cube;
-                    CREATE EXTENSION earthdistance;
-                    CREATE EXTENSION vectors;
+#           postgresql:
+#             enabled: true
+#             image:
+#               repository: tensorchord/pgvecto-rs
+#               tag: pg14-v0.2.0
+#             global:
+#               postgresql:
+#                 auth:
+#                   username: immich
+#                   database: immich
+#                   password: immich
+#             primary:
+#               containerSecurityContext:
+#                 readOnlyRootFilesystem: false
+#               initdb:
+#                 scripts:
+#                   create-extensions.sql: |
+#                     CREATE EXTENSION cube;
+#                     CREATE EXTENSION earthdistance;
+#                     CREATE EXTENSION vectors;
 
-          redis:
-            enabled: true
-            architecture: standalone
-            auth:
-              enabled: false
+#           redis:
+#             enabled: true
+#             architecture: standalone
+#             auth:
+#               enabled: false
 
-          # Immich components
+#           # Immich components
 
-          server:
-            enabled: true
-            image:
-              repository: ghcr.io/immich-app/immich-server
-              pullPolicy: IfNotPresent
-            ingress:
-              main:
-                enabled: true
-                ingressClassName: nginx
-                annotations:
-                  # proxy-body-size is set to 0 to remove the body limit on file uploads
-                  nginx.ingress.kubernetes.io/proxy-body-size: "0"
-                  cert-manager.io/cluster-issuer: prod-cluster-issuer
-                  nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-                hosts:
-                  - host: immich.hensen.io
-                    paths:
-                      - path: "/"
-                tls:
-                  - secretName:  letsencrypt-prod
-                    hosts:
-                      - immich.hensen.io
+#           server:
+#             enabled: true
+#             image:
+#               repository: ghcr.io/immich-app/immich-server
+#               pullPolicy: IfNotPresent
+#             ingress:
+#               main:
+#                 enabled: true
+#                 ingressClassName: nginx
+#                 annotations:
+#                   # proxy-body-size is set to 0 to remove the body limit on file uploads
+#                   nginx.ingress.kubernetes.io/proxy-body-size: "0"
+#                   cert-manager.io/cluster-issuer: prod-cluster-issuer
+#                   nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+#                 hosts:
+#                   - host: immich.hensen.io
+#                     paths:
+#                       - path: "/"
+#                 tls:
+#                   - secretName:  letsencrypt-prod
+#                     hosts:
+#                       - immich.hensen.io
 
 
-          machine-learning:
-            enabled: true
-            image:
-              repository: ghcr.io/immich-app/immich-machine-learning
-              pullPolicy: IfNotPresent
-            env:
-              TRANSFORMERS_CACHE: /cache
-            persistence:
-              cache:
-                enabled: true
-                size: 10Gi
-                # Optional: Set this to pvc to avoid downloading the ML models every start.
-                type: emptyDir
-                accessMode: ReadWriteMany
-                # storageClass: your-class
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: immich
+#           machine-learning:
+#             enabled: true
+#             image:
+#               repository: ghcr.io/immich-app/immich-machine-learning
+#               pullPolicy: IfNotPresent
+#             env:
+#               TRANSFORMERS_CACHE: /cache
+#             persistence:
+#               cache:
+#                 enabled: true
+#                 size: 10Gi
+#                 # Optional: Set this to pvc to avoid downloading the ML models every start.
+#                 type: emptyDir
+#                 accessMode: ReadWriteMany
+#                 # storageClass: your-class
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: immich
+
+# env:
+#   REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
+#   DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
+#   DB_USERNAME: "{{ .Values.postgresql.global.postgresql.auth.username }}"
+#   DB_DATABASE_NAME: "{{ .Values.postgresql.global.postgresql.auth.database }}"
+#   # -- You should provide your own secret outside of this helm-chart and use `postgresql.global.postgresql.auth.existingSecret` to provide credentials to the postgresql instance
+#   DB_PASSWORD: "{{ .Values.postgresql.global.postgresql.auth.password }}"
+#   IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+
+# image:
+#   tag: v1.119.0
+
+# immich:
+#   metrics:
+#     # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
+#     enabled: false
+#   persistence:
+#     # Main data store for all photos shared between different components.
+#     library:
+#       # Automatically creating the library volume is not supported by this chart
+#       # You have to specify an existing PVC to use
+#       existingClaim: immich-claim
+  
+#   # configuration is immich-config.json converted to yaml
+#   # ref: https://immich.app/docs/install/config-file/
+#   #
+#   configuration: {}
+#     # trash:
+#     #   enabled: false
+#     #   days: 30
+#     # storageTemplate:
+#     #   enabled: true
+#     #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
+
+# # Dependencies
+
+# postgresql:
+#   enabled: true
+#   image:
+#     repository: tensorchord/pgvecto-rs
+#     tag: pg14-v0.2.0
+#   global:
+#     postgresql:
+#       auth:
+#         username: immich
+#         database: immich
+#         password: immich
+#   primary:
+#     containerSecurityContext:
+#       readOnlyRootFilesystem: false
+#     initdb:
+#       scripts:
+#         create-extensions.sql: |
+#           CREATE EXTENSION cube;
+#           CREATE EXTENSION earthdistance;
+#           CREATE EXTENSION vectors;
+
+# redis:
+#   enabled: true
+#   architecture: standalone
+#   auth:
+#     enabled: false
+
+# # Immich components
+
+# server:
+#   enabled: true
+#   image:
+#     repository: ghcr.io/immich-app/immich-server
+#     pullPolicy: IfNotPresent
+#   ingress:
+#     main:
+#       enabled: true
+#       ingressClassName: nginx
+#       annotations:
+#         # proxy-body-size is set to 0 to remove the body limit on file uploads
+#         nginx.ingress.kubernetes.io/proxy-body-size: "0"
+#         cert-manager.io/cluster-issuer: prod-cluster-issuer
+#         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+#       hosts:
+#         - host: immich.hensen.io
+#           paths:
+#             - path: "/"
+#       tls:
+#         - secretName:  letsencrypt-prod
+#           hosts:
+#             - immich.hensen.io
+
+
+# machine-learning:
+#   enabled: true
+#   image:
+#     repository: ghcr.io/immich-app/immich-machine-learning
+#     pullPolicy: IfNotPresent
+#   env:
+#     TRANSFORMERS_CACHE: /cache
+#   persistence:
+#     cache:
+#       enabled: true
+#       size: 10Gi
+#       # Optional: Set this to pvc to avoid downloading the ML models every start.
+#       type: emptyDir
+#       accessMode: ReadWriteMany
+#       # storageClass: your-class

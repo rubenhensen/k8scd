@@ -17,8 +17,8 @@ patches:
       name: argocd-notifications-controller
     path: overlays/argocd-notifications-controller-patch.yaml
   - target:
-      group: apps
+      group: ""
       version: v1
-      kind: ReplicaSet
+      kind: ConfigMap
       name: argocd-cm
     path: overlays/argocd-cm-patch.yaml

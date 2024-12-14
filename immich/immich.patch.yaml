@@ -11,12 +11,7 @@ metadata:
   namespace: immich
 spec:
   template:
-    metadata:
-      labels:
-        app.kubernetes.io/instance: helm-immich
-        app.kubernetes.io/name: server
     spec:
-      automountServiceAccountToken: true
       containers:
         - startupProbe:
             failureThreshold: 40

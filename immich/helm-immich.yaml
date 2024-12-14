@@ -79,7 +79,7 @@ spec:
             enabled: true
             architecture: standalone
             auth:
-              enabled: true
+              enabled: false
 
           # Immich components
 

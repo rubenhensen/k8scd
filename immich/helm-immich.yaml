@@ -76,10 +76,10 @@ spec:
                     CREATE EXTENSION vectors;
 
           redis:
-            enabled: false
+            enabled: true
             architecture: standalone
             auth:
-              enabled: false
+              enabled: true
 
           # Immich components
 

@@ -20,7 +20,6 @@ spec:
       helm:
         values: |
           env:
-            startupProbe: {}
             REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
             DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
             DB_USERNAME: "{{ .Values.postgresql.global.postgresql.auth.username }}"
@@ -31,6 +30,7 @@ spec:
 
           image:
             tag: v1.119.0
+            startupProbe: {}
 
           immich:
             metrics:

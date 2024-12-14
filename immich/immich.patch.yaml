@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: helm-immich
   name: helm-immich-server
   namespace: immich
 spec:

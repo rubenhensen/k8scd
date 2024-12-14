@@ -646,7 +646,7 @@ spec:
             httpGet:
               path: /api/server/ping
               port: http
-            initialDelaySeconds: 120
+            initialDelaySeconds: 0
             periodSeconds: 10
             timeoutSeconds: 1
       volumes:

@@ -642,11 +642,11 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 1
           startupProbe:
-            failureThreshold: 30
+            failureThreshold: 100
             httpGet:
               path: /api/server/ping
               port: http
-            initialDelaySeconds: 600000
+            initialDelaySeconds: 120
             periodSeconds: 10
             timeoutSeconds: 1
       volumes:

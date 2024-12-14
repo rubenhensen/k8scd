@@ -90,6 +90,7 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-server
               pullPolicy: IfNotPresent
+            startupProbe: {}
             ingress:
               main:
                 enabled: true

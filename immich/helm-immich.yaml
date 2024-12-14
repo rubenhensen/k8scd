@@ -32,7 +32,6 @@ spec:
             tag: v1.119.0
 
           immich:
-            startupProbe: {}
             metrics:
               # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
               enabled: false

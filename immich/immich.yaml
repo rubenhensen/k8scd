@@ -562,7 +562,7 @@ spec:
             httpGet:
               path: /ping
               port: http
-            initialDelaySeconds: 0
+            initialDelaySeconds: 600
             periodSeconds: 10
             timeoutSeconds: 1
       volumes:

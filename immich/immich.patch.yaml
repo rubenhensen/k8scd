@@ -3,10 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/instance: helm-immich
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: server
-    app.kubernetes.io/version: v1.119.0
-    helm.sh/chart: immich-0.8.5
   name: helm-immich-server
   namespace: immich
 spec:

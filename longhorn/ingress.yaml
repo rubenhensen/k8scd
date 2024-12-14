@@ -7,6 +7,8 @@ metadata:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     nginx.ingress.kubernetes.io/ssl-passthrough: "false"
     nginx.ingress.kubernetes.io/enable-cors: "true"
+    # type of authentication
+    nginx.ingress.kubernetes.io/auth-type: basic
     # name of the secret that contains the user/password definitions
     nginx.ingress.kubernetes.io/auth-secret: longhorn-basic-auth
     # message to display with an appropriate context why the authentication is required

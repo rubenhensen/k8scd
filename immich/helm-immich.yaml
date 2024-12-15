@@ -120,7 +120,6 @@ spec:
                       - path: "/"
                         service:
                           name: sol-auth-svc
-                          port: http-svc
                 tls:
                   - secretName:  letsencrypt-prod
                     hosts:

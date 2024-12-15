@@ -91,7 +91,7 @@ data:
     RewriteEngine on
     RewriteCond %{HTTP:Upgrade} websocket [NC]
     RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule ^/?(.*) "ws://mbg-photoprism-svc:2342/$1" [P,L]
+    RewriteRule ^/?(.*) "wss://helm-immich-server:2283/$1" [P,L]
 
     ProxyPass /api wss://helm-immich-server:2283/api/
     ProxyPassReverse /api wss://helm-immich-server:2283/api/

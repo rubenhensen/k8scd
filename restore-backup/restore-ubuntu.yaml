@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: restore-ubuntu
+  labels:
+    app: restore-ubuntu
+# docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restore-ubuntu
+  template:
+    metadata:
+      labels:
+        app: restore-ubuntu
+    spec:
+      containers:
+        - name: restore-ubuntu
+          image: ubuntu:plucky
+          volumeMounts:
+          - mountPath: "/mnt/restore-vol"
+            name: backupofimmich

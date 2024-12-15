@@ -76,9 +76,9 @@ spec:
                     CREATE EXTENSION earthdistance;
                     CREATE EXTENSION vectors;
               resources:
-                limits:
-                  cpu: 300m
-                  memory: 384Mi
+                # limits:
+                #   cpu: 600m
+                #   memory: 384Mi
                 requests:
                   cpu: 200m
                   memory: 256Mi

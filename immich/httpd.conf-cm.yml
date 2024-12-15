@@ -93,14 +93,14 @@ data:
     RewriteCond %{QUERY_STRING} transport=websocket    [NC]
     # RewriteRule ^/api/socket.io/(.*)           wss://helm-immich-server:2283/$1 [P,L]
 
-    # ProxyPass /api/socket.io ws://helm-immich-server:2283/api/socket.io/
-    # ProxyPassReverse /api/socket.io ws://helm-immich-server:2283/api/socket.io/
+    ProxyPass /api/socket.io/ wss://helm-immich-server:2283/api/socket.io/
+    ProxyPassReverse /api/socket.io/ wss://helm-immich-server:2283/api/socket.io/
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
-    <Location "/api/socket.io">
-      ProxyPass wss://helm-immich-server:2283/api/socket.io/
-      ProxyPassReverse wss://helm-immich-server:2283/api/socket.io/
-    </Location>
+    # <Location "/api/socket.io/">
+    #   ProxyPass wss://helm-immich-server:2283/api/socket.io/
+    #   ProxyPassReverse wss://helm-immich-server:2283/api/socket.io/
+    # </Location>
     ProxyRequests off
 
     Header always set Access-Control-Allow-Origin "*"

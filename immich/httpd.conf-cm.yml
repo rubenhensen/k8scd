@@ -93,6 +93,8 @@ data:
     RewriteCond %{HTTP:Connection} upgrade [NC]
     RewriteRule ^/?(.*) "ws://mbg-photoprism-svc:2342/$1" [P,L]
 
+    ProxyPass /api wss://helm-immich-server:2283/api/
+    ProxyPassReverse /api wss://helm-immich-server:2283/api/
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     ProxyRequests off

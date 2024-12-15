@@ -91,7 +91,12 @@ spec:
               pullPolicy: IfNotPresent
             probes:
               startup: 
-                enabled: false
+                enabled: true
+                spec:
+                  initialDelaySeconds: 0
+                  timeoutSeconds: 1
+                  periodSeconds: 5
+                  failureThreshold: 100
             ingress:
               main:
                 enabled: true

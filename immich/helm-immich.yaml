@@ -75,13 +75,13 @@ spec:
                     CREATE EXTENSION cube;
                     CREATE EXTENSION earthdistance;
                     CREATE EXTENSION vectors;
-            resources: {}
-              # limits:
-              #   cpu: 300m
-              #   memory: 384Mi
-              # requests:
-              #   cpu: 200m
-              #   memory: 256Mi
+              resources:
+                limits:
+                  cpu: 300m
+                  memory: 384Mi
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
 
           redis:
             enabled: true

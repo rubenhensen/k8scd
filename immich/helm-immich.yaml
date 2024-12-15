@@ -27,9 +27,6 @@ spec:
             # -- You should provide your own secret outside of this helm-chart and use `postgresql.global.postgresql.auth.existingSecret` to provide credentials to the postgresql instance
             DB_PASSWORD: "{{ .Values.postgresql.global.postgresql.auth.password }}"
             IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-            probes:
-              startup: 
-                enabled: false
 
           image:
             tag: v1.119.0
@@ -126,6 +123,10 @@ spec:
                 type: emptyDir
                 accessMode: ReadWriteMany
                 # storageClass: your-class
+
+          probes:
+            startup: 
+              enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: immich

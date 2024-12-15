@@ -96,7 +96,7 @@ data:
     RewriteEngine on
     RewriteCond %{HTTP:Upgrade} websocket [NC]
     RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule ^/?(.*) "wss://localhost:3000/$1" [P,L]
+    RewriteRule ^/?(.*) "wss://helm-immich-server:2283/$1" [P,L]
 
     # must be bigger than pingInterval (25s by default) + pingTimeout (20s by default)
     ProxyTimeout 60

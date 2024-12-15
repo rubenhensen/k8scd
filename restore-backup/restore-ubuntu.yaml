@@ -19,6 +19,9 @@ spec:
       containers:
         - name: restore-ubuntu
           image: ubuntu:plucky
+          volumeMounts:
+          - name: restorevol
+            mountPath: /mnt/restorevol/
       volumes:
         - name: restorevol
           persistentVolumeClaim:

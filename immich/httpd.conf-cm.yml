@@ -91,7 +91,7 @@ data:
     RewriteEngine on
     RewriteCond %{REQUEST_URI}  ^/socket.io            [NC]
     RewriteCond %{QUERY_STRING} transport=websocket    [NC]
-    RewriteRule /(.*)           wss://helm-immich-server:2283/$1 [P,L]
+    RewriteRule ^/api/socket.io/(.*)           wss://helm-immich-server:2283/$1 [P,L]
 
     # ProxyPass /api/socket.io ws://helm-immich-server:2283/api/socket.io/
     # ProxyPassReverse /api/socket.io ws://helm-immich-server:2283/api/socket.io/

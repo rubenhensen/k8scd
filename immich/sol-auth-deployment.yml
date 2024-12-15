@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sol-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sol-auth
+  template:
+    metadata:
+      labels:
+        app: sol-auth
+    spec:
+      # securityContext:
+      #     runAsUser: 1000
+      #     runAsGroup: 1000
+      #     fsGroup: 1000
+      containers:
+        - image: hebury/sol-auth:2.2
+          name: sol-auth
+          resources: 
+            requests:
+              memory: "50Mi"
+            limits:
+              memory: "500Mi"
+          ports:
+            - name: http
+              containerPort: 8002
+              hostPort: 8002
+              protocol: TCP
+          volumeMounts:
+          - name: config-volume
+            mountPath: /config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: httpd-conf
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 5

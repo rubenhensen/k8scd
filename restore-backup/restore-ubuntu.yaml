@@ -22,6 +22,8 @@ spec:
           volumeMounts:
           - name: restorevol
             mountPath: /mnt/restorevol/
+          command: [ "/bin/bash", "-c", "--" ]        # Let container sleep, so it does not close because of 'completion'
+          args: [ "while true; do sleep 30; done;" ]
       volumes:
         - name: restorevol
           persistentVolumeClaim:

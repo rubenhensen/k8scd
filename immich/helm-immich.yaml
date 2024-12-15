@@ -19,6 +19,9 @@ spec:
       targetRevision: 0.8.5 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
       helm:
         values: |
+          probes:
+              startup: 
+                enabled: false
           env:
             REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
             DB_HOSTNAME: "{{ .Release.Name }}-postgresql"
@@ -90,9 +93,6 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-server
               pullPolicy: IfNotPresent
-            probes:
-              startup: 
-                enabled: false
             ingress:
               main:
                 enabled: true

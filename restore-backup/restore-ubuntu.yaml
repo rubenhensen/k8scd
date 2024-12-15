@@ -20,4 +20,4 @@ spec:
           image: ubuntu:plucky
           volumeMounts:
           - mountPath: "/mnt/restore-vol"
-            name: backupofimmich
+            name: immich-claim 

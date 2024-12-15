@@ -1,0 +1,1 @@
+Example container to restore files. See `Obsidian > Cluster > Restore longhorn backup` for more

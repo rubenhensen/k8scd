@@ -16,4 +16,4 @@ patches:
       kind: ReplicaSet
       name: argocd-notifications-controller
     path: overlays/argocd-notifications-controller-patch.yaml
-  - path: overlays/argocd-cm.patch.yaml
+  # - path: overlays/argocd-cm.patch.yaml

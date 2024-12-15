@@ -60,37 +60,10 @@ data:
       AuthOpenIDSecureCookie            On    
     </Location>
 
-    <Location "/manifest.json">
-      AuthType None
-      Require all granted
-    </Location>
-
-    <Location "/static/build">
-      AuthType None
-      Require all granted
-    </Location>
-
-    <Location "/build">
-      AuthType None
-      Require all granted
-    </Location>
-
-
-    <Location "/static">
-      AuthType None
-      Require all granted
-    </Location>
 
     AllowEncodedSlashes NoDecode
     ProxyPreserveHost Off
 
-    # RewriteEngine on
-    # RewriteCond %{REQUEST_URI}  ^/socket.io            [NC]
-    # RewriteCond %{QUERY_STRING} transport=websocket    [NC]
-    # RewriteRule ^/api/socket.io/(.*)           wss://helm-immich-server:2283/$1 [P,L]
-
-    # ProxyPass /api/socket.io/ wss://helm-immich-server:2283/api/socket.io/
-    # ProxyPassReverse /api/socket.io/ wss://helm-immich-server:2283/api/socket.io/
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     RewriteEngine on

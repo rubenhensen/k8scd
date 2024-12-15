@@ -4,7 +4,7 @@ metadata:
   name: restore-ubuntu
   labels:
     app: restore-ubuntu
-  namespace: immich
+  # namespace: immich # edit in apps folder
 # docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
 spec:
   replicas: 1
@@ -19,6 +19,7 @@ spec:
       containers:
         - name: restore-ubuntu
           image: ubuntu:plucky
-          volumeMounts:
-          - mountPath: "/mnt/restore-vol"
-            name: backupofimmich
+      volumes:
+        - name: restorevol
+          persistentVolumeClaim:
+            claimName: backupofimmich

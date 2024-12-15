@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: restore-backup-app 
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rubenhensen/k8scd.git
+    targetRevision: HEAD
+    path: restore-backup
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: immich # Change too namespace where the volume is!
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true

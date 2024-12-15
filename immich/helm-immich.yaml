@@ -118,10 +118,10 @@ spec:
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"
-                    service:
-                      name: sol-auth-svc
-                      port:
-                        name: http-svc
+                        service:
+                          name: sol-auth-svc
+                          port:
+                            name: http-svc
                 tls:
                   - secretName:  letsencrypt-prod
                     hosts:

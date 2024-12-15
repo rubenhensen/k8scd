@@ -60,6 +60,10 @@ data:
       AuthOpenIDSecureCookie            On    
     </Location>
 
+    <Location "/_app">
+      AuthType None
+      Require all granted
+    </Location>
 
     AllowEncodedSlashes NoDecode
     ProxyPreserveHost Off

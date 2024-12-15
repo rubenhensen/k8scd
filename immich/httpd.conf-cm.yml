@@ -93,8 +93,8 @@ data:
     RewriteCond %{HTTP:Connection} upgrade [NC]
     RewriteRule ^/?(.*) "wss://helm-immich-server:2283/$1" [P,L]
 
-    ProxyPass /api/socket.io wss://helm-immich-server:2283/api/socket.io/
-    ProxyPassReverse /api/socket.io wss://helm-immich-server:2283/api/socket.io/
+    ProxyPass /api/socket.io ws://helm-immich-server:2283/api/socket.io/
+    ProxyPassReverse /api/socket.io ws://helm-immich-server:2283/api/socket.io/
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     ProxyRequests off

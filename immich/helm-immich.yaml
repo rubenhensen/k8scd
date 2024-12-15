@@ -89,6 +89,9 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-server
               pullPolicy: IfNotPresent
+            probes:
+              startup: 
+                enabled: false
             ingress:
               main:
                 enabled: true
@@ -124,9 +127,7 @@ spec:
                 accessMode: ReadWriteMany
                 # storageClass: your-class
 
-          probes:
-            startup: 
-              enabled: false
+          
   destination:
     server: https://kubernetes.default.svc
     namespace: immich

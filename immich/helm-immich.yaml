@@ -111,8 +111,6 @@ spec:
                   nginx.ingress.kubernetes.io/proxy-body-size: "0"
                   cert-manager.io/cluster-issuer: prod-cluster-issuer
                   nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-                  nginx.ingress.kubernetes.io/use-regex: "true"
-                  nginx.ingress.kubernetes.io/rewrite-target: /sharing
                 hosts:
                   - host: immich.hensen.io
                     paths:
@@ -123,12 +121,6 @@ spec:
                         service:
                           name: sol-auth-svc
                           port: 8002
-                      # - path: /(photos)
-                      #   pathType: ImplementationSpecific
-                      #   backend:
-                      #     service:
-                      #       name: sol-auth-svc
-                      #       port: 8002
                       
                 tls:
                   - secretName:  letsencrypt-prod

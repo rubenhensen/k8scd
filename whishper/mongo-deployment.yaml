@@ -70,7 +70,7 @@ spec:
       volumes:
         - name: mongo-claim0
           persistentVolumeClaim:
-            claimName: mongo-claim0
+            claimName: mongo-claim10
         # - name: mongo-claim1
         #   persistentVolumeClaim:
         #     claimName: mongo-claim1

@@ -23,9 +23,9 @@ spec:
         io.kompose.service: mongo
     spec:
       containers:
-        - args:
-            - --logpath
-            - /var/log/mongodb/mongod.log
+        # - args:
+        #     - --logpath
+        #     - /var/log/mongodb/mongod.log
           env:
             - name: DB_PASS
               valueFrom:

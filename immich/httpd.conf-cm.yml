@@ -68,6 +68,8 @@ data:
     AllowEncodedSlashes NoDecode
     ProxyPreserveHost Off
 
+    ProxyPass /photos http://helm-immich-server:2283/sharing
+    ProxyPassReverse /photos http://helm-immich-server:2283/sharing
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     RewriteEngine on

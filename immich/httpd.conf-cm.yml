@@ -69,7 +69,7 @@ data:
     ProxyPreserveHost Off
 
     RewriteEngine on
-    RewriteRule ^photos/?$ /sharing [R=301,L]
+    RewriteRule ^/?photos/?$ /sharing [R=301,L]
 
     # ProxyPass /photos http://helm-immich-server:2283/sharing
     # ProxyPassReverse /photos http://helm-immich-server:2283/sharing

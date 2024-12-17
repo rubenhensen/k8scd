@@ -68,12 +68,14 @@ data:
     AllowEncodedSlashes NoDecode
     ProxyPreserveHost Off
 
+    RewriteEngine on
+    RewriteRule ^photos/?$ /sharing [R=301,L]
+
     # ProxyPass /photos http://helm-immich-server:2283/sharing
     # ProxyPassReverse /photos http://helm-immich-server:2283/sharing
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     RewriteEngine on
-    RewriteRule ^photos/?$ /sharing [R=301,L]
     RewriteCond %{HTTP:Upgrade} websocket [NC]
     RewriteCond %{HTTP:Connection} upgrade [NC]
     RewriteRule ^/?(.*) "ws://helm-immich-server:2283/$1" [P,L]

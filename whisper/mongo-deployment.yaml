@@ -23,7 +23,7 @@ spec:
         io.kompose.service: mongo
     spec:
       containers:
-          - env:
+        - env:
             - name: DB_PASS
               valueFrom:
                 configMapKeyRef:

@@ -24,7 +24,7 @@ spec:
     spec:
       securityContext:
         runAsGroup: 1000
-        runAsNonRoot: false
+        runAsNonRoot: true
         runAsUser: 1000
         supplementalGroups:
         - 6
@@ -67,11 +67,16 @@ spec:
           ports:
             - containerPort: 27017
               protocol: TCP
-          volumeMounts:
-            - mountPath: /data/db
+          volumeDevices:
+            - devicePath: /data/db
               name: mongo-claim0
             - mountPath: /var/log/mongodb
               name: mongo-claim1
+          # volumeMounts:
+          #   - mountPath: /data/db
+          #     name: mongo-claim0
+          #   - mountPath: /var/log/mongodb
+          #     name: mongo-claim1
       restartPolicy: Always
       volumes:
         - name: mongo-claim0

@@ -118,7 +118,7 @@ spec:
                       - path: "/"
                   - host: foto.scoutingmbg.nl
                     paths:
-                      - path: "/photos"
+                      - path: /photos
                         pathType: ImplementationSpecific
                         backend:
                           service:

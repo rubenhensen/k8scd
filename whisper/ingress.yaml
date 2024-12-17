@@ -31,9 +31,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: app
+            name: whishper
             port: 
-              number: 80
+              number: 8082
             
   # TLS configuration for HTTPS
   tls:

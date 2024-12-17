@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   DB_PASS: whishper
   DB_USER: whishper
-  LT_LOAD_ONLY: en,nl
+  LT_LOAD_ONLY: es,en,fr,nl
   WHISHPER_HOST: http://127.0.0.1:8082
   WHISPER_MODELS: tiny, tiny.en, small, small.en, base, base.en, medium, medium.en, large-v2, large-v3
 kind: ConfigMap

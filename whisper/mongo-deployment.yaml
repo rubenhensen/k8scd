@@ -23,11 +23,7 @@ spec:
         io.kompose.service: mongo
     spec:
       securityContext:
-        runAsGroup: 2000
-        runAsNonRoot: true
-        runAsUser: 2000
-        supplementalGroups:
-        - 6
+        runAsUser: 0
       containers:
         - args:
             - --logpath

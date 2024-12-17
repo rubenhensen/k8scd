@@ -24,7 +24,7 @@ spec:
     spec:
       securityContext:
         runAsGroup: 1000
-        runAsNonRoot: true
+        runAsNonRoot: false
         runAsUser: 1000
         supplementalGroups:
         - 6

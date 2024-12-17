@@ -13,7 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: whisper-basic-auth
     # message to display with an appropriate context why the authentication is required
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
-    
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
     # nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000/"
     # nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
     # If you encounter a redirect loop or are getting a 307 response code

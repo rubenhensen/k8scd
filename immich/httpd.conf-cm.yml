@@ -68,14 +68,15 @@ data:
     AllowEncodedSlashes NoDecode
     ProxyPreserveHost Off
 
-    ProxyPass /photos http://helm-immich-server:2283/sharing
-    ProxyPassReverse /photos http://helm-immich-server:2283/sharing
+    # ProxyPass /photos http://helm-immich-server:2283/sharing
+    # ProxyPassReverse /photos http://helm-immich-server:2283/sharing
     ProxyPass / http://helm-immich-server:2283/
     ProxyPassReverse / http://helm-immich-server:2283/
     RewriteEngine on
     RewriteCond %{HTTP:Upgrade} websocket [NC]
     RewriteCond %{HTTP:Connection} upgrade [NC]
     RewriteRule ^/?(.*) "ws://helm-immich-server:2283/$1" [P,L]
+    RewriteRule ^photos/?$ /sharing [R=301,L]
 
     # must be bigger than pingInterval (25s by default) + pingTimeout (20s by default)
     ProxyTimeout 60

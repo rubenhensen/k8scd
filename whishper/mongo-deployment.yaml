@@ -26,7 +26,7 @@ spec:
         # - args:
         #     - --logpath
         #     - /var/log/mongodb/mongod.log
-          env:
+        - env:
             - name: DB_PASS
               valueFrom:
                 configMapKeyRef:

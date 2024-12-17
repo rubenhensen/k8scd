@@ -74,9 +74,9 @@ spec:
               name: mongo-claim3
       restartPolicy: Always
       volumes:
-        - name: mongo-claim0
+        - name: mongo-claim2
           persistentVolumeClaim:
             claimName: mongo-claim2
-        - name: mongo-claim1
+        - name: mongo-claim3
           persistentVolumeClaim:
             claimName: mongo-claim3

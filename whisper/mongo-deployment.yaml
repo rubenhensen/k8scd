@@ -22,10 +22,12 @@ spec:
       labels:
         io.kompose.service: mongo
     spec:
+      securityContext:
+        fsGroup: 2000 
       containers:
-        # - args:
-        #     - --logpath
-        #     - /var/log/mongodb/mongod.log
+        - args:
+            - --logpath
+            - /var/log/mongodb/mongod.log
           env:
             - name: DB_PASS
               valueFrom:

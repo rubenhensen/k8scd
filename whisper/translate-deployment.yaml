@@ -22,6 +22,8 @@ spec:
       labels:
         io.kompose.service: translate
     spec:
+      securityContext:
+        fsGroup: 2000 
       containers:
         - env:
             - name: DB_PASS

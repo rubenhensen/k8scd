@@ -32,6 +32,8 @@ spec:
         backend:
           service:
             name: whishper
+            port:
+              number: 8082
             
   # TLS configuration for HTTPS
   tls:

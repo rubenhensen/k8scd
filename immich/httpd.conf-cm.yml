@@ -70,6 +70,10 @@ data:
 
     RewriteEngine on
     RewriteRule ^/?photos/?$ /sharing [R=301,L]
+    RewriteRule ^/?user-settings/?$ /sharing [R=301,L]
+    RewriteRule ^/?trash/?$ /sharing [R=301,L]
+    RewriteRule ^/?archive/?$ /sharing [R=301,L]
+    RewriteRule ^/?utilities/?$ /sharing [R=301,L]
 
     # ProxyPass /photos http://helm-immich-server:2283/sharing
     # ProxyPassReverse /photos http://helm-immich-server:2283/sharing

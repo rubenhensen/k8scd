@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: longhorn-ingress
+  name: whisper-ingress
   annotations:
     # nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: prod-cluster-issuer
@@ -10,7 +10,7 @@ metadata:
     # type of authentication
     nginx.ingress.kubernetes.io/auth-type: basic
     # name of the secret that contains the user/password definitions
-    nginx.ingress.kubernetes.io/auth-secret: longhorn-basic-auth
+    nginx.ingress.kubernetes.io/auth-secret: whisper-basic-auth
     # message to display with an appropriate context why the authentication is required
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
     
@@ -24,14 +24,14 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: longhorn.hensen.io
+  - host: alv.hensen.io
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: longhorn-frontend
+            name: app
             port: 
               number: 80
             
@@ -40,4 +40,4 @@ spec:
     # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
-        - longhorn.hensen.io
+        - alv.hensen.io

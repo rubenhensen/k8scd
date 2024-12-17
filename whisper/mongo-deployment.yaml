@@ -22,16 +22,7 @@ spec:
       labels:
         io.kompose.service: mongo
     spec:
-      securityContext:
-        runAsGroup: 0
-        runAsUser: 0
-        supplementalGroups:
-        - 6
-        - 2000
       containers:
-        - args:
-            - --logpath
-            - /var/log/mongodb/mongod.log
           env:
             - name: DB_PASS
               valueFrom:
@@ -70,13 +61,13 @@ spec:
           volumeMounts:
             - mountPath: /data/db
               name: mongo-claim2
-            - mountPath: /var/log/mongodb
-              name: mongo-claim3
+            # - mountPath: /var/log/mongodb
+            #   name: mongo-claim3
       restartPolicy: Always
       volumes:
         - name: mongo-claim2
           persistentVolumeClaim:
             claimName: mongo-claim2
-        - name: mongo-claim3
-          persistentVolumeClaim:
-            claimName: mongo-claim3
+        # - name: mongo-claim3
+        #   persistentVolumeClaim:
+        #     claimName: mongo-claim3

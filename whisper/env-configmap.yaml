@@ -3,7 +3,7 @@ data:
   DB_PASS: whishper
   DB_USER: whishper
   LT_LOAD_ONLY: en,nl
-  WHISHPER_HOST: http://0.0.0.0:8082
+  WHISHPER_HOST: http://127.0.0.1:8082
   WHISPER_MODELS: large
 kind: ConfigMap
 metadata:

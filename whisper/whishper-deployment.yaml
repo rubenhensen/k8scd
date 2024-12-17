@@ -43,7 +43,7 @@ spec:
                   name: env
             - name: PUBLIC_API_HOST
             - name: PUBLIC_INTERNAL_API_HOST
-              value: http://0.0.0.0:80
+              value: http://127.0.0.1:80
             - name: PUBLIC_TRANSLATION_API_HOST
             - name: PUBLIC_WHISHPER_PROFILE
               value: cpu

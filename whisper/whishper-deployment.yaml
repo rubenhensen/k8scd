@@ -22,6 +22,8 @@ spec:
       labels:
         io.kompose.service: whishper
     spec:
+      securityContext:
+        runAsUser: 0
       containers:
         - env:
             - name: CPU_THREADS

@@ -70,7 +70,7 @@ spec:
           volumeDevices:
             - devicePath: /data/db
               name: mongo-claim0
-            - mountPath: /var/log/mongodb
+            - devicePath: /var/log/mongodb
               name: mongo-claim1
           # volumeMounts:
           #   - mountPath: /data/db

@@ -69,9 +69,9 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: /data/db
-              name: mongo-claim0
+              name: mongo-claim2
             - mountPath: /var/log/mongodb
-              name: mongo-claim1
+              name: mongo-claim3
       restartPolicy: Always
       volumes:
         - name: mongo-claim0

@@ -123,12 +123,12 @@ spec:
                         service:
                           name: sol-auth-svc
                           port: 8002
-                      - path: /(photos)
-                        pathType: ImplementationSpecific
-                        backend:
-                          service:
-                            name: sol-auth-svc
-                            port: 8002
+                      # - path: /(photos)
+                      #   pathType: ImplementationSpecific
+                      #   backend:
+                      #     service:
+                      #       name: sol-auth-svc
+                      #       port: 8002
                       
                 tls:
                   - secretName:  letsencrypt-prod

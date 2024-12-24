@@ -31,7 +31,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ha-svc
+            name: home-assistant-external
             port: 
               name: http
             

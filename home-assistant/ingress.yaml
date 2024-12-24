@@ -33,7 +33,7 @@ spec:
           service:
             name: ha-svc
             port: 
-              number: 80
+              name: http
             
   # TLS configuration for HTTPS
   tls:

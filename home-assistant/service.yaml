@@ -10,5 +10,7 @@ spec:
     targetPort: 8123
   selector:
     app: ha-endpoint
+  ipFamilies:
+  - IPv4
   clusterIP: None
   type: ClusterIP

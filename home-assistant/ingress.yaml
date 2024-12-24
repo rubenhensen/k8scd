@@ -26,13 +26,14 @@ spec:
   rules:
   - host: ha.hensen.io
     http:
-      paths:
-      - backend:
-          serviceName: external-ip
-          servicePort: 80
-        path: /
+      - path: /
         pathType: Prefix
-            
+        backend:
+          service:
+            name: ha-svc
+            port:
+              number: 80
+
   # TLS configuration for HTTPS
   tls:
     # TLS secretName used on ClusterIssuer

@@ -12,5 +12,6 @@ spec:
     app: ha-endpoint
   ipFamilies:
   - IPv4
+  ipFamilyPolicy: SingleStack
   clusterIP: None
   type: ClusterIP

@@ -31,6 +31,7 @@ spec:
           serviceName: external-ip
           servicePort: 80
         path: /
+        pathType: Prefix
             
   # TLS configuration for HTTPS
   tls:

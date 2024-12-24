@@ -7,8 +7,8 @@ spec:
   - name: app
     port: 443
     targetPort: 8123
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
-  clusterIP: None
-  type: ClusterIP
+  # ipFamilies:
+  # - IPv4
+  # ipFamilyPolicy: SingleStack
+  # clusterIP: None
+  # type: ClusterIP

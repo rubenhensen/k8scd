@@ -26,17 +26,19 @@ spec:
   rules:
   - host: ha.hensen.io
     http:
+      paths:
       - path: /
         pathType: Prefix
         backend:
           service:
             name: ha-svc
-            port:
+            port: 
               number: 80
-
+            
   # TLS configuration for HTTPS
   tls:
     # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
         - ha.hensen.io
+

@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
   - name: app
-    port: 80
+    port: 443
     targetPort: 8123
   ipFamilies:
   - IPv4

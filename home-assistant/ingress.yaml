@@ -19,7 +19,7 @@ metadata:
     # If you encounter a redirect loop or are getting a 307 response code
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
     #
-    # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
   # namespace: ente-photos
 spec:
   ingressClassName: nginx
@@ -33,7 +33,7 @@ spec:
           service:
             name: ha-svc
             port: 
-              number: 80
+              number: 443
             
   # TLS configuration for HTTPS
   tls:

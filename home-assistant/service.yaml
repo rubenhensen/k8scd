@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
   - name: app
-    port: 8123
+    port: 80
     protocol: TCP
     targetPort: 8123
   clusterIP: None

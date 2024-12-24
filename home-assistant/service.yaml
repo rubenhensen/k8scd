@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app
+  name: ha-svc
 spec:
+  selector:
+    app.kubernetes.io/name: app
   ports:
-  - name: app
-    port: 443
-    targetPort: 8123
-  # ipFamilies:
-  # - IPv4
-  # ipFamilyPolicy: SingleStack
-  # clusterIP: None
-  # type: ClusterIP
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8123
+  externalIPs:
+    - 192.168.1.202

@@ -23,7 +23,7 @@ spec:
           service:
             name: web-nginx
             port: 
-              name: "80"
+              name: http
             
   # TLS configuration for HTTPS
   tls:

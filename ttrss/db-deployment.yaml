@@ -30,8 +30,20 @@ spec:
                   key: HTTP_PORT
                   name: env
             - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: TTRSS_DB_NAME
+                  name: env
             - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: TTRSS_DB_PASS
+                  name: env
             - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: TTRSS_DB_USER
+                  name: env
             - name: TTRSS_DB_NAME
               valueFrom:
                 configMapKeyRef:

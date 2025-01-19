@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: https://angelnu.github.io/helm-charts
-    targetRevision: 6.0.0
+    targetRevision: v6.0.0
     chart: angelnu/tt-rss
     helm:
         values: |

@@ -6,7 +6,7 @@ metadata:
   name: updater-claim1
 spec:
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi

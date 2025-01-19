@@ -24,11 +24,6 @@ spec:
     spec:
       containers:
         - env:
-            - name: HTTP_PORT
-              valueFrom:
-                configMapKeyRef:
-                  key: HTTP_PORT
-                  name: env
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
@@ -40,21 +35,6 @@ spec:
                   key: TTRSS_DB_PASS
                   name: env
             - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  key: TTRSS_DB_USER
-                  name: env
-            - name: TTRSS_DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: TTRSS_DB_NAME
-                  name: env
-            - name: TTRSS_DB_PASS
-              valueFrom:
-                configMapKeyRef:
-                  key: TTRSS_DB_PASS
-                  name: env
-            - name: TTRSS_DB_USER
               valueFrom:
                 configMapKeyRef:
                   key: TTRSS_DB_USER

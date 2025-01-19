@@ -24,6 +24,10 @@ spec:
     spec:
       containers:
         - env:
+            - name: APP_UPSTREAM
+              value: app.ttrss.svc.cluster.local
+            - name: RESOLVER
+              value: kube-dns.kube-system.svc.cluster.local
             - name: HTTP_PORT
               valueFrom:
                 configMapKeyRef:

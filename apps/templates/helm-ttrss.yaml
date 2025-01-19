@@ -36,20 +36,8 @@ spec:
           # @default -- See below.
           env:
             # -- External URL you use to connect to the RSS (the one you enter in your browser)
-            TTRSS_SELF_URL_PATH: ""
-            # -- Postgres database hostname
-            # @default -- internal postgresql URL
-            # -- Postgres database port.
-            TTRSS_DB_PORT: "5432"
-            # -- Postgres database user name
-            # @default -- postgresql.auth.username value
-            TTRSS_DB_USER: "{{ .Values.postgresql.auth.username }}"
-            # -- Postgres database password
-            # @default -- postgresql.auth.password value
-            TTRSS_DB_PASS: "{{ .Values.postgresql.auth.password }}"
-            # -- Postgres database password
-            # @default -- postgresql.auth.database value
-            TTRSS_DB_NAME: "{{ .Values.postgresql.auth.database }}"
+            TTRSS_SELF_URL_PATH: "rss.hensen.io"
+
 
           # -- Configure the services for the chart here.
           # @default -- See below.

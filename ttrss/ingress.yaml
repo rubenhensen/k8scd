@@ -14,14 +14,14 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: argocd.hensen.io
+  - host: rss.hensen.io
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: argocd-server
+            name: web-nginx
             port: 
               name: "80"
             

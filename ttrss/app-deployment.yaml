@@ -46,6 +46,9 @@ spec:
                   name: env
           image: cthulhoo/ttrss-fpm-pgsql-static:latest
           name: app
+          ports:
+            - containerPort: 80
+              protocol: TCP
           volumeMounts:
             - mountPath: /var/www/html
               name: app

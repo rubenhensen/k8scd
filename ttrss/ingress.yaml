@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-server-ingress
+  name: ttrss-ingress
   annotations:
     # nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: prod-cluster-issuer

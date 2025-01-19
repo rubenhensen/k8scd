@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  HTTP_PORT: 127.0.0.1:8280
+  TTRSS_DB_NAME: postgres
+  TTRSS_DB_PASS: password
+  TTRSS_DB_USER: postgres
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: app-env
+  name: env

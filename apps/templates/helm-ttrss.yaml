@@ -39,7 +39,7 @@ spec:
             TTRSS_SELF_URL_PATH: ""
             # -- Postgres database hostname
             # @default -- internal postgresql URL
-            TTRSS_DB_HOST: "{{ printf '%s-postgresql' .Release.Name }}"
+            # TTRSS_DB_HOST: "{{ printf '%s-postgresql' .Release.Name }}"
             # -- Postgres database port.
             TTRSS_DB_PORT: "5432"
             # -- Postgres database user name

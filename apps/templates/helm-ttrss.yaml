@@ -59,7 +59,7 @@ spec:
                 cert-manager.io/cluster-issuer: prod-cluster-issuer
                 nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
               hosts:
-                - host: rss.scoutingmbg.nl
+                - host: rss.hensen.io
                   paths:
                     - path: "/"
                     

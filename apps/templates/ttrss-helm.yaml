@@ -1,0 +1,92 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ttrss
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: ttrss
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://angelnu.github.io/helm-charts
+    targetRevision: 6.0.0
+    chart: tt-rss
+    helm:
+        values: |
+          #
+          # IMPORTANT NOTE
+          #
+          # This chart inherits from our common library chart. You can check the default values/options here:
+          # https://github.com/k8s-at-home/library-charts/tree/main/charts/stable/common/values.yaml
+          #
+
+          image:
+            # -- image repository
+            repository: ghcr.io/angelnu/tt-rss
+            # -- image pull policy
+            pullPolicy: IfNotPresent
+            # -- image tag
+            tag: 2.0.9486
+
+          # -- See more environment variables in the tt-rss documentation
+          # https://git.tt-rss.org/fox/tt-rss/src/branch/master/classes/config.php#L9
+          # @default -- See below.
+          env:
+            # -- External URL you use to connect to the RSS (the one you enter in your browser)
+            TTRSS_SELF_URL_PATH: "rss.hensen.io"
+
+
+          # -- Configure the services for the chart here.
+          # @default -- See below.
+          service:
+            main:
+              ports:
+                http:
+                  port: 8080
+
+          ingress:
+            # -- Enable and configure ingress settings for the chart under this key.
+            # @default -- See values.yaml
+            main:
+              enabled: true
+              ingressClassName: nginx
+              annotations:
+                # proxy-body-size is set to 0 to remove the body limit on file uploads
+                nginx.ingress.kubernetes.io/proxy-body-size: "0"
+                cert-manager.io/cluster-issuer: prod-cluster-issuer
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+              hosts:
+                - host: rss.hensen.io
+                  paths:
+                    - path: "/"
+                    
+              tls:
+                - secretName:  letsencrypt-prod
+                  hosts:
+                    - rss.hensen.io
+
+          # -- Bitnami postgres chart. For more options see https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+          # @default -- see bellow
+          postgresql:
+            # -- By default uses an internal postgress. Dissable if you use your own Postgres.
+            enabled: true
+            auth:
+              # -- Postgres database user name
+              username: tt-rss
+              # -- Postgres database password
+              password: "changeme"
+              # -- Postgres database
+              database: tt-rss
+            persistence:
+              # -- if database is stored to a PVC. Set to true when you are done testing.
+              enabled: false
+              # storageClass: ""
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true

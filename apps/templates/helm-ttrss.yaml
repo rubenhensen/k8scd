@@ -52,16 +52,21 @@ spec:
             # @default -- See values.yaml
             main:
               enabled: true
-              host: rss.hensen.io
-                http:
+              ingressClassName: nginx
+              annotations:
+                # proxy-body-size is set to 0 to remove the body limit on file uploads
+                nginx.ingress.kubernetes.io/proxy-body-size: "0"
+                cert-manager.io/cluster-issuer: prod-cluster-issuer
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+              hosts:
+                - host: rss.scoutingmbg.nl
                   paths:
-                    - backend:
-                        service:
-                          name: ttrss-tt-rss
-                          port:
-                            number: 8080
-                      path: /
-                      pathType: Prefix
+                    - path: "/"
+                    
+              tls:
+                - secretName:  letsencrypt-prod
+                  hosts:
+                    - rss.hensen.io
 
           # -- Bitnami postgres chart. For more options see https://github.com/bitnami/charts/tree/master/bitnami/postgresql
           # @default -- see bellow

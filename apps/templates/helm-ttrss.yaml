@@ -52,6 +52,16 @@ spec:
             # @default -- See values.yaml
             main:
               enabled: true
+              host: rss.hensen.io
+                http:
+                  paths:
+                    - backend:
+                        service:
+                          name: ttrss-tt-rss
+                          port:
+                            number: 8080
+                      path: /
+                      pathType: Prefix
 
           # -- Bitnami postgres chart. For more options see https://github.com/bitnami/charts/tree/master/bitnami/postgresql
           # @default -- see bellow

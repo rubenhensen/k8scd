@@ -6,9 +6,9 @@ spec:
   type: ExternalName
   externalName: 192.168.1.99
   ports:
-    - name: nas-5000   
+    - name: nas-5000
       protocol: TCP 
-      port: 5000       
-    - name: nas-5001   
+      port: 5000
+    - name: nas-5001
       protocol: TCP
-      port: 5001    
+      port: 5001

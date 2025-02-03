@@ -38,16 +38,16 @@ spec:
           host: drive.hensen.io
             configs:
               polling.config.php: |-
-               <?php
-               $CONFIG = array (
-                   'trusted_domains' => 
-                    array (
-                      0 => 'drive.hensen.io',
-                    ),
-                    'overwrite.cli.url' => 'https://drive.hensen.io',
-                    'overwritehost' => 'drive.hensen.io',
-                    'overwriteprotocol' => 'https',
-               );
+                <?php
+                $CONFIG = array (
+                    'trusted_domains' => 
+                      array (
+                        0 => 'drive.hensen.io',
+                      ),
+                      'overwrite.cli.url' => 'https://drive.hensen.io',
+                      'overwritehost' => 'drive.hensen.io',
+                      'overwriteprotocol' => 'https',
+                );
         ingress:
           enabled: true
           # className: nginx

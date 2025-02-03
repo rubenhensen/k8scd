@@ -4,7 +4,8 @@ metadata:
   name: nas-ingress
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
 spec:
   ingressClassName: nginx
   rules:
@@ -17,7 +18,7 @@ spec:
           service:
             name: nas-external
             port: 
-              number: 5001
+              number: 5000
             
   # TLS configuration for HTTPS
   tls:

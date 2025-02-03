@@ -36,6 +36,12 @@ spec:
           #  memory: 128Mi
         nextcloud:
           host: drive.hensen.io
+          configs:
+            proxy.config.php: |
+              <?php
+              $CONFIG = array (
+                'trusted_proxies' => ['10.0.0.0/8'],
+                );
         phpClientHttpsFix:
           enabled: true
           protocol: https

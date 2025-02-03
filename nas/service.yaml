@@ -5,8 +5,6 @@ metadata:
 spec:
   type: ExternalName
   externalName: 192.168.1.99
-  ipFamilies:
-    - IPv4
   ports:
     - name: nas-5000   
       protocol: TCP 

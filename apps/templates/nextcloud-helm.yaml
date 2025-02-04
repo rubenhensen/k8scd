@@ -47,13 +47,13 @@ spec:
           protocol: https
         ingress:
           enabled: true
-          # className: nginx
+          className: nginx
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: 100G
           #  kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: prod-cluster-issuer
           #  # Keep this in sync with the README.md:
-           nginx.ingress.kubernetes.io/server-snippet: |-
+           nginx.ingress.kubernetes.io/server-snippet: |
               server_tokens off;
               add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
               proxy_hide_header X-Powered-By;

@@ -40,7 +40,7 @@ spec:
             proxy.config.php: |
               <?php
               $CONFIG = array (
-                'trusted_proxies' => ['10.0.0.0/8', '192.168.1.1/32'],
+                'trusted_proxies' => ['10.0.0.0/8'],
                 );
         phpClientHttpsFix:
           enabled: true

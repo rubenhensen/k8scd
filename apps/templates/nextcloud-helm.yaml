@@ -54,8 +54,7 @@ spec:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
           #  # Keep this in sync with the README.md:
             nginx.ingress.kubernetes.io/server-snippet: |
-              server_tokens off;
-              add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
+              server_tokens off
               proxy_hide_header X-Powered-By;
               rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
               rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;

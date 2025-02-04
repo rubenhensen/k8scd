@@ -42,6 +42,10 @@ spec:
               $CONFIG = array (
                 'trusted_proxies' => ['10.0.0.0/8', '192.168.1.1/32'],
                 );
+        nginx:
+          config:
+            headers: 
+              Strict-Transport-Security: "max-age=15768001; includeSubDomains;"
         phpClientHttpsFix:
           enabled: true
           protocol: https
@@ -50,8 +54,8 @@ spec:
           className: nginx
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: 100G
-            nginx.ingress.kubernetes.io/configuration-snippet: |
-              more_set_headers "Strict-Transport-Security: max-age=15768000; includeSubDomains";
+            # nginx.ingress.kubernetes.io/configuration-snippet: |
+              # more_set_headers "Strict-Transport-Security: max-age=15768000; includeSubDomains";
           #  kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: prod-cluster-issuer
             #  # Keep this in sync with the README.md:
@@ -86,6 +90,7 @@ spec:
           labels: {}
           path: /
           pathType: Prefix
+          
 
   syncPolicy:
     syncOptions:

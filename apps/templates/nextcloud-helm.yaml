@@ -42,6 +42,11 @@ spec:
               $CONFIG = array (
                 'trusted_proxies' => ['10.0.0.0/8', '192.168.1.1/32'],
                 );
+            phone.config.php: |
+              <?php
+              $CONFIG = array (
+                'default_phone_region' => 'NL',
+                );
         phpClientHttpsFix:
           enabled: true
           protocol: https
@@ -51,8 +56,7 @@ spec:
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: 100G
             nginx.ingress.kubernetes.io/configuration-snippet: |
-              more_set_headers "Strict-Transport-Security: max-age=15768001; includeSubDomains";
-              more_set_headers "X-Forwarded-Strict-Transport-Security: $upstream_http_strict_transport_security";
+              more_set_headers "Strict-Transport-Security: max-age=15768000; includeSubDomains";
           #  kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: prod-cluster-issuer
             #  # Keep this in sync with the README.md:

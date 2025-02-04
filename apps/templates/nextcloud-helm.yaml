@@ -50,6 +50,8 @@ spec:
           className: nginx
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: 100G
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              more_set_headers "Strict-Transport-Security: max-age=15552000; includeSubDomains";
           #  kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: prod-cluster-issuer
           #  # Keep this in sync with the README.md:

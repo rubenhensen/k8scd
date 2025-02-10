@@ -115,6 +115,12 @@ spec:
                   # - host: immich.hensen.io
                   #   paths:
                   #     - path: "/"
+                  - host: mbg.hensen.io
+                    paths:
+                      - path: "/"
+                        service:
+                          name: sol-auth-svc
+                          port: 8002
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"
@@ -125,7 +131,8 @@ spec:
                 tls:
                   - secretName:  letsencrypt-prod
                     hosts:
-                      - immich.hensen.io
+                      # - immich.hensen.io
+                      - mbg.hensen.io
                       - foto.scoutingmbg.nl
 
           machine-learning:

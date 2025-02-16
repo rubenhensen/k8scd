@@ -47,12 +47,10 @@ spec:
               $CONFIG = array (
                 'default_phone_region' => 'NL',
                 );
-            upload.config.php: |
-              <?php
-              $CONFIG = array (
-                'upload_max_filesize' => '16G',
-                'post_max_size' => '16G',
-                );
+          phpConfigs:
+            user.ini: |-
+              upload_max_filesize=16G
+              post_max_size=16G
         phpClientHttpsFix:
           enabled: true
           protocol: https

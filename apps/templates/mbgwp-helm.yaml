@@ -1,80 +1,80 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: mbgwp-helm
-  namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  destination:
-    namespace: mbgwp
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 24.1.13
-    chart: wordpress
-    helm:
-      values: |
-        ingress:
-          enabled: true
-          ingressClassName: nginx
-          hostname: mbgwp.hensen.io
-          path: /
-          annotations:
-            cert-manager.io/cluster-issuer: prod-cluster-issuer
-          tls: true
-          tlsWwwPrefix: false
-          selfSigned: false
-          extraHosts: []
-          extraPaths: []
-          extraTls:
-            - secretName:  letsencrypt-prod
-              hosts:
-                - mbgwp.hensen.io
-          secrets: []
-          extraRules: []
-        persistence:
-          ## @param persistence.enabled Enable persistence using Persistent Volume Claims
-          ##
-          enabled: true
-          ## @param persistence.storageClass Persistent Volume storage class
-          ## If defined, storageClassName: <storageClass>
-          ## If set to "-", storageClassName: "", which disables dynamic provisioning
-          ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
-          ##
-          storageClass: ""
-          ## @param persistence.accessModes [array] Persistent Volume access modes
-          ##
-          accessModes:
-            - ReadWriteOnce
-          ## @param persistence.accessMode Persistent Volume access mode (DEPRECATED: use `persistence.accessModes` instead)
-          ##
-          accessMode: ReadWriteOnce
-          ## @param persistence.size Persistent Volume size
-          ##
-          size: 10Gi
-          ## @param persistence.dataSource Custom PVC data source
-          ##
-          dataSource: {}
-          ## @param persistence.existingClaim The name of an existing PVC to use for persistence
-          ##
-          existingClaim: ""
-          ## @param persistence.selector Selector to match an existing Persistent Volume for WordPress data PVC
-          ## If set, the PVC can't have a PV dynamically provisioned for it
-          ## E.g.
-          ## selector:
-          ##   matchLabels:
-          ##     app: my-app
-          ##
-          selector: {}
-          ## @param persistence.annotations Persistent Volume Claim annotations
-          ##
-          annotations: {}
-        allowEmptyPassword: true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: mbgwp-helm
+#   namespace: argocd
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+# spec:
+#   destination:
+#     namespace: mbgwp
+#     server: https://kubernetes.default.svc
+#   project: default
+#   source:
+#     repoURL: registry-1.docker.io/bitnamicharts
+#     targetRevision: 24.1.13
+#     chart: wordpress
+#     helm:
+#       values: |
+#         ingress:
+#           enabled: true
+#           ingressClassName: nginx
+#           hostname: mbgwp.hensen.io
+#           path: /
+#           annotations:
+#             cert-manager.io/cluster-issuer: prod-cluster-issuer
+#           tls: true
+#           tlsWwwPrefix: false
+#           selfSigned: false
+#           extraHosts: []
+#           extraPaths: []
+#           extraTls:
+#             - secretName:  letsencrypt-prod
+#               hosts:
+#                 - mbgwp.hensen.io
+#           secrets: []
+#           extraRules: []
+#         persistence:
+#           ## @param persistence.enabled Enable persistence using Persistent Volume Claims
+#           ##
+#           enabled: true
+#           ## @param persistence.storageClass Persistent Volume storage class
+#           ## If defined, storageClassName: <storageClass>
+#           ## If set to "-", storageClassName: "", which disables dynamic provisioning
+#           ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
+#           ##
+#           storageClass: ""
+#           ## @param persistence.accessModes [array] Persistent Volume access modes
+#           ##
+#           accessModes:
+#             - ReadWriteOnce
+#           ## @param persistence.accessMode Persistent Volume access mode (DEPRECATED: use `persistence.accessModes` instead)
+#           ##
+#           accessMode: ReadWriteOnce
+#           ## @param persistence.size Persistent Volume size
+#           ##
+#           size: 10Gi
+#           ## @param persistence.dataSource Custom PVC data source
+#           ##
+#           dataSource: {}
+#           ## @param persistence.existingClaim The name of an existing PVC to use for persistence
+#           ##
+#           existingClaim: ""
+#           ## @param persistence.selector Selector to match an existing Persistent Volume for WordPress data PVC
+#           ## If set, the PVC can't have a PV dynamically provisioned for it
+#           ## E.g.
+#           ## selector:
+#           ##   matchLabels:
+#           ##     app: my-app
+#           ##
+#           selector: {}
+#           ## @param persistence.annotations Persistent Volume Claim annotations
+#           ##
+#           annotations: {}
+#         allowEmptyPassword: true
 
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    automated:
-      selfHeal: true
+#   syncPolicy:
+#     syncOptions:
+#     - CreateNamespace=true
+#     automated:
+#       selfHeal: true

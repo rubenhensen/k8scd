@@ -73,7 +73,10 @@ spec:
           annotations: {}
         allowEmptyPassword: true
         containerSecurityContext:
+          enabled: true
           runAsUser: 0
+          runAsGroup: 0
+          runAsNonRoot: true
 
   syncPolicy:
     syncOptions:

@@ -76,7 +76,7 @@ spec:
           enabled: true
           runAsUser: 0
           runAsGroup: 0
-          runAsNonRoot: true
+          runAsNonRoot: false
 
   syncPolicy:
     syncOptions:

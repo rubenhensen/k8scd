@@ -77,7 +77,7 @@ spec:
           fsGroupChangePolicy: Always
           sysctls: []
           supplementalGroups:
-            - 6
+          - 6
           fsGroup: 1001
 
   syncPolicy:

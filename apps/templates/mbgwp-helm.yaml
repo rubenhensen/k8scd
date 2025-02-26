@@ -11,8 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    enableOCI: true
-    repoURL: oci://registry-1.docker.io/bitnamicharts
+    repoURL: registry-1.docker.io/bitnamicharts
     targetRevision: 24.1.13
     chart: wordpress
     helm:

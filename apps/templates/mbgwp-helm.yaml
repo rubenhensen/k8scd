@@ -75,8 +75,8 @@ spec:
         containerSecurityContext:
           enabled: true
           seLinuxOptions: {}
-          runAsUser: 0
-          runAsGroup: 0
+          runAsUser: 1001
+          runAsGroup: 1001
           runAsNonRoot: false
           privileged: false
           readOnlyRootFilesystem: true
@@ -84,7 +84,7 @@ spec:
           capabilities:
             drop: ["ALL"]
           seccompProfile:
-            type: "RuntimeDefault
+            type: "RuntimeDefault"
 
   syncPolicy:
     syncOptions:

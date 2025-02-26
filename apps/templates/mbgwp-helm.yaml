@@ -27,7 +27,10 @@ spec:
           selfSigned: false
           extraHosts: []
           extraPaths: []
-          extraTls: []
+          extraTls:
+            - secretName:  letsencrypt-prod
+              hosts:
+                - mbgwp.hensen.io
           secrets: []
           extraRules: []
         persistence:

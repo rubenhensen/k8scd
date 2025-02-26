@@ -72,13 +72,19 @@ spec:
           ##
           annotations: {}
         allowEmptyPassword: true
-        podSecurityContext:
+        containerSecurityContext:
           enabled: true
-          fsGroupChangePolicy: Always
-          sysctls: []
-          supplementalGroups:
-          - 6
-          fsGroup: 1001
+          seLinuxOptions: {}
+          runAsUser: 0
+          runAsGroup: 0
+          runAsNonRoot: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: "RuntimeDefault
 
   syncPolicy:
     syncOptions:

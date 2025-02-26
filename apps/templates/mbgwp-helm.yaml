@@ -21,7 +21,8 @@ spec:
           ingressClassName: nginx
           hostname: mbgwp.hensen.io
           path: /
-          annotations: {}
+          annotations:
+            cert-manager.io/cluster-issuer: prod-cluster-issuer
           tls: true
           tlsWwwPrefix: false
           selfSigned: false

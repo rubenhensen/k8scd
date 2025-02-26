@@ -75,8 +75,8 @@ spec:
         containerSecurityContext:
           enabled: true
           seLinuxOptions: {}
-          runAsUser: 1001
-          runAsGroup: 1001
+          runAsUser: 0
+          runAsGroup: 0
           runAsNonRoot: false
           privileged: false
           readOnlyRootFilesystem: true

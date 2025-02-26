@@ -71,6 +71,7 @@ spec:
           ## @param persistence.annotations Persistent Volume Claim annotations
           ##
           annotations: {}
+        allowEmptyPassword: true
 
   syncPolicy:
     syncOptions:

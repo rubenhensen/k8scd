@@ -72,19 +72,10 @@ spec:
           ##
           annotations: {}
         allowEmptyPassword: true
-        containerSecurityContext:
+        volumePermissions:
+          ## @param volumePermissions.enabled Enable init container that changes the owner/group of the PV mount point to `runAsUser:fsGroup`
+          ##
           enabled: true
-          seLinuxOptions: {}
-          runAsUser: 1001
-          runAsGroup: 0
-          runAsNonRoot: true
-          privileged: false
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-          seccompProfile:
-            type: "RuntimeDefault"
 
   syncPolicy:
     syncOptions:

@@ -73,13 +73,13 @@ spec:
           annotations: {}
         allowEmptyPassword: true
         lifecycleHooks:
-        lifecycle:
-          postStart:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - "sleep 30 && touch /opt/bitnami/apache/conf/httpd.conf"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - "sleep 30 && touch /opt/bitnami/apache/conf/httpd.conf"
 
   syncPolicy:
     syncOptions:

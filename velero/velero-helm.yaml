@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: velero
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    targetRevision: 8.4.0
+    helm:
+      values: |
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.11.1
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+        configuration:
+          provider: aws
+          backupStorageLocation:
+            name: default
+            bucket: velero-backups
+            config:
+              region: minio
+              s3ForcePathStyle: true
+              s3Url: http://192.168.1.99:9000
+              insecureSkipTLSVerify: "true"
+          volumeSnapshotLocation:
+            name: default
+            config:
+              region: minio
+        credentials:
+          # Use existing secret created by External Secrets Operator
+          existingSecret: velero-minio-credentials
+        deployRestic: true
+        restic:
+          privileged: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true

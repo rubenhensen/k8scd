@@ -32,6 +32,7 @@ spec:
               provider: aws
               config:
                 region: minio
+          features: EnableCSI
         credentials:
           # Use existing secret created by External Secrets Operator
           # existingSecret: velero-minio-credentials
@@ -49,7 +50,7 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
-        features: EnableCSI
+        
   destination:
     server: https://kubernetes.default.svc
     namespace: velero

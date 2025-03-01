@@ -1,0 +1,6 @@
+apiVersion: apps/v1
+kind: Application
+metadata:
+  name: helm-longhorn
+  annotations:
+    argocd.argoproj.io/tracking-method: annotation

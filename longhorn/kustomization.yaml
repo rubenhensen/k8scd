@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: argocd
+namespace: longhorn-system
 
 resources:
 - helm-longhorn.yaml
@@ -9,5 +9,5 @@ resources:
 - volume-snapshot.yaml
 - https://github.com/kubernetes-csi/external-snapshotter/client/config/crd
 
-patches:
-- path: tracking-patch.yaml
+# patches:
+# - path: tracking-patch.yaml

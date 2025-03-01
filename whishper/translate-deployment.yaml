@@ -22,11 +22,30 @@ spec:
       labels:
         io.kompose.service: translate
     spec:
-      securityContext:
-        runAsUser: 1032
-        runAsGroup: 1032
       containers:
-        - env:
+        - image: libretranslate/libretranslate:latest
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+          livenessProbe:
+            exec:
+              command:
+                - ./venv/bin/python scripts/healthcheck.py
+            failureThreshold: 5
+            periodSeconds: 2
+            timeoutSeconds: 3
+          name: whisper-libretranslate
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          tty: true
+          volumeMounts:
+            - mountPath: /home/libretranslate/.local/share
+              name: translate-claim0
+            - mountPath: /home/libretranslate/.local/cache
+              name: translate-claim1
+          env:
             - name: DB_PASS
               valueFrom:
                 configMapKeyRef:
@@ -56,25 +75,6 @@ spec:
                 configMapKeyRef:
                   key: WHISPER_MODELS
                   name: env
-          image: libretranslate/libretranslate:latest
-          livenessProbe:
-            exec:
-              command:
-                - ./venv/bin/python scripts/healthcheck.py
-            failureThreshold: 5
-            periodSeconds: 2
-            timeoutSeconds: 3
-          name: whisper-libretranslate
-          ports:
-            - containerPort: 5000
-              protocol: TCP
-          tty: true
-          
-          volumeMounts:
-            - mountPath: /home/libretranslate/.local/share
-              name: translate-claim0
-            - mountPath: /home/libretranslate/.local/cache
-              name: translate-claim1
       restartPolicy: Always
       volumes:
         - name: translate-claim0

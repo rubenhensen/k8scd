@@ -4,4 +4,7 @@ kind: Kustomization
 namespace: longhorn-system
 
 resources:
+- helm-longhorn.yaml
+- ingress.yaml
+- volume-snapshot.yaml
 - https://github.com/kubernetes-csi/external-snapshotter/client/config/crd

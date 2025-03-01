@@ -18,10 +18,10 @@ spec:
               - mountPath: /target
                 name: plugins
         configuration:
-          provider: aws
           backupStorageLocation:
             - name: default
               bucket: velero-backups
+              provider: aws
               config:
                 region: minio
                 s3ForcePathStyle: true
@@ -29,6 +29,7 @@ spec:
                 insecureSkipTLSVerify: "true"
           volumeSnapshotLocation:
             - name: default
+              provider: aws
               config:
                 region: minio
         credentials:

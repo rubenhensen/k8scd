@@ -1,0 +1,29 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-backup
+  namespace: velero
+spec:
+  schedule: "0 1 * * *"  # Daily at 1 AM
+  template:
+    includedNamespaces:
+      - immich
+      - nextcloud
+      - home-assistant
+      - ttrss
+    ttl: 720h  # 30 days
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: weekly-backup
+  namespace: velero
+spec:
+  schedule: "0 0 * * 0"  # Weekly on Sunday at midnight
+  template:
+    includedNamespaces:
+      - immich
+      - nextcloud
+      - home-assistant
+      - ttrss
+    ttl: 2160h  # 90 days

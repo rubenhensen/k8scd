@@ -23,8 +23,8 @@ spec:
         io.kompose.service: translate
     spec:
       securityContext:
-            runAsUser: 1032
-            runAsGroup: 1032
+        runAsUser: 1032
+        runAsGroup: 1032
       containers:
         - env:
             - name: DB_PASS

@@ -22,6 +22,9 @@ spec:
       labels:
         io.kompose.service: translate
     spec:
+      securityContext:
+            runAsUser: 1032
+            runAsGroup: 1032
       containers:
         - env:
             - name: DB_PASS
@@ -66,9 +69,7 @@ spec:
             - containerPort: 5000
               protocol: TCP
           tty: true
-          securityContext:
-            runAsUser: 1032
-            runAsGroup: 1032
+          
           volumeMounts:
             - mountPath: /home/libretranslate/.local/share
               name: translate-claim0

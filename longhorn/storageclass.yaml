@@ -1,4 +1,3 @@
-allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -15,5 +14,6 @@ parameters:
   staleReplicaTimeout: "30"
   unmapMarkSnapChainRemoved: ignored
 provisioner: driver.longhorn.io
+allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: Immediate

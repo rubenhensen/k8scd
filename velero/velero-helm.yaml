@@ -34,9 +34,10 @@ spec:
         credentials:
           # Use existing secret created by External Secrets Operator
           existingSecret: velero-minio-credentials
-        deployRestic: true
-        restic:
-          privileged: true
+        deployNodeAgent: true
+        nodeAgent:
+          containerSecurityContext:
+            privileged: true
         resources:
           requests:
             cpu: 100m

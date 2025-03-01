@@ -35,6 +35,7 @@ spec:
         credentials:
           # Use existing secret created by External Secrets Operator
           existingSecret: velero-minio-credentials
+          extraSecretRef: velero-minio-credentials
         deployNodeAgent: true
         nodeAgent:
           containerSecurityContext:

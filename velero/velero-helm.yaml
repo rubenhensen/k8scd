@@ -20,17 +20,17 @@ spec:
         configuration:
           provider: aws
           backupStorageLocation:
-            name: default
-            bucket: velero-backups
-            config:
-              region: minio
-              s3ForcePathStyle: true
-              s3Url: http://192.168.1.99:9000
-              insecureSkipTLSVerify: "true"
+            - name: default
+              bucket: velero-backups
+              config:
+                region: minio
+                s3ForcePathStyle: true
+                s3Url: http://192.168.1.99:9000
+                insecureSkipTLSVerify: "true"
           volumeSnapshotLocation:
-            name: default
-            config:
-              region: minio
+            - name: default
+              config:
+                region: minio
         credentials:
           # Use existing secret created by External Secrets Operator
           existingSecret: velero-minio-credentials

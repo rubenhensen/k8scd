@@ -8,3 +8,6 @@ resources:
 - ingress.yaml
 - volume-snapshot.yaml
 - https://github.com/kubernetes-csi/external-snapshotter/client/config/crd
+
+patches:
+- path: tracking-patch.yaml

@@ -34,9 +34,10 @@ spec:
                 region: minio
         credentials:
           # Use existing secret created by External Secrets Operator
-          existingSecret: velero-minio-credentials
-          extraEnvVars:
-            AWS_SHARED_CREDENTIALS_FILE: /credentials/cloud
+          # existingSecret: velero-minio-credentials
+          # extraEnvVars:
+          # AWS_SHARED_CREDENTIALS_FILE: /credentials/cloud
+          existingSecret: cloud-credentials
         deployNodeAgent: true
         nodeAgent:
           containerSecurityContext:

@@ -3,8 +3,10 @@ kind: Schedule
 metadata:
   name: daily-backup
   namespace: velero
+  annotations:
+    velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
 spec:
-  schedule: "0 1 * * *"  # Daily at 1 AM
+  schedule: "41 22 * * *"  # Daily at 1 AM
   template:
     # includedNamespaces:
     #   - immich
@@ -19,6 +21,8 @@ kind: Schedule
 metadata:
   name: weekly-backup
   namespace: velero
+  annotations:
+    velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
 spec:
   schedule: "0 0 * * 0"  # Weekly on Sunday at midnight
   template:

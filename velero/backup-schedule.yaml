@@ -11,7 +11,8 @@ spec:
     #   - nextcloud
     #   - home-assistant
     #   - ttrss
-    ttl: 720h  # 30 days
+    ttl: 30d  # 30 days
+    defaultVolumesToFsBackup: true
 ---
 apiVersion: velero.io/v1
 kind: Schedule
@@ -26,4 +27,5 @@ spec:
     #   - nextcloud
     #   - home-assistant
     #   - ttrss
-    ttl: 2160h  # 90 days
+    ttl: 90d  # 90 days
+    defaultVolumesToFsBackup: true

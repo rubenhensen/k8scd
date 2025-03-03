@@ -42,6 +42,9 @@ spec:
               name: app-claim0
             - mountPath: /Whisper-WebUI/outputs
               name: app-claim1
+            - name: config-volume
+              mountPath: /Whisper-WebUI/configs/default_parameters.yaml
+              subPath: default_parameters.yaml
       restartPolicy: Always
       volumes:
         - name: app-claim0
@@ -50,3 +53,6 @@ spec:
         - name: app-claim1
           persistentVolumeClaim:
             claimName: app-claim1
+        - name: config-volume
+          configMap:
+            name: whisper-webui-config

@@ -6,7 +6,7 @@ metadata:
   annotations:
     velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
 spec:
-  schedule: "09 22 * * *"  # Daily at 1 AM
+  schedule: "15 22 * * *"  # Daily at 1 AM
   template:
     # includedNamespaces:
     #   - immich

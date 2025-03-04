@@ -1,7 +1,7 @@
 apiVersion: velero.io/v1
 kind: Schedule
 metadata:
-  name: daily-backup
+  name: test-backup
   namespace: velero
   annotations:
     velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
@@ -15,4 +15,3 @@ spec:
       - ttrss
     ttl: 30d  # 30 days
     defaultVolumesToFsBackup: true
----

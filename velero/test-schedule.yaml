@@ -1,0 +1,18 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-backup
+  namespace: velero
+  annotations:
+    velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
+spec:
+  schedule: "*/5 * * * *"  # Daily at 1 AM
+  template:
+    includedNamespaces:
+    #   - immich
+    #   - nextcloud
+    #   - home-assistant
+      - ttrss
+    ttl: 30d  # 30 days
+    defaultVolumesToFsBackup: true
+---

@@ -29,8 +29,6 @@ spec:
           volumeMounts:
             - name: config-volume-readonly
               mountPath: /config-readonly
-            - name: config-volume-writable
-              mountPath: /config-writable
       containers:
         - command:
             - python

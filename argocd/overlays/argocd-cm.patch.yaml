@@ -9,6 +9,6 @@ data:
   # kustomize.buildOptions: "--enable-helm" 
   resource.exclusions: |
     - apiGroups:
-      - "velero.io"
+      - "velero.io/v1"
       kinds:
       - "Backup"

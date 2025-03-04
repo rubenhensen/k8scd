@@ -22,15 +22,6 @@ spec:
       labels:
         io.kompose.service: app
     spec:
-      initContainers:
-        - name: config-init
-          image: busybox
-          command: ['sh', '-c', 'cp /config-readonly/default_parameters.yaml /writable-configs/ && chmod 666 /writable-configs/default_parameters.yaml']
-          volumeMounts:
-            - name: config-volume
-              mountPath: /config-readonly
-            - name: writable-config
-              mountPath: /writable-configs
       containers:
         - command:
             - sh
@@ -40,7 +31,7 @@ spec:
               if [ -f /Whisper-WebUI/configs/default_parameters.yaml ]; then
                 rm /Whisper-WebUI/configs/default_parameters.yaml
               fi
-              ln -s /writable-configs/default_parameters.yaml /Whisper-WebUI/configs/default_parameters.yaml
+              cp /myconfig/default_parameters.yaml /Whisper-WebUI/configs/default_parameters.yaml
               # Start the application
               python app.py --server_port 7860 --server_name 0.0.0.0
           image: hebury/whisper-webui:latest
@@ -55,8 +46,8 @@ spec:
               name: app-claim0
             - mountPath: /Whisper-WebUI/outputs
               name: app-claim1
-            - name: writable-config
-              mountPath: /writable-configs
+            - name: config-volume
+              mountPath: /myconfig
       restartPolicy: Always
       volumes:
         - name: app-claim0
@@ -68,5 +59,3 @@ spec:
         - name: config-volume
           configMap:
             name: whisper-webui-config
-        - name: writable-config
-          emptyDir: {}

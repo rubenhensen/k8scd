@@ -41,6 +41,15 @@ Execute the test script with appropriate parameters:
 
 ```bash
 ./test-velero-backup.sh \
+--s3-access-key <ACCESS_KEY> \
+--s3-secret-key <SECRET_KEY> \
+--backup-name <BACKUP_NAME> \
+--original-namespace mbgwp \
+--test-namespace mbgwp
+```
+
+```bash
+./test-velero-backup.sh \
   --s3-access-key YOUR_ACCESS_KEY \
   --s3-secret-key YOUR_SECRET_KEY \
   --original-namespace immich

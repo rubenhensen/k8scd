@@ -76,7 +76,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Verify required variables
-if [[ -z "$S3_BUCKET" || -z "$S3_REGION" || -z "$S3_ACCESS_KEY" || -z "$S3_SECRET_KEY" ]]; then
+if [[ -z "$S3_BUCKET" || -z "$S3_REGION" || -z "$S3_ACCESS_KEY" || -z "$S3_SECRET_KEY" || -z "$ORIGINAL_NAMESPACE" || -z "$TEST_NAMESPACE" ]]; then
   echo "Error: S3 configuration is incomplete"
   exit 1
 fi
@@ -106,29 +106,34 @@ k3d cluster create backup-test \
   --api-port 6443 \
   --port "80:80@loadbalancer" \
   --port "443:443@loadbalancer" \
-  --agents 2 \
+  --agents 0 \
   --k3s-arg "--disable=traefik@server:0" \
   --wait
+  # -v /mnt/longhorn:/var/lib/longhorn:shared@all \
+  # -i hebury/k3s:v1.32.2-k3s1  \
+  # --wait
 
 # Verify cluster is running
 kubectl config use-context k3d-backup-test
 kubectl get nodes
 
 # 2. Install Longhorn
-echo "Installing Longhorn..."
-kubectl create namespace longhorn-system
+# echo "Installing Longhorn..."
+# kubectl create namespace longhorn-system
 
-helm repo add longhorn https://charts.longhorn.io
-helm repo update
+# helm repo add longhorn https://charts.longhorn.io
+# helm repo update
 
-helm install longhorn longhorn/longhorn \
-  --namespace longhorn-system \
-  --set persistence.defaultClassReplicaCount=1 \
-  --set defaultSettings.backupTarget="" \
-  --set defaultSettings.defaultReplicaCount=1
+# helm install longhorn longhorn/longhorn \
+#   --namespace longhorn-system \
+#   --set persistence.defaultClassReplicaCount=1 \
+#   --set defaultSettings.backupTarget="" \
+#   --set defaultSettings.defaultReplicaCount=1
 
-echo "Waiting for Longhorn to be ready..."
-kubectl -n longhorn-system rollout status deployment/longhorn-ui
+# echo "Waiting for Longhorn to be ready..."
+# kubectl -n longhorn-system rollout status deployment/longhorn-ui
+# kubectl -n longhorn-system rollout status deployment/longhorn-driver-deployer
+# kubectl -n longhorn-system rollout status daemonset/longhorn-manager
 
 # 3. Install Velero with S3 provider
 echo "Installing Velero..."
@@ -173,6 +178,9 @@ rm velero-credentials
 # Wait for Velero to be ready
 echo "Waiting for Velero to be fully ready..."
 kubectl -n velero rollout status deployment/velero --timeout=120s
+
+echo "Install change-storage-class.yaml"
+kubectl apply -f change-storage-class.yaml
 
 # Check if velero CLI is installed and functioning
 if ! command -v velero &> /dev/null; then
@@ -262,6 +270,8 @@ else
   velero restore create --from-backup $BACKUP_NAME \
     --namespace-mappings $ORIGINAL_NAMESPACE:$TEST_NAMESPACE \
     --include-namespaces $ORIGINAL_NAMESPACE \
+    --exclude-namespaces kube-system,kube-public,kube-node-lease,velero \
+    --exclude-resources certificates.cert-manager.io \ 
     --wait
 fi
 
@@ -274,89 +284,89 @@ echo "Waiting for pods to be ready..."
 kubectl wait --for=condition=ready pod --all -n $TEST_NAMESPACE --timeout=300s || true
 
 # 8. Run validation script (create it first if it doesn't exist)
-if [[ ! -f ./validate-restore.sh ]]; then
-  echo "Creating validation script..."
-  cat > validate-restore.sh <<'EOF'
-#!/bin/bash
-# validate-restore.sh - Script to validate Velero backup restoration
+# if [[ ! -f ./validate-restore.sh ]]; then
+#   echo "Creating validation script..."
+#   cat > validate-restore.sh <<'EOF'
+# #!/bin/bash
+# # validate-restore.sh - Script to validate Velero backup restoration
 
-set -e
-echo "Starting validation of restored resources..."
+# set -e
+# echo "Starting validation of restored resources..."
 
-# Get namespace from command line or use default
-NAMESPACE="${1:-default}"
+# # Get namespace from command line or use default
+# NAMESPACE="${1:-default}"
 
-# Check all deployments
-echo "Checking deployments..."
-deployments=$(kubectl get deployment -n $NAMESPACE -o name)
-if [[ -z "$deployments" ]]; then
-  echo "❌ No deployments found in namespace $NAMESPACE"
-else
-  echo "Found deployments: $deployments"
+# # Check all deployments
+# echo "Checking deployments..."
+# deployments=$(kubectl get deployment -n $NAMESPACE -o name)
+# if [[ -z "$deployments" ]]; then
+#   echo "❌ No deployments found in namespace $NAMESPACE"
+# else
+#   echo "Found deployments: $deployments"
   
-  # Check if pods are running for each deployment
-  for deployment in $deployments; do
-    name=$(echo $deployment | cut -d'/' -f2)
-    echo -n "Checking deployment $name: "
+#   # Check if pods are running for each deployment
+#   for deployment in $deployments; do
+#     name=$(echo $deployment | cut -d'/' -f2)
+#     echo -n "Checking deployment $name: "
     
-    # Check if pods are running
-    ready_replicas=$(kubectl get deployment -n $NAMESPACE $name -o jsonpath='{.status.readyReplicas}')
-    if [[ -n "$ready_replicas" && "$ready_replicas" != "0" ]]; then
-      echo "✅ $ready_replicas pods ready"
-    else
-      echo "❌ No pods running"
-    fi
-  done
-fi
+#     # Check if pods are running
+#     ready_replicas=$(kubectl get deployment -n $NAMESPACE $name -o jsonpath='{.status.readyReplicas}')
+#     if [[ -n "$ready_replicas" && "$ready_replicas" != "0" ]]; then
+#       echo "✅ $ready_replicas pods ready"
+#     else
+#       echo "❌ No pods running"
+#     fi
+#   done
+# fi
 
-# Check all services
-echo "Checking services..."
-services=$(kubectl get service -n $NAMESPACE -o name | grep -v "kubernetes")
-if [[ -z "$services" ]]; then
-  echo "❌ No services found in namespace $NAMESPACE"
-else
-  echo "Found services: $services"
+# # Check all services
+# echo "Checking services..."
+# services=$(kubectl get service -n $NAMESPACE -o name | grep -v "kubernetes")
+# if [[ -z "$services" ]]; then
+#   echo "❌ No services found in namespace $NAMESPACE"
+# else
+#   echo "Found services: $services"
   
-  # Check if services have endpoints
-  for service in $services; do
-    name=$(echo $service | cut -d'/' -f2)
-    echo -n "Checking service $name: "
+#   # Check if services have endpoints
+#   for service in $services; do
+#     name=$(echo $service | cut -d'/' -f2)
+#     echo -n "Checking service $name: "
     
-    # Check if service has endpoints
-    endpoints=$(kubectl get endpoints -n $NAMESPACE $name -o jsonpath='{.subsets[*].addresses[*].ip}')
-    if [ -n "$endpoints" ]; then
-      echo "✅ Has endpoints"
-    else
-      echo "❌ No endpoints"
-    fi
-  done
-fi
+#     # Check if service has endpoints
+#     endpoints=$(kubectl get endpoints -n $NAMESPACE $name -o jsonpath='{.subsets[*].addresses[*].ip}')
+#     if [ -n "$endpoints" ]; then
+#       echo "✅ Has endpoints"
+#     else
+#       echo "❌ No endpoints"
+#     fi
+#   done
+# fi
 
-# Check PVCs
-echo "Checking PVCs..."
-pvcs=$(kubectl get pvc -n $NAMESPACE -o name)
-if [[ -z "$pvcs" ]]; then
-  echo "No PVCs found in namespace $NAMESPACE"
-else
-  pvc_count=$(echo "$pvcs" | wc -l)
-  echo "Found $pvc_count PVCs"
+# # Check PVCs
+# echo "Checking PVCs..."
+# pvcs=$(kubectl get pvc -n $NAMESPACE -o name)
+# if [[ -z "$pvcs" ]]; then
+#   echo "No PVCs found in namespace $NAMESPACE"
+# else
+#   pvc_count=$(echo "$pvcs" | wc -l)
+#   echo "Found $pvc_count PVCs"
   
-  # Check if PVCs are bound
-  bound_count=$(kubectl get pvc -n $NAMESPACE -o jsonpath='{.items[?(@.status.phase=="Bound")].metadata.name}' | wc -w)
-  echo "$bound_count/$pvc_count PVCs are bound"
+#   # Check if PVCs are bound
+#   bound_count=$(kubectl get pvc -n $NAMESPACE -o jsonpath='{.items[?(@.status.phase=="Bound")].metadata.name}' | wc -w)
+#   echo "$bound_count/$pvc_count PVCs are bound"
   
-  if [ "$bound_count" -ne "$pvc_count" ]; then
-    echo "❌ Not all PVCs are bound"
-  else
-    echo "✅ All PVCs are bound"
-  fi
-fi
+#   if [ "$bound_count" -ne "$pvc_count" ]; then
+#     echo "❌ Not all PVCs are bound"
+#   else
+#     echo "✅ All PVCs are bound"
+#   fi
+# fi
 
-echo "Validation complete!"
-exit 0
-EOF
-  chmod +x validate-restore.sh
-fi
+# echo "Validation complete!"
+# exit 0
+# EOF
+#   chmod +x validate-restore.sh
+# fi
 
 echo "Running validation tests..."
 ./validate-restore.sh $TEST_NAMESPACE

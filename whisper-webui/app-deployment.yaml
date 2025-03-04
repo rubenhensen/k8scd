@@ -22,6 +22,15 @@ spec:
       labels:
         io.kompose.service: app
     spec:
+      initContainers:
+        - name: config-init
+          image: busybox
+          command: ['sh', '-c', 'cp /config-readonly/default_parameters.yaml /Whisper-WebUI/configs/default_parameters.yaml']
+          volumeMounts:
+            - name: config-volume-readonly
+              mountPath: /config-readonly
+            - name: config-volume-writable
+              mountPath: /config-writable
       containers:
         - command:
             - python
@@ -42,9 +51,8 @@ spec:
               name: app-claim0
             - mountPath: /Whisper-WebUI/outputs
               name: app-claim1
-            - name: config-volume
-              mountPath: /Whisper-WebUI/configs/default_parameters.yaml
-              subPath: default_parameters.yaml
+            - name: config-volume-writable
+              mountPath: /Whisper-WebUI/configs
       restartPolicy: Always
       volumes:
         - name: app-claim0
@@ -53,6 +61,6 @@ spec:
         - name: app-claim1
           persistentVolumeClaim:
             claimName: app-claim1
-        - name: config-volume
+        - name: config-volume-readonly
           configMap:
             name: whisper-webui-config

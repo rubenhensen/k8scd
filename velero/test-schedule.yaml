@@ -13,5 +13,5 @@ spec:
     #   - nextcloud
     #   - home-assistant
       - ttrss
-    ttl: 30d  # 30 days
+    ttl: 15m  # 30 days
     defaultVolumesToFsBackup: true

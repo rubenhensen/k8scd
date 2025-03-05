@@ -8,3 +8,4 @@ spec:
     includedNamespaces:
       - ttrss
     ttl: 15m  # 30 days
+    defaultVolumesToFsBackup: true

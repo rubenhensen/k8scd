@@ -1,0 +1,10 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: test-backup
+spec:
+  schedule: "*/2 * * * *"  # Daily at 1 AM
+  template:
+    includedNamespaces:
+      - ttrss
+    ttl: 15m  # 30 days

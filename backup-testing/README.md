@@ -24,16 +24,8 @@ cd backup-testing
 2. Make the scripts executable:
 
 ```bash
-chmod +x setup-credentials.sh test-velero-backup.sh validate-restore.sh
+chmod +x test-velero-backup.sh validate-restore.sh
 ```
-
-3. Set up your MinIO credentials:
-
-```bash
-./setup-credentials.sh
-```
-
-This script will look for credentials in `~/.velero/credentials-velero` or prompt you to create them.
 
 ## Running a Backup Test
 
@@ -44,33 +36,17 @@ Execute the test script with appropriate parameters:
 --s3-access-key <ACCESS_KEY> \
 --s3-secret-key <SECRET_KEY> \
 --backup-name <BACKUP_NAME> \
---original-namespace mbgwp \
---test-namespace mbgwp
-```
-
-```bash
-./test-velero-backup.sh \
-  --s3-access-key YOUR_ACCESS_KEY \
-  --s3-secret-key YOUR_SECRET_KEY \
-  --original-namespace immich
+--original-namespace <NAMESPACE> \
+--test-namespace <NAMESPACE>
 ```
 
 This will:
-1. Create a temporary K3d cluster
-2. Install Longhorn for storage
-3. Install Velero configured to access your MinIO backup location
-4. List available backups
-5. Allow you to test restoring a specific backup
++ Create a temporary K3d cluster
++ Install Velero configured to access your MinIO backup location
++ List available backups
++ Allow you to test restoring a specific backup
 
 To restore a specific backup, run:
-
-```bash
-./test-velero-backup.sh \
-  --s3-access-key YOUR_ACCESS_KEY \
-  --s3-secret-key YOUR_SECRET_KEY \
-  --original-namespace immich \
-  --backup-name specific-backup-name
-```
 
 ## Testing Specific Applications
 
@@ -80,25 +56,19 @@ For testing Immich backups:
 
 ```bash
 ./test-velero-backup.sh \
-  --s3-access-key YOUR_ACCESS_KEY \
-  --s3-secret-key YOUR_SECRET_KEY \
+  --s3-access-key <ACCESS_KEY> \
+  --s3-secret-key <SECRET_KEY> \
+  --backup-name immich \
   --original-namespace immich \
-  --test-namespace immich-test
+  --test-namespace immich
+
+kubectl port-forward service/helm-immich-server -n immich 8080:2283
 ```
+Reachable on `localhost:8080`
 
-### NextCloud
 
-For testing NextCloud backups:
 
-```bash
-./test-velero-backup.sh \
-  --s3-access-key YOUR_ACCESS_KEY \
-  --s3-secret-key YOUR_SECRET_KEY \
-  --original-namespace nextcloud \
-  --test-namespace nextcloud-test
-```
-
-## Testing with Volume Snapshots
+## Testing with Volume Snapshots (not tested yet)
 
 To test CSI volume snapshot backups:
 
@@ -110,7 +80,7 @@ To test CSI volume snapshot backups:
   --include-volume-snapshots
 ```
 
-## Customizing Validation
+## Customizing Validation (not tested yet)
 
 You can extend the `validate-restore.sh` script to perform application-specific validation checks:
 
@@ -126,7 +96,7 @@ You can extend the `validate-restore.sh` script to perform application-specific 
   --custom-validation-script ./your-custom-validation.sh
 ```
 
-## Troubleshooting
+## Troubleshooting (not tested yet)
 
 If you encounter issues:
 

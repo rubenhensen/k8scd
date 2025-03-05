@@ -271,7 +271,7 @@ else
     --namespace-mappings $ORIGINAL_NAMESPACE:$TEST_NAMESPACE \
     --include-namespaces $ORIGINAL_NAMESPACE \
     --exclude-namespaces kube-system,kube-public,kube-node-lease,velero \
-    --exclude-resources certificates.cert-manager.io \ 
+    --exclude-resources certificates.cert-manager.io \
     --wait
 fi
 
@@ -281,7 +281,7 @@ velero restore get
 
 # Wait for pods to be ready
 echo "Waiting for pods to be ready..."
-kubectl wait --for=condition=ready pod --all -n $TEST_NAMESPACE --timeout=300s || true
+kubectl wait --for=condition=ready pod --all -n $TEST_NAMESPACE --timeout=600s || true
 
 # 8. Run validation script (create it first if it doesn't exist)
 # if [[ ! -f ./validate-restore.sh ]]; then

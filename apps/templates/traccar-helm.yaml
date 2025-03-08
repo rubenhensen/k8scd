@@ -128,7 +128,7 @@ spec:
               password: "traccar"
             primary:
               persistence:
-                enabled: enabled
+                enabled: true
             secondary:
               persistence:
                 enabled: false

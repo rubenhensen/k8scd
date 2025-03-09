@@ -149,7 +149,7 @@ data:
     allow_anonymous false
     password_file /mosquitto/config/password_file
     # Add other MQTT configuration options here
-
+    protocol websockets
 ---
 # MQTT Deployment
 apiVersion: apps/v1

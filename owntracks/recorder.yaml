@@ -100,14 +100,9 @@ spec:
               name: owntracks-mqtt-password
               key: password
         volumeMounts:
-        - name: config
-          mountPath: /config
         - name: store
           mountPath: /store
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: otrecorder-config-pvc
       - name: store
         persistentVolumeClaim:
           claimName: otrecorder-store-pvc

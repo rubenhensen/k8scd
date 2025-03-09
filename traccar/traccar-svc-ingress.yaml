@@ -36,6 +36,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "TCP"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
+  ingressClassName: nginx
   rules:
     - host: traccar-client.hensen.io  # Replace with your actual domain
       http:

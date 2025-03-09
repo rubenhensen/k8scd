@@ -45,22 +45,6 @@ spec:
     requests:
       storage: 1Gi
 ---
-# ConfigMap for Mosquitto configuration
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mosquitto-config
-data:
-  mosquitto.conf: |
-    persistence true
-    persistence_location /mosquitto/data/
-    log_dest file /mosquitto/log/mosquitto.log
-    listener 1883
-    listener 8883
-    # If you need SSL/TLS for the MQTT broker, add appropriate configuration here
-    # certfile /mosquitto/config/cert.pem
-    # keyfile /mosquitto/config/key.pem
----
 # Deployment for OwnTracks Recorder
 apiVersion: apps/v1
 kind: Deployment
@@ -116,63 +100,99 @@ spec:
     targetPort: 8083
   type: ClusterIP
 ---
-# Deployment for Mosquitto
+# ExternalSecret to fetch MQTT password file from Vault
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mqtt-password-file
+  namespace: mqtt
+spec:
+  refreshInterval: "15m"
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: mqtt-password-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: password_file
+      remoteRef:
+        key: kv/mqtt
+        property: secret
+
+---
+# ConfigMap for MQTT configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mqtt-config
+  namespace: mqtt
+data:
+  mosquitto.conf: |
+    listener 1883
+    allow_anonymous false
+    password_file /mosquitto/config/password_file
+    # Add other MQTT configuration options here
+
+---
+# MQTT Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mosquitto
+  name: mqtt
+  namespace: mqtt
+  labels:
+    app: mqtt
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mosquitto
+      app: mqtt
   template:
     metadata:
       labels:
-        app: mosquitto
+        app: mqtt
     spec:
       containers:
-      - name: mosquitto
+      - name: mqtt
         image: eclipse-mosquitto:latest
         ports:
         - containerPort: 1883
           name: mqtt
-        - containerPort: 8883
-          name: mqtts
+        - containerPort: 9001
+          name: websocket
         volumeMounts:
-        - name: data
-          mountPath: /mosquitto/data
-        - name: logs
-          mountPath: /mosquitto/log
-        - name: config-volume
-          mountPath: /mosquitto/config
+        - name: config
+          mountPath: /mosquitto/config/mosquitto.conf
+          subPath: mosquitto.conf
+        - name: password-file
+          mountPath: /mosquitto/config/password_file
+          subPath: password_file
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: mosquitto-data-pvc
-      - name: logs
-        persistentVolumeClaim:
-          claimName: mosquitto-logs-pvc
-      - name: config-volume
+      - name: config
         configMap:
-          name: mosquitto-config
+          name: mqtt-config
+      - name: password-file
+        secret:
+          secretName: mqtt-password-secret
+
 ---
-# Service for Mosquitto
+# MQTT Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: mosquitto
+  name: mqtt
+  namespace: mqtt
 spec:
   selector:
-    app: mosquitto
+    app: mqtt
   ports:
-  - name: mqtt
-    port: 1883
+  - port: 1883
     targetPort: 1883
-  - name: mqtts
-    port: 8883
-    targetPort: 8883
-  type: ClusterIP
+    name: mqtt
+  - port: 9001
+    targetPort: 9001
+    name: websocket
 ---
 # External access with Ingress for OwnTracks Recorder
 apiVersion: networking.k8s.io/v1

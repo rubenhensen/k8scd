@@ -1,0 +1,226 @@
+---
+# PersistentVolumeClaim for OwnTracks Recorder
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: otrecorder-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: otrecorder-store-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# PersistentVolumeClaim for Mosquitto
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mosquitto-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mosquitto-logs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Deployment for OwnTracks Recorder
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otrecorder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otrecorder
+  template:
+    metadata:
+      labels:
+        app: otrecorder
+    spec:
+      containers:
+      - name: otrecorder
+        image: owntracks/recorder
+        ports:
+        - containerPort: 8083
+        env:
+        - name: OTR_HOST
+          value: "mosquitto"
+        - name: OTR_PORT
+          value: "1883"
+        - name: OTR_USER
+          value: "user"
+        - name: OTR_PASS
+          value: "pass"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: store
+          mountPath: /store
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: otrecorder-config-pvc
+      - name: store
+        persistentVolumeClaim:
+          claimName: otrecorder-store-pvc
+---
+# Service for OwnTracks Recorder
+apiVersion: v1
+kind: Service
+metadata:
+  name: otrecorder
+spec:
+  selector:
+    app: otrecorder
+  ports:
+  - port: 8083
+    targetPort: 8083
+  type: ClusterIP
+---
+# ConfigMap for Mosquitto configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-config
+data:
+  mosquitto.conf: |
+    persistence true
+    persistence_location /mosquitto/data/
+    log_dest file /mosquitto/log/mosquitto.log
+    listener 1883
+    listener 8883
+    # If you need SSL/TLS for the MQTT broker, add appropriate configuration here
+    # certfile /mosquitto/config/cert.pem
+    # keyfile /mosquitto/config/key.pem
+
+# Deployment for Mosquitto
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mosquitto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      containers:
+      - name: mosquitto
+        image: eclipse-mosquitto:latest
+        ports:
+        - containerPort: 1883
+          name: mqtt
+        - containerPort: 8883
+          name: mqtts
+        volumeMounts:
+        - name: data
+          mountPath: /mosquitto/data
+        - name: logs
+          mountPath: /mosquitto/log
+        - name: config
+          mountPath: /mosquitto/config
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mosquitto-data-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: mosquitto-logs-pvc
+      - name: config
+        configMap:
+          name: mosquitto-config
+---
+# Service for Mosquitto
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto
+spec:
+  selector:
+    app: mosquitto
+  ports:
+  - name: mqtt
+    port: 1883
+    targetPort: 1883
+  - name: mqtts
+    port: 8883
+    targetPort: 8883
+  type: ClusterIP
+---
+# External access with Ingress for OwnTracks Recorder
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otrecorder-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - owntracks.hensen.io
+    secretName: owntracks-tls-secret
+  rules:
+  - host: owntracks.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: otrecorder
+            port:
+              number: 8083
+---
+# External access with Ingress for Mosquitto
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mosquitto-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - mqtt.hensen.io
+    secretName: mqtt-tls-secret
+  rules:
+  - host: mqtt.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mosquitto
+            port:
+              number: 8883

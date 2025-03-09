@@ -1,5 +1,5 @@
-# ---
-# # PersistentVolumeClaim for OwnTracks Recorder
+---
+# PersistentVolumeClaim for OwnTracks Recorder
 # apiVersion: v1
 # kind: PersistentVolumeClaim
 # metadata:
@@ -10,17 +10,17 @@
 #   resources:
 #     requests:
 #       storage: 1Gi
-# ---
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: otrecorder-store-pvc
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: otrecorder-store-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
 ---
 # PersistentVolumeClaim for Mosquitto
 apiVersion: v1
@@ -66,44 +66,44 @@ spec:
 
 ---
 # Deployment for OwnTracks Recorder
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: otrecorder
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: otrecorder
-#   template:
-#     metadata:
-#       labels:
-#         app: otrecorder
-#     spec:
-#       containers:
-#       - name: otrecorder
-#         image: owntracks/recorder
-#         ports:
-#         - containerPort: 8083
-#         env:
-#         - name: OTR_HOST
-#           value: "mqtt"
-#         - name: OTR_PORT
-#           value: "1883"
-#         - name: OTR_USER
-#           value: "ruben"
-#         - name: OTR_PASS
-#           valueFrom:
-#             secretKeyRef:
-#               name: owntracks-mqtt-password
-#               key: password
-#         volumeMounts:
-#         - name: store
-#           mountPath: /store
-#       volumes:
-#       - name: store
-#         persistentVolumeClaim:
-#           claimName: otrecorder-store-pvc
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otrecorder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otrecorder
+  template:
+    metadata:
+      labels:
+        app: otrecorder
+    spec:
+      containers:
+      - name: otrecorder
+        image: owntracks/recorder
+        ports:
+        - containerPort: 8083
+        env:
+        - name: OTR_HOST
+          value: "mqtt"
+        - name: OTR_PORT
+          value: "1883"
+        - name: OTR_USER
+          value: "ruben"
+        - name: OTR_PASS
+          valueFrom:
+            secretKeyRef:
+              name: owntracks-mqtt-password
+              key: password
+        volumeMounts:
+        - name: store
+          mountPath: /store
+      volumes:
+      - name: store
+        persistentVolumeClaim:
+          claimName: otrecorder-store-pvc
 ---
 # Service for OwnTracks Recorder
 apiVersion: v1

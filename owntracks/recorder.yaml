@@ -45,6 +45,22 @@ spec:
     requests:
       storage: 1Gi
 ---
+# ConfigMap for Mosquitto configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-config
+data:
+  mosquitto.conf: |
+    persistence true
+    persistence_location /mosquitto/data/
+    log_dest file /mosquitto/log/mosquitto.log
+    listener 1883
+    listener 8883
+    # If you need SSL/TLS for the MQTT broker, add appropriate configuration here
+    # certfile /mosquitto/config/cert.pem
+    # keyfile /mosquitto/config/key.pem
+---
 # Deployment for OwnTracks Recorder
 apiVersion: apps/v1
 kind: Deployment
@@ -100,22 +116,6 @@ spec:
     targetPort: 8083
   type: ClusterIP
 ---
-# ConfigMap for Mosquitto configuration
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mosquitto-config
-data:
-  mosquitto.conf: |
-    persistence true
-    persistence_location /mosquitto/data/
-    log_dest file /mosquitto/log/mosquitto.log
-    listener 1883
-    listener 8883
-    # If you need SSL/TLS for the MQTT broker, add appropriate configuration here
-    # certfile /mosquitto/config/cert.pem
-    # keyfile /mosquitto/config/key.pem
-
 # Deployment for Mosquitto
 apiVersion: apps/v1
 kind: Deployment
@@ -144,7 +144,7 @@ spec:
           mountPath: /mosquitto/data
         - name: logs
           mountPath: /mosquitto/log
-        - name: config
+        - name: config-volume
           mountPath: /mosquitto/config
       volumes:
       - name: data
@@ -153,7 +153,7 @@ spec:
       - name: logs
         persistentVolumeClaim:
           claimName: mosquitto-logs-pvc
-      - name: config
+      - name: config-volume
         configMap:
           name: mosquitto-config
 ---

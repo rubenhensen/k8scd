@@ -234,13 +234,18 @@ spec:
             port:
               number: 8083
 ---
-# External access with Ingress for Mosquitto
+# Corrected MQTT Ingress:
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mosquitto-ingress
+  name: mqtt-ingress
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
+    # Add NGINX TCP passthrough annotations
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "TCP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   tls:
@@ -255,6 +260,11 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: mosquitto
+            name: mqtt
             port:
-              number: 8883
+              number: 1883
+
+# Note: For proper MQTT over TLS, consider these alternatives:
+# 1. Use a TCP Load Balancer instead of an Ingress
+# 2. Configure the MQTT broker to use TLS directly (port 8883)
+# 3. Use NGINX TCP ingress controller configuration

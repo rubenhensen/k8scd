@@ -243,7 +243,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     # Add NGINX TCP passthrough annotations
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "TCP"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:

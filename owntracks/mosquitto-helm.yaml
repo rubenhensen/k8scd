@@ -40,7 +40,7 @@ spec:
 
           service:
             type: ClusterIP
-            # externalTrafficPolicy: Cluster
+            externalTrafficPolicy: {}
             annotations: {}
               # metallb.universe.tf/allow-shared-ip: pi-hole
 

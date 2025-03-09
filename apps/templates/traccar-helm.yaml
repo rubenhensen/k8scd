@@ -204,7 +204,8 @@ spec:
           #       key: "password"
 
           ingress:
-            enabled: enables
+            enabled: true
+            ingressClassName: nginx
             extraAnnotations: {}
             annotations:
               kubernetes.io/ingress.class: nginx

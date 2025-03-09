@@ -93,7 +93,7 @@ spec:
         - name: OTR_USER
           value: "ruben"
         - name: OTR_CLIENTID
-          value: "1b"
+          value: "recorder"
         - name: OTR_PASS
           valueFrom:
             secretKeyRef:

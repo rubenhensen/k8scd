@@ -92,8 +92,8 @@ spec:
           value: "1883"
         - name: OTR_USER
           value: "ruben"
-        - name: OTR_CLIENTID
-          value: ""
+        # - name: OTR_CLIENTID
+          # value: ""
         - name: OTR_PASS
           valueFrom:
             secretKeyRef:

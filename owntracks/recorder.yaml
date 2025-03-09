@@ -86,7 +86,7 @@ spec:
         ports:
         - containerPort: 8083
         env:
-        - name: OTR_HOST
+        - name: OTR_HTTPHOST
           value: "mqtt"
         - name: OTR_PORT
           value: "1883"

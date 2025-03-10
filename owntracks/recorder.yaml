@@ -87,11 +87,17 @@ spec:
         - containerPort: 8083
         env:
         - name: OTR_HOST
-          value: "mqtt"
+          value: "mqtt.hensen.io"
         - name: OTR_PORT
-          value: "1883"
+          value: "8083"
         - name: OTR_USER
           value: "ruben"
+        - name: TZ
+          value: "Europe/Berlin"
+        # - name: VIRTUAL_HOST
+          # value: "owntracks.hensen.io"
+        # - name: VIRTUAL_PORT
+          # value: 8883
         # - name: OTR_CLIENTID
           # value: ""
         - name: OTR_PASS
@@ -147,10 +153,11 @@ metadata:
   name: mqtt-config
 data:
   mosquitto.conf: |
-    listener 1883
+    listener 8883
     allow_anonymous false
     password_file /mosquitto/config/password_file
     # Add other MQTT configuration options here
+    listener 8083
     protocol websockets
 ---
 # MQTT Deployment
@@ -174,9 +181,9 @@ spec:
       - name: mqtt
         image: eclipse-mosquitto:latest
         ports:
-        - containerPort: 1883
+        - containerPort: 8883
           name: mqtt
-        - containerPort: 9001
+        - containerPort: 8083
           name: websocket
         volumeMounts:
         - name: config
@@ -203,11 +210,11 @@ spec:
   selector:
     app: mqtt
   ports:
-  - port: 1883
-    targetPort: 1883
+  - port: 8883
+    targetPort: 8883
     name: mqtt
-  - port: 9001
-    targetPort: 9001
+  - port: 8083
+    targetPort: 8083
     name: websocket
 ---
 # External access with Ingress for OwnTracks Recorder
@@ -264,7 +271,7 @@ spec:
           service:
             name: mqtt
             port:
-              number: 1883
+              number: 8083
 
 # Note: For proper MQTT over TLS, consider these alternatives:
 # 1. Use a TCP Load Balancer instead of an Ingress

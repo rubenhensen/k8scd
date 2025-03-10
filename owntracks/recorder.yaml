@@ -92,8 +92,8 @@ spec:
           value: "8883"
         - name: OTR_USER
           value: "ruben"
-        - name: TZ
-          value: "Europe/Berlin"
+        # - name: TZ
+          # value: "Europe/Berlin"
         # - name: VIRTUAL_HOST
           # value: "owntracks.hensen.io"
         # - name: VIRTUAL_PORT

@@ -89,7 +89,7 @@ spec:
         - name: OTR_HOST
           value: "mqtt.hensen.io"
         - name: OTR_PORT
-          value: "8083"
+          value: "8883"
         - name: OTR_USER
           value: "ruben"
         - name: TZ

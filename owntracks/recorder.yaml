@@ -46,85 +46,85 @@ spec:
       storage: 1Gi
 ---
 # ExternalSecret for OwnTracks Recorder password
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: owntracks-mqtt-credentials
-spec:
-  refreshInterval: "15m"
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: owntracks-mqtt-password
-    creationPolicy: Owner
-  data:
-    - secretKey: password
-      remoteRef:
-        key: kv/mqtt
-        property: password
+# apiVersion: external-secrets.io/v1beta1
+# kind: ExternalSecret
+# metadata:
+#   name: owntracks-mqtt-credentials
+# spec:
+#   refreshInterval: "15m"
+#   secretStoreRef:
+#     name: vault-backend
+#     kind: ClusterSecretStore
+#   target:
+#     name: owntracks-mqtt-password
+#     creationPolicy: Owner
+#   data:
+#     - secretKey: password
+#       remoteRef:
+#         key: kv/mqtt
+#         property: password
 
 ---
 # Deployment for OwnTracks Recorder
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: otrecorder
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: otrecorder
-  template:
-    metadata:
-      labels:
-        app: otrecorder
-    spec:
-      containers:
-      - name: otrecorder
-        image: owntracks/recorder
-        ports:
-        - containerPort: 8083
-        env:
-        - name: OTR_HOST
-          value: "mqtt"
-        - name: OTR_PORT
-          value: "8883"
-        - name: OTR_USER
-          value: "ruben"
-        # - name: TZ
-          # value: "Europe/Berlin"
-        # - name: VIRTUAL_HOST
-          # value: "owntracks.hensen.io"
-        # - name: VIRTUAL_PORT
-          # value: 8883
-        # - name: OTR_CLIENTID
-          # value: ""
-        - name: OTR_PASS
-          valueFrom:
-            secretKeyRef:
-              name: owntracks-mqtt-password
-              key: password
-        volumeMounts:
-        - name: store
-          mountPath: /store
-      volumes:
-      - name: store
-        persistentVolumeClaim:
-          claimName: otrecorder-store-pvc
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: otrecorder
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: otrecorder
+#   template:
+#     metadata:
+#       labels:
+#         app: otrecorder
+#     spec:
+#       containers:
+#       - name: otrecorder
+#         image: owntracks/recorder
+#         ports:
+#         - containerPort: 8083
+#         env:
+#         - name: OTR_HOST
+#           value: "mqtt"
+#         - name: OTR_PORT
+#           value: "8883"
+#         - name: OTR_USER
+#           value: "ruben"
+#         # - name: TZ
+#           # value: "Europe/Berlin"
+#         # - name: VIRTUAL_HOST
+#           # value: "owntracks.hensen.io"
+#         # - name: VIRTUAL_PORT
+#           # value: 8883
+#         # - name: OTR_CLIENTID
+#           # value: ""
+#         - name: OTR_PASS
+#           valueFrom:
+#             secretKeyRef:
+#               name: owntracks-mqtt-password
+#               key: password
+#         volumeMounts:
+#         - name: store
+#           mountPath: /store
+#       volumes:
+#       - name: store
+#         persistentVolumeClaim:
+#           claimName: otrecorder-store-pvc
 ---
 # Service for OwnTracks Recorder
-apiVersion: v1
-kind: Service
-metadata:
-  name: otrecorder
-spec:
-  selector:
-    app: otrecorder
-  ports:
-  - port: 8083
-    targetPort: 8083
-  type: ClusterIP
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: otrecorder
+# spec:
+#   selector:
+#     app: otrecorder
+#   ports:
+#   - port: 8083
+#     targetPort: 8083
+#   type: ClusterIP
 ---
 # ExternalSecret to fetch MQTT password file from Vault
 apiVersion: external-secrets.io/v1beta1
@@ -218,30 +218,30 @@ spec:
     name: websocket
 ---
 # External access with Ingress for OwnTracks Recorder
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: otrecorder-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: prod-cluster-issuer
-spec:
-  ingressClassName: nginx
-  tls:
-  - hosts:
-    - owntracks.hensen.io
-    secretName: owntracks-tls-secret
-  rules:
-  - host: owntracks.hensen.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: otrecorder
-            port:
-              number: 8083
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: otrecorder-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     cert-manager.io/cluster-issuer: prod-cluster-issuer
+# spec:
+#   ingressClassName: nginx
+#   tls:
+#   - hosts:
+#     - owntracks.hensen.io
+#     secretName: owntracks-tls-secret
+#   rules:
+#   - host: owntracks.hensen.io
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: otrecorder
+#             port:
+#               number: 8083
 ---
 # Corrected MQTT Ingress:
 

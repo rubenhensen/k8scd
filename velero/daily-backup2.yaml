@@ -2,8 +2,6 @@ apiVersion: velero.io/v1
 kind: Schedule
 metadata:
   name: daily-backup2
-  annotations:
-    velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
 spec:
   schedule: "*/1 * * * *"  # Daily at 1 AM
   template:

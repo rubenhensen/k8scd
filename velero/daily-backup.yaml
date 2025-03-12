@@ -7,7 +7,7 @@ metadata:
 spec:
   schedule: "0 1 * * *"  # Daily at 1 AM
   template:
-    ttl: 30d
+    ttl: 720h # 30 days ONLY h, d/w for day and week do not work!
     defaultVolumesToFsBackup: true
     snapshotVolumes: true
     snapshotMoveData: true

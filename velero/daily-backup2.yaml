@@ -5,7 +5,7 @@ metadata:
   annotations:
     velero.io/csi-volumesnapshot-class_driver.longhorn.io: "longhorn-backup-vsc"
 spec:
-  schedule: "*/2 * * * *"  # Daily at 1 AM
+  schedule: "*/1 * * * *"  # Daily at 1 AM
   template:
     ttl: 30d
     defaultVolumesToFsBackup: true

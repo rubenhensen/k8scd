@@ -2,7 +2,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: wordpress-secrets
-  namespace: default # Change to your desired namespace
+  namespace: mbgwp
 spec:
   refreshInterval: "15m"
   secretStoreRef:

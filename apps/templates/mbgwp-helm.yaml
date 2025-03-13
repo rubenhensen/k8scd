@@ -80,6 +80,7 @@ spec:
         wordpressUsername: rubenhensen
         smtpExistingSecret: wordpress-credentials
         customHTAccessCM: prod-wordpress-cm
+        resourcesPreset: "large"
         lifecycleHooks:
           postStart:
             exec:

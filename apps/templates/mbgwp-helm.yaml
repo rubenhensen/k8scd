@@ -79,6 +79,7 @@ spec:
         existingSecret: wordpress-credentials
         wordpressUsername: rubenhensen
         smtpExistingSecret: wordpress-credentials
+        customHTAccessCM: prod-wordpress-cm
         lifecycleHooks:
           postStart:
             exec:

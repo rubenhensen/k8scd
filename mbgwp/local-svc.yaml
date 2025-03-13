@@ -6,8 +6,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 80                  # The port the service exposes internally
-    targetPort: 80            # The port on the pods to which this service forwards traffic
+  - port: 8080                  # The port the service exposes internally
+    targetPort: 8080            # The port on the pods to which this service forwards traffic
     nodePort: 30989           # The port on each node to access this service (must be between 30000-32767)
   selector:
     app.kubernetes.io/name: wordpress  # Selector to match your WordPress pods

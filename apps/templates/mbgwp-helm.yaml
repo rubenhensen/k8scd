@@ -76,9 +76,9 @@ spec:
           ##
           annotations: {}
         allowEmptyPassword: false
-        wordpressPassword: wordpress-password
+        wordpressPassword: wordpress-credentials
         wordpressUsername: rubenhensen
-        smtpExistingSecret: smtp-password
+        smtpExistingSecret: wordpress-credentials
         lifecycleHooks:
           postStart:
             exec:

@@ -27,6 +27,7 @@ spec:
           path: /
           annotations:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
+            nginx.ingress.kubernetes.io/proxy-body-size: 1G
           tls: true
           tlsWwwPrefix: false
           selfSigned: false

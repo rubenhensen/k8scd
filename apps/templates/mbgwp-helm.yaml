@@ -23,7 +23,7 @@ spec:
         ingress:
           enabled: true
           ingressClassName: nginx
-          hostname: mbgwp.hensen.io
+          hostname: scoutingmbg.nl
           path: /
           annotations:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
@@ -36,7 +36,7 @@ spec:
           extraTls:
             - secretName:  letsencrypt-prod
               hosts:
-                - mbgwp.hensen.io
+                - scoutingmbg.nl
           secrets: []
           extraRules: []
         persistence:

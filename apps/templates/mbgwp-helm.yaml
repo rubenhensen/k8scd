@@ -31,12 +31,14 @@ spec:
           tls: true
           tlsWwwPrefix: false
           selfSigned: false
-          extraHosts: []
+          extraHosts: 
+            - www.scoutingmbg.nl
           extraPaths: []
           extraTls:
             - secretName:  letsencrypt-prod
               hosts:
                 - scoutingmbg.nl
+                - www.scoutingmbg.nl
           secrets: []
           extraRules: []
         persistence:

@@ -28,8 +28,7 @@ spec:
           annotations:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
             nginx.ingress.kubernetes.io/proxy-body-size: 1G
-            nginx.ingress.kubernetes.io/server-snippet: |
-              return 301 $scheme://scoutingmbg.nl$request_uri;
+            nginx.ingress.kubernetes.io/rewrite-target: "https://scoutingmbg.nl/$1"
           tls: true
           tlsWwwPrefix: false
           selfSigned: false
@@ -42,8 +41,7 @@ spec:
                 - scoutingmbg.nl
                 - www.scoutingmbg.nl
           secrets: []
-          extraRules:
-            - host: www.scoutingmbg.nl
+          extraRules: []
 
         persistence:
           ## @param persistence.enabled Enable persistence using Persistent Volume Claims

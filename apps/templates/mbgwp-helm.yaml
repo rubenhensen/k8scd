@@ -28,7 +28,6 @@ spec:
           annotations:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
             nginx.ingress.kubernetes.io/proxy-body-size: 1G
-            nginx.ingress.kubernetes.io/rewrite-target: "https://scoutingmbg.nl/$1"
           tls: true
           tlsWwwPrefix: false
           selfSigned: false

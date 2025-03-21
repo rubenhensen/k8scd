@@ -32,7 +32,7 @@ spec:
           tlsWwwPrefix: false
           selfSigned: false
           extraHosts: 
-            - www.scoutingmbg.nl
+            - name: www.scoutingmbg.nl
           extraPaths: []
           extraTls:
             - secretName:  letsencrypt-prod

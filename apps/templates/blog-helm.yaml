@@ -37,11 +37,12 @@ spec:
         ## @param smtpService SMTP service
         ## @param smtpProtocol SMTP protocol (ssl or tls)
         ##
-        smtpHost: smtp.hostinger.com
-        smtpPort: 465
-        smtpUser: ruben@hensen.io
+        smtpHost: smtp.mailgun.org
+        smtpPort: 587
+        smtpUser: postmaster@sandbox7739a6cdca37419aacc3e8d654af84ed.mailgun.org
         smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
         smtpProtocol: tls
+        smtpService: mailgun
         ## @param smtpExistingSecret The name of an existing secret with SMTP credentials
         ## NOTE: Must contain key `smtp-password`
         ## NOTE: When it's set, the `smtpPassword` parameter is ignored

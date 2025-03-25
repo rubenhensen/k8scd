@@ -29,7 +29,7 @@ spec:
         smtpHost: "smtp.eu.mailgun.org"
         smtpPort: "587"
         smtpUser: "postmaster@mail.hensen.io"
-        # smtpPassword: ""
+        smtpPassword: "-"
         # smtpProtocol: "ssl"
         # smtpService: ""
         smptExistingSecret: ghost-es

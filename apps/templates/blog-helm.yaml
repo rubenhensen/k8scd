@@ -30,7 +30,7 @@ spec:
         smtpPort: 587
         smtpUser: postmaster@mail.hensen.io
         smtpPassword: "ignored-but-has-to-exist-else-password-isnt-passed"
-        smtpProtocol: tls
+        smtpProtocol: ssl
         smtpService: mailgun
         allowEmptyPassword: false
         resourcesPreset: "micro"

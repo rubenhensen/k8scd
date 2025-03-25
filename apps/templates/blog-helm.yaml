@@ -29,20 +29,14 @@ spec:
         smtpHost: "smtp.eu.mailgun.org"
         smtpPort: "25"
         smtpUser: "postmaster@mail.hensen.io"
-        smtpPassword: "-"
+        smtpPassword: "sdfadf"
         smtpProtocol: "tls"
-        # smtpService: ""
+        smtpService: "mailgun"
         smptExistingSecret: ghost-es
         allowEmptyPassword: false
         resourcesPreset: "micro"
-        containerPorts:
-          http: 2368
-          https: 2368
         service:
           type: ClusterIP
-          ports:
-            http: 80
-            https: 443
         ingress:
           enabled: true
           ingressClassName: nginx

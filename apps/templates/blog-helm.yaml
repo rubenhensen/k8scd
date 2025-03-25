@@ -26,12 +26,13 @@ spec:
         ghostHost: "blog.hensen.io"
         ghostPath: /
         ghostEnableHttps: true
-        smtpHost: smtp.eu.mailgun.org
-        smtpPort: 587
-        smtpUser: postmaster@mail.hensen.io
-        smtpPassword: "ignored-but-has-to-exist-else-password-isnt-passed"
-        smtpProtocol: ssl
-        smtpService: mailgun
+        smtpHost: "smtp.eu.mailgun.org"
+        smtpPort: "587"
+        smtpUser: "postmaster@mail.hensen.io"
+        smtpPassword: ""
+        smtpProtocol: "ssl"
+        smtpService: ""
+        smptExistingSecret: ghost-es
         allowEmptyPassword: false
         resourcesPreset: "micro"
         containerPorts:

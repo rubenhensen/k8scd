@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: blog
+    namespace: ghost
     server: https://kubernetes.default.svc
   project: default
   source:
@@ -22,8 +22,8 @@ spec:
         ## NOTE: When it's set, the `ghostPassword` parameter is ignored
         existingSecret: ghost-es
         ghostEmail: ruben.hensen@protonmail.com
-        ghostBlogTitle: Catch && Compile
-        ghostHost: "blog.hensen.io"
+        ghostBlogTitle: "Catch && Compile"
+        ghostHost: blog.hensen.io
         ghostPath: /
         smtpHost: smtp.eu.mailgun.org
         smtpPort: 587

@@ -30,7 +30,7 @@ spec:
         smtpPort: "587"
         smtpUser: "postmaster@mail.hensen.io"
         smtpPassword: "-"
-        # smtpProtocol: "ssl"
+        smtpProtocol: "tls"
         # smtpService: ""
         smptExistingSecret: ghost-es
         allowEmptyPassword: false

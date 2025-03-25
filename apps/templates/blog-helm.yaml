@@ -31,6 +31,7 @@ spec:
         smtpUser: postmaster@mail.hensen.io
         smtpPassword: "ignored-but-has-to-exist-else-password-isnt-passed"
         smtpProtocol: tls
+        smtpService: mailgun
         allowEmptyPassword: false
         resourcesPreset: "micro"
         containerPorts:

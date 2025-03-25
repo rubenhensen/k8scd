@@ -1,100 +1,100 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: blog-helm
-  namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  destination:
-    namespace: blog
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 22.2.4
-    chart: ghost
-    helm:
-      values: |
-        ghostUsername: ruben
-        ## @param existingSecret Name of existing secret containing Ghost credentials
-        ## NOTE: Must contain key `ghost-password`
-        ## NOTE: When it's set, the `ghostPassword` parameter is ignored
-        existingSecret: ghost-es
-        ghostEmail: ruben.hensen@protonmail.com
-        ghostBlogTitle: Catch && Compile
-        ghostHost: "blog.hensen.io"
-        ghostPath: /
-        ghostEnableHttps: false
-        smtpHost: "smtp.eu.mailgun.org"
-        smtpPort: "25"
-        smtpUser: "postmaster@mail.hensen.io"
-        smtpPassword: "sdfadf"
-        smtpProtocol: "tls"
-        smtpService: "mailgun"
-        smptExistingSecret: ghost-es
-        allowEmptyPassword: false
-        resourcesPreset: "micro"
-        service:
-          type: ClusterIP
-        ingress:
-          enabled: true
-          ingressClassName: nginx
-          hostname: blog.hensen.io
-          path: /
-          annotations:
-            cert-manager.io/cluster-issuer: prod-cluster-issuer
-            nginx.ingress.kubernetes.io/proxy-body-size: 1G
-          tls: true
-          tlsWwwPrefix: false
-          selfSigned: false
-          extraHosts: 
-            - name: blog.hensen.io
-          extraPaths: []
-          extraTls:
-            - secretName:  letsencrypt-prod
-              hosts:
-                - blog.hensen.io
-          secrets: []
-          extraRules: []
-        persistence:
-          enabled: true
-          accessModes:
-            - ReadWriteOnce
-          size: 8Gi
-        mysql:
-          enabled: true
-          architecture: standalone
-          ## MySQL Authentication parameters
-          ## @param mysql.auth.rootPassword MySQL root password
-          ## @param mysql.auth.database MySQL custom database
-          ## @param mysql.auth.username MySQL custom user name
-          ## @param mysql.auth.password MySQL custom user password
-          ## @param mysql.auth.existingSecret Existing secret with MySQL credentials
-          ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mysql#setting-the-root-password-on-first-run
-          ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-on-first-run
-          ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-user-on-first-run
-          auth:
-            database: bitnami_ghost
-            username: bn_ghost
-            existingSecret: ghost-es
-          primary:
-            ## MySQL Primary Persistence parameters
-            ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-            ## @param mysql.primary.persistence.enabled Enable persistence on MySQL using PVC(s)
-            ## @param mysql.primary.persistence.storageClass Persistent Volume storage class
-            ## @param mysql.primary.persistence.accessModes [array] Persistent Volume access modes
-            ## @param mysql.primary.persistence.size Persistent Volume size
-            ##
-            persistence:
-              enabled: true
-              storageClass: ""
-              accessModes:
-                - ReadWriteOnce
-              size: 8Gi
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: blog-helm
+#   namespace: argocd
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+# spec:
+#   destination:
+#     namespace: blog
+#     server: https://kubernetes.default.svc
+#   project: default
+#   source:
+#     repoURL: registry-1.docker.io/bitnamicharts
+#     targetRevision: 22.2.4
+#     chart: ghost
+#     helm:
+#       values: |
+#         ghostUsername: ruben
+#         ## @param existingSecret Name of existing secret containing Ghost credentials
+#         ## NOTE: Must contain key `ghost-password`
+#         ## NOTE: When it's set, the `ghostPassword` parameter is ignored
+#         existingSecret: ghost-es
+#         ghostEmail: ruben.hensen@protonmail.com
+#         ghostBlogTitle: Catch && Compile
+#         ghostHost: "blog.hensen.io"
+#         ghostPath: /
+#         ghostEnableHttps: false
+#         smtpHost: "smtp.eu.mailgun.org"
+#         smtpPort: "25"
+#         smtpUser: "postmaster@mail.hensen.io"
+#         smtpPassword: "sdfadf"
+#         smtpProtocol: "tls"
+#         smtpService: "mailgun"
+#         smptExistingSecret: ghost-es
+#         allowEmptyPassword: false
+#         resourcesPreset: "micro"
+#         service:
+#           type: ClusterIP
+#         ingress:
+#           enabled: true
+#           ingressClassName: nginx
+#           hostname: blog.hensen.io
+#           path: /
+#           annotations:
+#             cert-manager.io/cluster-issuer: prod-cluster-issuer
+#             nginx.ingress.kubernetes.io/proxy-body-size: 1G
+#           tls: true
+#           tlsWwwPrefix: false
+#           selfSigned: false
+#           extraHosts: 
+#             - name: blog.hensen.io
+#           extraPaths: []
+#           extraTls:
+#             - secretName:  letsencrypt-prod
+#               hosts:
+#                 - blog.hensen.io
+#           secrets: []
+#           extraRules: []
+#         persistence:
+#           enabled: true
+#           accessModes:
+#             - ReadWriteOnce
+#           size: 8Gi
+#         mysql:
+#           enabled: true
+#           architecture: standalone
+#           ## MySQL Authentication parameters
+#           ## @param mysql.auth.rootPassword MySQL root password
+#           ## @param mysql.auth.database MySQL custom database
+#           ## @param mysql.auth.username MySQL custom user name
+#           ## @param mysql.auth.password MySQL custom user password
+#           ## @param mysql.auth.existingSecret Existing secret with MySQL credentials
+#           ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mysql#setting-the-root-password-on-first-run
+#           ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-on-first-run
+#           ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-user-on-first-run
+#           auth:
+#             database: bitnami_ghost
+#             username: bn_ghost
+#             existingSecret: ghost-es
+#           primary:
+#             ## MySQL Primary Persistence parameters
+#             ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+#             ## @param mysql.primary.persistence.enabled Enable persistence on MySQL using PVC(s)
+#             ## @param mysql.primary.persistence.storageClass Persistent Volume storage class
+#             ## @param mysql.primary.persistence.accessModes [array] Persistent Volume access modes
+#             ## @param mysql.primary.persistence.size Persistent Volume size
+#             ##
+#             persistence:
+#               enabled: true
+#               storageClass: ""
+#               accessModes:
+#                 - ReadWriteOnce
+#               size: 8Gi
 
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    automated:
-      selfHeal: true
+#   syncPolicy:
+#     syncOptions:
+#     - CreateNamespace=true
+#     automated:
+#       selfHeal: true

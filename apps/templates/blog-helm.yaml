@@ -25,13 +25,12 @@ spec:
         ghostBlogTitle: Catch && Compile
         ghostHost: "blog.hensen.io"
         ghostPath: /
-        ghostEnableHttps: false
-        smtpHost: "smtp.eu.mailgun.org"
-        smtpPort: "25"
-        smtpUser: "postmaster@mail.hensen.io"
-        smtpPassword: "sdfadf"
-        smtpProtocol: "tls"
-        smtpService: "mailgun"
+        smtpHost: smtp.eu.mailgun.org
+        smtpPort: 587
+        smtpUser: postmaster@mail.hensen.io
+        smtpPassword: sdfadf
+        smtpProtocol: tls
+        smtpService: mailgun
         smptExistingSecret: ghost-es
         allowEmptyPassword: false
         resourcesPreset: "micro"
@@ -48,13 +47,6 @@ spec:
           tls: true
           tlsWwwPrefix: false
           selfSigned: false
-          extraHosts: 
-            - name: blog.hensen.io
-          extraPaths: []
-          extraTls:
-            - secretName:  letsencrypt-prod
-              hosts:
-                - blog.hensen.io
           secrets: []
           extraRules: []
         persistence:

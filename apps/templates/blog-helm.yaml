@@ -25,7 +25,7 @@ spec:
         ghostBlogTitle: Catch && Compile
         ghostHost: "blog.hensen.io"
         ghostPath: /
-        ghostEnableHttps: false
+        ghostEnableHttps: true
         smtpHost: "smtp.eu.mailgun.org"
         smtpPort: "587"
         smtpUser: "postmaster@mail.hensen.io"

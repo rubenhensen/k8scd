@@ -28,9 +28,9 @@ spec:
         ghostHost: "blog.hensen.io"
         ghostPath: /
         ghostEnableHttps: true
-        smtpHost: smtp.hostinger.com
+        smtpHost: sandbox7739a6cdca37419aacc3e8d654af84ed.mailgun.org
         smtpPort: 465
-        smtpUser: ruben@hensen.io
+        smtpUser: postmaster@sandbox7739a6cdca37419aacc3e8d654af84ed.mailgun.org
         smtpPassword: "ignored-but-has-to-exist-else-password-isnt-passed"
         smtpProtocol: tls
         allowEmptyPassword: false

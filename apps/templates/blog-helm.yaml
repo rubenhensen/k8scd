@@ -27,7 +27,7 @@ spec:
         ghostPath: /
         ghostEnableHttps: false
         smtpHost: "smtp.eu.mailgun.org"
-        # smtpPort: "587"
+        smtpPort: "587"
         smtpUser: "postmaster@mail.hensen.io"
         # smtpPassword: ""
         # smtpProtocol: "ssl"

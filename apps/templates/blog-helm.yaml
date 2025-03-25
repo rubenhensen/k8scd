@@ -1,106 +1,188 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: blog-helm
-  namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  destination:
-    namespace: blog
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 22.2.4
-    chart: ghost
-    helm:
-      values: |
-        image:
-          debug: true
-        ghostUsername: ruben
-        ## @param existingSecret Name of existing secret containing Ghost credentials
-        ## NOTE: Must contain key `ghost-password`
-        ## NOTE: When it's set, the `ghostPassword` parameter is ignored
-        existingSecret: ghost-es
-        ghostEmail: ruben.hensen@protonmail.com
-        ghostBlogTitle: Catch && Compile
-        ghostHost: "blog.hensen.io"
-        ghostPath: /
-        ghostEnableHttps: true
-        smtpHost: sandbox7739a6cdca37419aacc3e8d654af84ed.mailgun.org
-        smtpPort: 465
-        smtpUser: postmaster@sandbox7739a6cdca37419aacc3e8d654af84ed.mailgun.org
-        smtpPassword: "ignored-but-has-to-exist-else-password-isnt-passed"
-        smtpProtocol: tls
-        allowEmptyPassword: false
-        resourcesPreset: "micro"
-        containerPorts:
-          http: 2368
-          https: 2368
-        service:
-          type: ClusterIP
-          ports:
-            http: 80
-            https: 443
-        ingress:
-          enabled: true
-          ingressClassName: nginx
-          hostname: blog.hensen.io
-          path: /
-          annotations:
-            cert-manager.io/cluster-issuer: prod-cluster-issuer
-            nginx.ingress.kubernetes.io/proxy-body-size: 1G
-          tls: true
-          tlsWwwPrefix: false
-          selfSigned: false
-          extraHosts: 
-            - name: blog.hensen.io
-          extraPaths: []
-          extraTls:
-            - secretName:  letsencrypt-prod
-              hosts:
-                - blog.hensen.io
-          secrets: []
-          extraRules: []
-        persistence:
-          enabled: true
-          accessModes:
-            - ReadWriteOnce
-          size: 8Gi
-        mysql:
-          enabled: true
-          architecture: standalone
-          ## MySQL Authentication parameters
-          ## @param mysql.auth.rootPassword MySQL root password
-          ## @param mysql.auth.database MySQL custom database
-          ## @param mysql.auth.username MySQL custom user name
-          ## @param mysql.auth.password MySQL custom user password
-          ## @param mysql.auth.existingSecret Existing secret with MySQL credentials
-          ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mysql#setting-the-root-password-on-first-run
-          ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-on-first-run
-          ##      https://github.com/bitnami/containers/tree/main/bitnami/mysql/#creating-a-database-user-on-first-run
-          auth:
-            database: bitnami_ghost
-            username: bn_ghost
-            existingSecret: ghost-es
-          primary:
-            ## MySQL Primary Persistence parameters
-            ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-            ## @param mysql.primary.persistence.enabled Enable persistence on MySQL using PVC(s)
-            ## @param mysql.primary.persistence.storageClass Persistent Volume storage class
-            ## @param mysql.primary.persistence.accessModes [array] Persistent Volume access modes
-            ## @param mysql.primary.persistence.size Persistent Volume size
-            ##
-            persistence:
-              enabled: true
-              storageClass: ""
-              accessModes:
-                - ReadWriteOnce
-              size: 8Gi
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: blog-helm
+#   namespace: argocd
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+# spec:
+#   destination:
+#     namespace: blog
+#     server: https://kubernetes.default.svc
+#   project: default
+#   source:
+#     repoURL: https://groundhog2k.github.io/helm-charts/
+#     targetRevision: 0.152.1
+#     chart: ghost
+#     helm:
+#       values: |
+#         ## Default values for Ghost deployment
+#         ## Default Ghost service port (default web service port)
+#         service:
+#           type: ClusterIP
+#           port: 80
 
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    automated:
-      selfHeal: true
+#         ## Ingress configuration
+#         ingress:
+#           ## Enable ingress endpoint
+#           enabled: true
+
+#           ## Optional ingress class name
+#           className:
+
+#           ## Maximal body size (default: 2m - increase if uploads failing)
+#           maxBodySize: 2m
+
+#           ## Additional ingress annotations
+#           annotations: 
+#             cert-manager.io/cluster-issuer: prod-cluster-issuer
+#             nginx.ingress.kubernetes.io/proxy-body-size: 1G
+
+#           ## Hosts
+#           hosts:
+#             - host: blog.hensen.io
+#               paths:
+#                 - path: /
+#                   pathType: ImplementationSpecific
+
+#           ## TLS settings for hosts
+#           tls:
+#             - secretName:  letsencrypt-prod
+#               hosts:
+#                 - scoutingmbg.nl
+#                 - www.scoutingmbg.nl
+
+#         externalDatabase:
+#           ## Type of database ("mysql" or "mariadb" - default: sqlite)
+#           type: sqlite
+
+#           ## Path to default SQLite database (only sqlite)
+#           sqliteDatabaseFile: "content/data/ghost.db"
+
+#           ## Name of the database (default: ghost)
+#           name: ghost
+
+#           ## Database user (only mysql/mariadb)
+#           user:
+
+#           ## Database password (only mysql/mariadb)
+#           password:
+
+#           ## Database host (only for mysql/mariadb)
+#           host:
+
+#           ## Database port (only for mysql/mariadb)
+#           port:
+
+#         ## Ghost specific configuration
+#         settings:
+#           ## Default URL (for generated links)
+#           url: https://blog.hensen.io
+
+#           ## Log to stdout only (default) - otherwise logging will go to stdout and file
+#           logToStdout: true
+
+#           ## Environment mode (development or production - default: production)
+#           mode: production
+
+#           ## SMTP connection details
+#           mail:
+#             from: "Catch && Compile < noreply@hensen.io>""
+#             transport: SMTP
+#             host: smtp.hostinger.com
+#             port: 465
+#             service:
+#             user: ruben@hensen.io
+#             password:
+
+#         ## Storage parameters
+#         storage:
+#           ##  Set persistentVolumenClaimName to reference an existing PVC
+#           persistentVolumeClaimName:
+
+#           ## Alternative set requestedSize to define a size for a dynmaically created PVC
+#           requestedSize:
+
+#           ## the storage class name
+#           className:
+
+#           ## Default access mode (ReadWriteOnce)
+#           accessModes:
+#             - ReadWriteOnce
+
+#           ## Keep a created Persistent volume claim when uninstalling the helm chart
+#           keepPvc: false
+
+#           ## Additional storage annotations
+#           annotations: {}
+
+#           ## Additional storage labels
+#           labels: {}
+
+
+#         ## MariaDB configuration
+#         mariadb:
+#           ## Enable MariaDB helm chart for deployment (default: false)
+#           enabled: false
+
+#           ## Database settings
+#           settings:
+#             ## The root user password
+#             rootPassword:
+
+#           ## Optional user database which is created during first startup with user and password
+#           userDatabase: {}
+#             ## Name of the user database
+#             # name:
+#             ## Database user with full access rights
+#             # user:
+#             ## Password of the database user
+#             # password:
+
+#         ## MySQL configuration
+#         mysql:
+#           ## Enable MySQL helm chart for deployment (default: false)
+#           enabled: false
+
+#           ## Database settings
+#           settings:
+#             ## The root user password
+#             rootPassword:
+
+#           ## Optional user database which is created during first startup with user and password
+#           userDatabase: {}
+#             ## Name of the user database
+#             # name:
+#             ## Database user with full access rights
+#             # user:
+#             ## Password of the database user
+#             # password:
+
+#           # Storage parameters
+#           storage:
+#             ## Set persistentVolumenClaimName to reference an existing PVC
+#             persistentVolumeClaimName:
+
+#             ## Alternative set requestedSize to define a size for a dynmaically created PVC
+#             requestedSize:
+
+#             ## the storage class name
+#             className:
+
+#             ## Additional storage annotations
+#             annotations: {}
+
+#             ## Additional storage labels
+#             labels: {}
+
+#         ## Network policies
+#         networkPolicy: {}
+#           ## Ingress and Egress policies
+#           # ingress: {}
+#           # egress: {}
+
+#   syncPolicy:
+#     syncOptions:
+#     - CreateNamespace=true
+#     automated:
+#       selfHeal: true

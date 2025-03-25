@@ -17,7 +17,7 @@ spec:
     helm:
       values: |
         image:
-          debug: false
+          debug: true
         ghostUsername: ruben
         ## @param existingSecret Name of existing secret containing Ghost credentials
         ## NOTE: Must contain key `ghost-password`
@@ -40,6 +40,7 @@ spec:
         smtpHost: smtp.hostinger.com
         smtpPort: 465
         smtpUser: ruben@hensen.io
+        smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
         smtpProtocol: tls
         ## @param smtpExistingSecret The name of an existing secret with SMTP credentials
         ## NOTE: Must contain key `smtp-password`

@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 22.2.5
+    targetRevision: 21.1.50
     chart: ghost
     helm:
       values: |
@@ -64,15 +64,11 @@ spec:
         containerPorts:
           http: 2368
           https: 2368
-          smtp: 587
         service:
           type: ClusterIP
           ports:
             http: 80
             https: 443
-          extraPorts:
-            - name: smtp
-              port: 587
         ingress:
           enabled: true
           ingressClassName: nginx

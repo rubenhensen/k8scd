@@ -47,6 +47,15 @@ spec:
         ## NOTE: When it's set, the `smtpPassword` parameter is ignored
         ##
         smtpExistingSecret: hensenio-smtp
+        ## @param extraEnvVars Array with extra environment variables to add to the Ghost container
+        ## e.g:
+        ## extraEnvVars:
+        ##   - name: FOO
+        ##     value: "bar"
+        ##
+        extraEnvVars:
+          - name: mail__options__secure
+            value: "false"
         # Mount the ConfigMap as a volume
         extraVolumes:
           - name: ghost-config

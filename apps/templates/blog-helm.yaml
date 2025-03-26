@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 19.3.24
+    targetRevision: 19.9.0
     chart: ghost
     helm:
       values: |

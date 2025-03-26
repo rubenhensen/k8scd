@@ -38,7 +38,7 @@ spec:
         ## @param smtpProtocol SMTP protocol (ssl or tls)
         ##
         smtpHost: smtp.hostinger.com
-        smtpPort: 465
+        smtpPort: 587
         smtpUser: ruben@hensen.io
         smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
         smtpProtocol: tls

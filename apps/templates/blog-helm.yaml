@@ -17,8 +17,8 @@ spec:
     helm:
       values: |
         image:
-          repository: ghost
-          tag: 5.114.1
+          # repository: ghost
+          # tag: 5.114.1
           debug: true
         ghostUsername: Ruben
         ## @param existingSecret Name of existing secret containing Ghost credentials
@@ -70,7 +70,10 @@ spec:
           ports:
             http: 80
             https: 443
-            smtp: 587
+          extraPorts:
+            smtp:
+              name: smtp
+              port: 587
         ingress:
           enabled: true
           ingressClassName: nginx

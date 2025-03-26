@@ -94,7 +94,7 @@ spec:
 
       containers:
       - name: ghost-blog
-        image: ghcr.io/sredevopsorg/ghost-on-kubernetes:main
+        image: ghost:latest
         imagePullPolicy: Always
         ports:
         - name: ghost

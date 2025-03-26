@@ -41,6 +41,9 @@ spec:
       - name: tmp
         emptyDir:
           sizeLimit: 64Mi
+      - name: ghost-logs
+        emptyDir:
+          sizeLimit: 256Mi
 
       initContainers:
       - name: permissions-fix
@@ -82,6 +85,9 @@ spec:
         volumeMounts:
         - name: ghost-content
           mountPath: /home/nonroot/app/ghost/content
+          readOnly: false
+        - name: ghost-logs
+          mountPath: /home/nonroot/app/ghost/versions/5.114.0/content/logs
           readOnly: false
 
       containers:
@@ -140,6 +146,9 @@ spec:
           subPath: config.production.json
         - name: tmp
           mountPath: /tmp
+          readOnly: false
+        - name: ghost-logs
+          mountPath: /home/nonroot/app/ghost/versions/5.114.0/content/logs
           readOnly: false
         securityContext:
           readOnlyRootFilesystem: true

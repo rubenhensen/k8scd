@@ -47,6 +47,17 @@ spec:
         ## NOTE: When it's set, the `smtpPassword` parameter is ignored
         ##
         smtpExistingSecret: hensenio-smtp
+        # Mount the ConfigMap as a volume
+        extraVolumes:
+          - name: ghost-config
+            configMap:
+              name: ghost-config
+
+        # Mount the volume at the specific file path
+        extraVolumeMounts:
+          - name: ghost-config
+            mountPath: /opt/bitnami/ghost/config.production.json
+            subPath: config.production.json
         ## @param allowEmptyPassword Allow the container to be started with blank passwords
         allowEmptyPassword: false
         resourcesPreset: "micro"

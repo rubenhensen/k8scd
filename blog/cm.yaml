@@ -1,0 +1,49 @@
+# ghost-config.yaml - Apply this with ArgoCD
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghost-config
+  labels:
+    app: ghost
+data:
+  config.production.json: |
+    {
+      "database": {
+        "client": "mysql",
+        "connection": {
+          "host": "blog-helm-mysql",
+          "port": 3306,
+          "database": "bitnami_ghost",
+          "user": "bn_ghost",
+          "password": "hq&UiS9T%QuabRbW",
+          "ssl": false
+        }
+      },
+      "url": "https://blog.hensen.io/",
+      "server": {
+        "port": 2368,
+        "host": "0.0.0.0"
+      },
+      "mail": {
+        "transport": "SMTP",
+        "from": "ruben.hensen@protonmail.com",
+        "options": {
+          "host": "smtp.hostinger.com",
+          "port": 465,
+          "secure": false,
+          "auth": {
+            "user": "ruben@hensen.io",
+            "pass": "q8R^v2QmZqiv&DH%6x29qaWf"
+          }
+        }
+      },
+      "logging": {
+        "transports": [
+          "file"
+        ]
+      },
+      "process": "local",
+      "paths": {
+        "contentPath": "/opt/bitnami/ghost/content"
+      }
+    }

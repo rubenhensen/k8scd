@@ -148,17 +148,10 @@ spec:
             memory: 400Mi
         volumeMounts:
         - name: ghost-content
-          mountPath: /home/nonroot/app/ghost/content
+          mountPath: /var/lib/ghost/content
           readOnly: false
-        - name: ghost-config-prod
-          readOnly: true
-          mountPath: /home/nonroot/app/ghost/config.production.json
-          subPath: config.production.json
         - name: tmp
           mountPath: /tmp
-          readOnly: false
-        - name: ghost-logs
-          mountPath: /home/nonroot/app/ghost/versions/5.114.0/content/logs
           readOnly: false
         securityContext:
           allowPrivilegeEscalation: false

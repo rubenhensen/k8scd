@@ -12,11 +12,13 @@ spec:
   project: default
   source:
     repoURL: registry-1.docker.io/bitnamicharts
-    targetRevision: 22.2.4
+    targetRevision: 22.2.5
     chart: ghost
     helm:
       values: |
         image:
+          repository: ghost
+          tag: 5.114.1
           debug: true
         ghostUsername: Ruben
         ## @param existingSecret Name of existing secret containing Ghost credentials

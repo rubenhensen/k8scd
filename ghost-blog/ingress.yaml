@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ghost-blog-ingress
+  namespace: ghost-blog
+  labels:
+    app: ghost-blog
+    app.kubernetes.io/name: ghost-blog-ingress
+    app.kubernetes.io/instance: ghost-blog
+    app.kubernetes.io/version: '5.92'
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: ghost-blog
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/proxy-body-size: 1G
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - blog.hensen.io
+    secretName: ghost-tls-secret
+  rules:
+  - host: blog.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ghost-service
+            port:
+              name: ghost

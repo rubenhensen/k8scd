@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ghost-mysql
+  namespace: ghost-blog
+  labels:
+    app: ghost-mysql
+    app.kubernetes.io/name: ghost-mysql
+    app.kubernetes.io/instance: ghost-blog
+    app.kubernetes.io/version: '5.92'
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ghost-blog
+spec:
+  serviceName: ghost-mysql-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghost-mysql
+  template:
+    metadata:
+      labels:
+        app: ghost-mysql
+    spec:
+      initContainers:
+      - name: ghost-mysql-init
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+        image: docker.io/busybox:stable-musl
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo 'Changing ownership of mysql mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/mysql || echo 'Error changing ownership of mysql mount directory to 65534:65534'
+          echo 'Changing ownership of tmp mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/tmp || echo 'Error changing ownership of tmp mount directory to 65534:65534'
+          echo 'Changing ownership of socket mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/var/run/mysqld || echo 'Error changing ownership of socket mount directory to 65534:65534'
+        volumeMounts:
+        - name: ghost-mysql-volume
+          mountPath: /mnt/mysql
+          subPath: mysql-empty-subdir
+          readOnly: false
+        - name: ghost-mysql-tmp
+          mountPath: /mnt/tmp
+          readOnly: false
+        - name: ghost-mysql-socket
+          mountPath: /mnt/var/run/mysqld
+          readOnly: false
+        resources:
+          requests:
+            memory: 50Mi
+            cpu: 50m
+          limits:
+            memory: 100Mi
+            cpu: 100m
+
+      containers:
+      - name: ghost-mysql
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+        image: docker.io/mysql:8.4
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - secretRef:
+            name: ghost-mysql-env
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 500m
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+          name: mysql
+        volumeMounts:
+        - name: ghost-mysql-volume
+          mountPath: /var/lib/mysql
+          subPath: mysql-empty-subdir
+          readOnly: false
+        - name: ghost-mysql-tmp
+          mountPath: /tmp
+          readOnly: false
+        - name: ghost-mysql-socket
+          mountPath: /var/run/mysqld
+          readOnly: false
+
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
+      volumes:
+      - name: ghost-mysql-volume
+        persistentVolumeClaim:
+          claimName: ghost-mysql-pvc
+      - name: ghost-mysql-tmp
+        emptyDir:
+          sizeLimit: 128Mi
+      - name: ghost-mysql-socket
+        emptyDir:
+          sizeLimit: 128Mi

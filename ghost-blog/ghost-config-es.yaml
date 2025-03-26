@@ -3,6 +3,8 @@ kind: ExternalSecret
 metadata:
   name: ghost-config-prod
   namespace: ghost-blog
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   refreshInterval: "15m"
   secretStoreRef:

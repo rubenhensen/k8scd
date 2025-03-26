@@ -10,6 +10,8 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: ghost-blog
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   serviceName: ghost-mysql-service
   replicas: 1

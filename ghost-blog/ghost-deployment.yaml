@@ -10,6 +10,8 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: ghost
     app.kubernetes.io/part-of: ghost-blog
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
 spec:
   replicas: 1
   selector:

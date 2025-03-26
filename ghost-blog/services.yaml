@@ -10,6 +10,8 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: service-frontend
     app.kubernetes.io/part-of: ghost-blog
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   ports:
   - port: 2368
@@ -33,6 +35,7 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: service-database
     app.kubernetes.io/part-of: ghost-blog
+  argocd.argoproj.io/sync-wave: "3"
 spec:
   ports:
   - port: 3306

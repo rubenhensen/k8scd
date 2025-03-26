@@ -13,6 +13,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     nginx.ingress.kubernetes.io/proxy-body-size: 1G
+    argocd.argoproj.io/sync-wave: "7"
 spec:
   ingressClassName: nginx
   tls:

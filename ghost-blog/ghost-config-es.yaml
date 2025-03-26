@@ -1,66 +1,42 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: ghost-config-prod
+  name: ghost-mail-config
   namespace: ghost-blog
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
 spec:
   refreshInterval: "15m"
   secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
-    name: ghost-config-prod
+    name: ghost-mail-config
     creationPolicy: Owner
   data:
-  - secretKey: config.production.json
+  - secretKey: mail__transport
     remoteRef:
       key: kv/ghost-blog/config
-    template:
-      engine: gotmpl
-      data: |
-        {
-          "url": "https://blog.hensen.io",
-          "admin": {
-            "url": "https://blog.hensen.io"
-          },
-          "server": {
-            "port": 2368,
-            "host": "0.0.0.0"
-          },
-          "mail": {
-            "transport": "SMTP",
-            "from": "{{ .email_from }}",
-            "options": {
-              "service": "{{ .email_service }}",
-              "host": "{{ .email_host }}",
-              "port": {{ .email_port }},
-              "secure": {{ .email_secure }},
-              "auth": {
-                "user": "{{ .email_user }}",
-                "pass": "{{ .email_password }}"
-              }
-            }
-          },
-          "logging": {
-            "transports": [
-              "stdout"
-            ]
-          },
-          "database": {
-            "client": "mysql",
-            "connection": 
-            {
-              "host": "ghost-mysql-service",
-              "user": "{{ .db_user }}",
-              "password": "{{ .db_password }}",
-              "database": "{{ .db_name }}",
-              "port": "3306"
-            }
-          },
-          "process": "local",
-          "paths": {
-            "contentPath": "/home/nonroot/app/ghost/content"
-          }
-        }
+      property: email_transport
+  - secretKey: mail__from
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_from
+  - secretKey: mail__options__service
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_service
+  - secretKey: mail__options__host
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_host
+  - secretKey: mail__options__port
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_port
+  - secretKey: mail__options__auth__user
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_user
+  - secretKey: mail__options__auth__pass
+    remoteRef:
+      key: kv/ghost-blog/config
+      property: email_password

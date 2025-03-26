@@ -10,8 +10,6 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: ghost
     app.kubernetes.io/part-of: ghost-blog
-  annotations:
-    argocd.argoproj.io/sync-wave: "6"
 spec:
   replicas: 1
   selector:
@@ -36,35 +34,24 @@ spec:
       - name: ghost-content
         persistentVolumeClaim:
           claimName: ghost-content
-      - name: ghost-config-prod
-        secret:
-          secretName: ghost-config-prod
-          defaultMode: 420
       - name: tmp
         emptyDir:
           sizeLimit: 64Mi
-      - name: ghost-logs
-        emptyDir:
-          sizeLimit: 256Mi
 
       initContainers:
       - name: permissions-fix
         imagePullPolicy: IfNotPresent
         image: docker.io/busybox:stable-musl
         env:
-        - name: GHOST_INSTALL
-          value: /home/nonroot/app/ghost
         - name: GHOST_CONTENT
-          value: /home/nonroot/app/ghost/content
-        - name: NODE_ENV
-          value: production
+          value: /var/lib/ghost/content
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
         resources:
           limits:
-            cpu: 900m
-            memory: 1000Mi
+            cpu: 500m
+            memory: 256Mi
           requests:
             cpu: 100m
             memory: 128Mi
@@ -81,20 +68,17 @@ spec:
                 echo "Creating $GHOST_CONTENT/$dir directory"
                 mkdir -pv $GHOST_CONTENT/$dir || echo "Error creating $GHOST_CONTENT/$dir directory"
               fi
-              chown -Rfv 65532:65532 $GHOST_CONTENT/$dir && echo "chown ok on $dir" || echo "Error changing ownership of $GHOST_CONTENT/$dir directory"
+              chown -Rfv 1000:1000 $GHOST_CONTENT/$dir && echo "chown ok on $dir" || echo "Error changing ownership of $GHOST_CONTENT/$dir directory"
             done
             exit 0
         volumeMounts:
         - name: ghost-content
-          mountPath: /home/nonroot/app/ghost/content
-          readOnly: false
-        - name: ghost-logs
-          mountPath: /home/nonroot/app/ghost/versions/5.114.0/content/logs
+          mountPath: /var/lib/ghost/content
           readOnly: false
 
       containers:
       - name: ghost-blog
-        image: ghost:latest
+        image: ghost:5.114.1-alpine
         imagePullPolicy: Always
         ports:
         - name: ghost
@@ -131,6 +115,30 @@ spec:
         env:
         - name: NODE_ENV
           value: production
+        - name: database__client
+          value: mysql
+        - name: database__connection__host
+          value: ghost-mysql-service
+        - name: database__connection__user
+          valueFrom:
+            secretKeyRef:
+              name: ghost-mysql-env
+              key: MYSQL_USER
+        - name: database__connection__password
+          valueFrom:
+            secretKeyRef:
+              name: ghost-mysql-env
+              key: MYSQL_PASSWORD
+        - name: database__connection__database
+          valueFrom:
+            secretKeyRef:
+              name: ghost-mysql-env
+              key: MYSQL_DATABASE
+        - name: url
+          value: https://blog.hensen.io
+        envFrom:
+        - secretRef:
+            name: ghost-mail-config
         resources:
           limits:
             cpu: 800m
@@ -153,10 +161,12 @@ spec:
           mountPath: /home/nonroot/app/ghost/versions/5.114.0/content/logs
           readOnly: false
         securityContext:
-          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           runAsNonRoot: true
-          runAsUser: 65532
+          runAsUser: 1000
       restartPolicy: Always
       terminationGracePeriodSeconds: 15
       dnsPolicy: ClusterFirst
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault

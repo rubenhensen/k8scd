@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/rubenhensen/k8scd.git
     targetRevision: HEAD
-    path: ghost
+    path: ghost-blog
   destination:
     server: https://kubernetes.default.svc
     namespace: ghost-blog

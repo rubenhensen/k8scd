@@ -41,7 +41,7 @@ spec:
         smtpPort: 587
         smtpUser: ruben@hensen.io
         smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
-        smtpProtocol: starttls
+        smtpProtocol: tls
         ## @param smtpExistingSecret The name of an existing secret with SMTP credentials
         ## NOTE: Must contain key `smtp-password`
         ## NOTE: When it's set, the `smtpPassword` parameter is ignored
@@ -61,11 +61,13 @@ spec:
         containerPorts:
           http: 2368
           https: 2368
+          smtp: 587
         service:
           type: ClusterIP
           ports:
             http: 80
             https: 443
+            smtp: 587
         ingress:
           enabled: true
           ingressClassName: nginx

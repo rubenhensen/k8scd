@@ -71,9 +71,8 @@ spec:
             http: 80
             https: 443
           extraPorts:
-            - smtp:
-                name: smtp
-                port: 587
+            - name: smtp
+              port: 587
         ingress:
           enabled: true
           ingressClassName: nginx

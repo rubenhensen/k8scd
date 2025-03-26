@@ -16,8 +16,6 @@ spec:
     chart: ghost
     helm:
       values: |
-        image:
-          debug: true
         ghostUsername: ruben
         ## @param existingSecret Name of existing secret containing Ghost credentials
         ## NOTE: Must contain key `ghost-password`
@@ -27,7 +25,6 @@ spec:
         ghostBlogTitle: Catch && Compile
         ghostHost: "blog.hensen.io"
         ghostPath: /
-        ghostEnableHttps: true
         ## SMTP mail delivery configuration
         ## ref: https://github.com/bitnami/containers/tree/main/bitnami/ghost/#smtp-configuration
         ## @param smtpHost SMTP server host

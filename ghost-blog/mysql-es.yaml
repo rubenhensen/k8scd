@@ -30,7 +30,7 @@ spec:
     remoteRef:
       key: kv/ghost-blog/mysql
       property: root_password
-  - secretKey: MYSQL_HOST
-    remoteRef:
-      key: kv/ghost-blog/mysql
-      property: host
+  # - secretKey: MYSQL_HOST
+  #   remoteRef:
+  #     key: kv/ghost-blog/mysql
+  #     property: host

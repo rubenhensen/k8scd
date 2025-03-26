@@ -41,7 +41,7 @@ spec:
         smtpPort: 587
         smtpUser: ruben@hensen.io
         smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
-        smtpProtocol: tls
+        smtpProtocol: starttls
         ## @param smtpExistingSecret The name of an existing secret with SMTP credentials
         ## NOTE: Must contain key `smtp-password`
         ## NOTE: When it's set, the `smtpPassword` parameter is ignored

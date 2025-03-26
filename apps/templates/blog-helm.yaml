@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: ghost
+    namespace: blog
     server: https://kubernetes.default.svc
   project: default
   source:
@@ -16,26 +16,48 @@ spec:
     chart: ghost
     helm:
       values: |
+        image:
+          debug: true
         ghostUsername: ruben
         ## @param existingSecret Name of existing secret containing Ghost credentials
         ## NOTE: Must contain key `ghost-password`
         ## NOTE: When it's set, the `ghostPassword` parameter is ignored
         existingSecret: ghost-es
         ghostEmail: ruben.hensen@protonmail.com
-        ghostBlogTitle: "Catch && Compile"
-        ghostHost: blog.hensen.io
+        ghostBlogTitle: Catch && Compile
+        ghostHost: "blog.hensen.io"
         ghostPath: /
-        smtpHost: smtp.eu.mailgun.org
-        smtpPort: 587
-        smtpUser: postmaster@mail.hensen.io
-        smtpPassword: sdfadf
+        ghostEnableHttps: true
+        ## SMTP mail delivery configuration
+        ## ref: https://github.com/bitnami/containers/tree/main/bitnami/ghost/#smtp-configuration
+        ## @param smtpHost SMTP server host
+        ## @param smtpPort SMTP server port
+        ## @param smtpUser SMTP username
+        ## @param smtpPassword SMTP user password
+        ## @param smtpService SMTP service
+        ## @param smtpProtocol SMTP protocol (ssl or tls)
+        ##
+        smtpHost: smtp.hostinger.com
+        smtpPort: 465
+        smtpUser: ruben@hensen.io
+        smtpPassword: "ignored-but-hast-to-exist-else-password-isnt-passed"
         smtpProtocol: tls
-        smtpService: mailgun
-        smptExistingSecret: ghost-es
+        ## @param smtpExistingSecret The name of an existing secret with SMTP credentials
+        ## NOTE: Must contain key `smtp-password`
+        ## NOTE: When it's set, the `smtpPassword` parameter is ignored
+        ##
+        smtpExistingSecret: hensenio-smtp
+        ## @param allowEmptyPassword Allow the container to be started with blank passwords
         allowEmptyPassword: false
         resourcesPreset: "micro"
+        containerPorts:
+          http: 2368
+          https: 2368
         service:
           type: ClusterIP
+          ports:
+            http: 80
+            https: 443
         ingress:
           enabled: true
           ingressClassName: nginx
@@ -47,6 +69,13 @@ spec:
           tls: true
           tlsWwwPrefix: false
           selfSigned: false
+          extraHosts: 
+            - name: blog.hensen.io
+          extraPaths: []
+          extraTls:
+            - secretName:  letsencrypt-prod
+              hosts:
+                - blog.hensen.io
           secrets: []
           extraRules: []
         persistence:
@@ -84,6 +113,14 @@ spec:
               accessModes:
                 - ReadWriteOnce
               size: 8Gi
+            ## MySQL primary container's resource requests and limits
+            ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+            ## We usually recommend not to specify default resources and to leave this as a conscious
+            ## choice for the user. This also increases chances charts run on environments with little
+            ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+            ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            ## @param mysql.primary.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, small, medium, large, xlarge, 2xlarge). This is ignored if primary.resources is set (primary.resources is recommended for production)
+            resourcesPreset: "small"
 
   syncPolicy:
     syncOptions:

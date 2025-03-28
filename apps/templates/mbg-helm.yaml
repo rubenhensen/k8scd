@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mbgwp-helm
+  name: mbg-helm
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: mbgwp
+    namespace: mbg
     server: https://kubernetes.default.svc
   project: default
   source:

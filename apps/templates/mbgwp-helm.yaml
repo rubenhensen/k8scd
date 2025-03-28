@@ -85,6 +85,8 @@ spec:
         smtpExistingSecret: wordpress-credentials
         customHTAccessCM: prod-wordpress-cm
         resourcesPreset: "large"
+        livenessProbe:
+          enabled: false
 
   syncPolicy:
     syncOptions:

@@ -21,7 +21,7 @@ spec:
           ##
           type: ClusterIP
         ingress:
-          enabled: false
+          enabled: true
           ingressClassName: nginx
           hostname: scoutingmbg.nl
           path: /

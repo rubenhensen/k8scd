@@ -94,9 +94,10 @@ spec:
     automated:
       selfHeal: true
   ignoreDifferences:
-  - group: apps
-    kind: StatefulSet
-    name: mbgwp-helm-mariadb
-    namespace: mbgwp
-    jsonPointers:
-    - /spec/template/spec/containers/0/livenessProbe
+    - group: apps
+      kind: StatefulSet
+      name: mbgwp-helm-mariadb
+      namespace: mbgwp
+      jsonPointers:
+      - /spec/template/spec/containers/0/livenessProbe
+      - /spec/template/spec/containers/0/readinessProbe

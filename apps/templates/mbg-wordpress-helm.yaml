@@ -37,7 +37,6 @@ spec:
           extraTls:
             - secretName:  letsencrypt-prod
               hosts:
-                - scoutingmbg.nl
                 - www.scoutingmbg.nl
           secrets: []
           extraRules: []

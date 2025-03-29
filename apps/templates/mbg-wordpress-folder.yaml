@@ -13,7 +13,7 @@ spec:
     path: mbg-wordpress
   destination:
     server: https://kubernetes.default.svc
-    namespace: mbg-wordpress
+    namespace: mbgwp
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

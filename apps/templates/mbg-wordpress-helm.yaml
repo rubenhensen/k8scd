@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: mbg-wordpress
+    namespace: mbgwp
     server: https://kubernetes.default.svc
   project: default
   source:
@@ -91,5 +91,3 @@ spec:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
-    automated:
-      selfHeal: true

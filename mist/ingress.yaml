@@ -13,6 +13,7 @@ metadata:
     # nginx.ingress.kubernetes.io/auth-secret: rowing-webcam-auth
     # nginx.ingress.kubernetes.io/auth-realm: "Rowing Club Webcam"
 spec:
+  ingressClassName: nginx
   rules:
   - host: mist.hensen.io
     http:

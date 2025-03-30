@@ -51,6 +51,10 @@ spec:
             user.ini: |-
               upload_max_filesize=16G
               post_max_size=16G
+        livenessProbe:
+          enabled: false
+        readinessProbe:
+          enabled: false  
         phpClientHttpsFix:
           enabled: true
           protocol: https

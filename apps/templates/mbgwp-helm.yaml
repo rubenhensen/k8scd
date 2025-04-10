@@ -84,7 +84,7 @@ spec:
         wordpressUsername: rubenhensen
         smtpExistingSecret: wordpress-credentials
         customHTAccessCM: prod-wordpress-cm
-        resourcesPreset: "micro"
+        resourcesPreset: "small"
         livenessProbe:
           enabled: false
 

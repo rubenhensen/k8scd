@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    io.kompose.service: mongo
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.34.0 (cbf2835db)
+      labels:
+        io.kompose.service: mongo
+    spec:
+      containers:
+        # - args:
+        #     - --logpath
+        #     - /var/log/mongodb/mongod.log
+        - env:
+            - name: DB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_PASS
+                  name: env
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_USER
+                  name: env
+            - name: LT_LOAD_ONLY
+              valueFrom:
+                configMapKeyRef:
+                  key: LT_LOAD_ONLY
+                  name: env
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: whishper
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: whishper
+            - name: WHISHPER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: WHISHPER_HOST
+                  name: env
+            - name: WHISPER_MODELS
+              valueFrom:
+                configMapKeyRef:
+                  key: WHISPER_MODELS
+                  name: env
+          image: mongo
+          name: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-claim0
+            # - mountPath: /var/log/mongodb
+            #   name: mongo-claim1
+      restartPolicy: Always
+      volumes:
+        - name: mongo-claim0
+          persistentVolumeClaim:
+            claimName: mongo-claim10
+        # - name: mongo-claim1
+        #   persistentVolumeClaim:
+        #     claimName: mongo-claim1

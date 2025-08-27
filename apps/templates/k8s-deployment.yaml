@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: outrun-game
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outrun-game
+  namespace: outrun-game
+  labels:
+    app: outrun-game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outrun-game
+  template:
+    metadata:
+      labels:
+        app: outrun-game
+    spec:
+      containers:
+      - name: outrun-game
+        image: hebury/outrun-game:v1.0.0  # Update with your Docker Hub username
+        ports:
+        - containerPort: 3001
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3001"
+        volumeMounts:
+        - name: highscores-storage
+          mountPath: /app/data
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: highscores-storage
+        persistentVolumeClaim:
+          claimName: outrun-game-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outrun-game-service
+  namespace: outrun-game
+  labels:
+    app: outrun-game
+spec:
+  selector:
+    app: outrun-game
+  ports:
+  - port: 80
+    targetPort: 3001
+    protocol: TCP
+    name: http
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: outrun-game-pvc
+  namespace: outrun-game
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: default  # Update with your storage class if needed
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: outrun-game-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: wissel.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: outrun-game-service
+            port:
+              number: 80
+  # TLS configuration for HTTPS
+  tls:
+    # TLS secretName used on ClusterIssuer
+    - secretName:  letsencrypt-prod
+      hosts:
+        - nas.hensen.io
+

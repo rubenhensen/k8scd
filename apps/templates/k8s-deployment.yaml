@@ -85,7 +85,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: default  # Update with your storage class if needed
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

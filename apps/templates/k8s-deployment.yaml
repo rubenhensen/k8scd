@@ -91,6 +91,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: outrun-game-ingress
+  namespace: outrun-game
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"

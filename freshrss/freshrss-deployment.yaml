@@ -29,11 +29,10 @@ spec:
           - git
           - clone
           - https://github.com/rubenhensen/Extensions.git
-          - /var/www/FreshRSS/extensions
-          - .
+          - /tmp
           volumeMounts:
           - name: extensions
-            mountPath: /var/www/FreshRSS/extensions
+            mountPath: /tmp
 # cd /var/www/FreshRSS/extensions
 # git checkout main
       containers:
@@ -64,8 +63,7 @@ spec:
           persistentVolumeClaim:
             claimName: data
         - name: extensions
-          persistentVolumeClaim:
-            claimName: extensions
+          emptyDir: {}
         - name: freshrss-claim2
           persistentVolumeClaim:
             claimName: freshrss-claim2

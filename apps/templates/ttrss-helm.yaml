@@ -59,14 +59,14 @@ spec:
                 cert-manager.io/cluster-issuer: prod-cluster-issuer
                 nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
               hosts:
-                - host: rss.hensen.io
+                - host: rss2.hensen.io
                   paths:
                     - path: "/"
                     
               tls:
                 - secretName:  letsencrypt-prod
                   hosts:
-                    - rss.hensen.io
+                    - rss2.hensen.io
 
           # -- Bitnami postgres chart. For more options see https://github.com/bitnami/charts/tree/master/bitnami/postgresql
           # @default -- see bellow

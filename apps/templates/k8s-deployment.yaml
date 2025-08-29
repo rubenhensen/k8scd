@@ -110,10 +110,21 @@ spec:
             name: outrun-game-service
             port:
               number: 80
+  - host: wissel.phocas.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: outrun-game-service
+            port:
+              number: 80
   # TLS configuration for HTTPS
   tls:
     # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
         - wissel.hensen.io
+        - wissel.phocas.nl
 

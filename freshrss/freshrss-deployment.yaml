@@ -22,22 +22,22 @@ spec:
       labels:
         io.kompose.service: freshrss
     spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git
+          command:
+          - sh
+          - -c
+          - |
+            git clone https://github.com/rubenhensen/Extensions.git /var/www/FreshRSS/extensions
+# cd /var/www/FreshRSS/extensions
+# git checkout main
       containers:
         - env:
-            # - name: CRON_MIN
-            #   value: 2,32
             - name: FRESHRSS_ENV
               value: production
-            # - name: FRESHRSS_INSTALL
-            #   value: "--api-enabled\n--base-url \n--db-base \n--db-host \n--db-password \n--db-type pgsql\n--db-user \n--default-user admin\n--language en"
-            # - name: FRESHRSS_USER
-            #   value: "--api-password \n--email \n--language en\n--password \n--user admin"
-            # - name: LISTEN
-            #   value: 0.0.0.0:80
             - name: OIDC_ENABLED
               value: "0"
-            # - name: TRUSTED_PROXY
-            #   value: 172.16.0.1/12 192.168.0.1/16
             - name: TZ
               value: Europe/Amsterdam
           image: freshrss/freshrss:latest

@@ -55,7 +55,7 @@ spec:
       volumes:
       - name: highscores-storage
         persistentVolumeClaim:
-          claimName: outrun-game-pvc2
+          claimName: outrun-game-pvc3
 ---
 apiVersion: v1
 kind: Service
@@ -77,7 +77,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: outrun-game-pvc2
+  name: outrun-game-pvc3
   namespace: outrun-game
 spec:
   accessModes:

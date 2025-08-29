@@ -23,13 +23,17 @@ spec:
         io.kompose.service: freshrss
     spec:
       initContainers:
-        - name: git-clone
-          image: alpine/git
+        - image: alpine/git
+          name: git
           command:
-          - sh
-          - -c
-          - |
-            git clone https://github.com/rubenhensen/Extensions.git /var/www/FreshRSS/extensions .
+          - git
+          - clone
+          - https://github.com/rubenhensen/Extensions.git
+          - /var/www/FreshRSS/extensions
+          - .
+          volumeMounts:
+          - name: extensions
+            mountPath: /var/www/FreshRSS/extensions
 # cd /var/www/FreshRSS/extensions
 # git checkout main
       containers:

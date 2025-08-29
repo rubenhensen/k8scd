@@ -40,7 +40,7 @@ spec:
             #   value: 172.16.0.1/12 192.168.0.1/16
             - name: TZ
               value: Europe/Amsterdam
-          image: freshrss/freshrss:stable
+          image: freshrss/freshrss:latest
           name: freshrss
           ports:
             - containerPort: 80

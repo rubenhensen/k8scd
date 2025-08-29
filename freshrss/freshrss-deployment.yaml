@@ -29,7 +29,6 @@ spec:
           - sh
           - -c
           - |
-            rm -rf /var/www/FreshRSS/extensions/*
             git clone https://github.com/rubenhensen/Extensions.git /var/www/FreshRSS/extensions .
 # cd /var/www/FreshRSS/extensions
 # git checkout main

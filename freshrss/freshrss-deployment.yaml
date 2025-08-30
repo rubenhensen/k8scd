@@ -39,6 +39,8 @@ spec:
         - env:
             - name: FRESHRSS_ENV
               value: production
+            - name: CRON_MIN
+              value: "3 5 * * *"
             - name: OIDC_ENABLED
               value: "0"
             - name: TZ

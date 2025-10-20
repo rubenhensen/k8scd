@@ -21,6 +21,9 @@ spec:
         global:
           security:
             allowInsecureImages: true
+        mariadb:
+          image:
+            repository: bitnamilegacy/mariadb
         service:
           ## @param service.type WordPress service type
           ##

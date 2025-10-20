@@ -17,7 +17,7 @@ spec:
     helm:
       values: |
         image:
-          repository: bitnami/wordpresslegacy
+          repository: bitnamilegacy/wordpress
         service:
           ## @param service.type WordPress service type
           ##

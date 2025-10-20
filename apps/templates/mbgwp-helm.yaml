@@ -18,6 +18,7 @@ spec:
       values: |
         image:
           repository: bitnamilegacy/wordpress
+        global.security.allowInsecureImages: true
         service:
           ## @param service.type WordPress service type
           ##

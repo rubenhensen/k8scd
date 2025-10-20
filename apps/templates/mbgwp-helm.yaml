@@ -16,6 +16,8 @@ spec:
     chart: wordpress
     helm:
       values: |
+        image:
+          repository: bitnami/wordpresslegacy
         service:
           ## @param service.type WordPress service type
           ##

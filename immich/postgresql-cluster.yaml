@@ -6,11 +6,11 @@ metadata:
 spec:
   instances: 1
 
-  imageName: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+  # Use TensorChord's CNPG-compatible image with pgvecto.rs
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.4.0
 
   postgresql:
     shared_preload_libraries:
-      - "vchord.so"
       - "vectors.so"
 
   bootstrap:
@@ -19,8 +19,8 @@ spec:
       owner: immich
       postInitSQL:
         - CREATE EXTENSION IF NOT EXISTS vectors;
+        - CREATE EXTENSION IF NOT EXISTS cube;
         - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
-        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
 
   storage:
     size: 20Gi

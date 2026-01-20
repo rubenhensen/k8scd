@@ -6,6 +6,7 @@ metadata:
   name: immich-claim
   namespace: immich
 spec:
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

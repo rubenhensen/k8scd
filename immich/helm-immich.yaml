@@ -69,6 +69,8 @@ spec:
             primary:
               containerSecurityContext:
                 readOnlyRootFilesystem: false
+              persistence:
+                storageClass: longhorn
               initdb:
                 scripts:
                   create-extensions.sql: |
@@ -88,6 +90,9 @@ spec:
             architecture: standalone
             auth:
               enabled: false
+            master:
+              persistence:
+                storageClass: longhorn
 
           # Immich components
 

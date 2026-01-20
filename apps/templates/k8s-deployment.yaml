@@ -80,6 +80,7 @@ metadata:
   name: outrun-game-pvc8
   namespace: outrun-game
 spec:
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

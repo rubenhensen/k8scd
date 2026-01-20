@@ -19,9 +19,6 @@ spec:
       targetRevision: 0.9.3 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
       helm:
         values: |
-          global:
-            security:
-              allowInsecureImages: true
           env:
             REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
             DB_HOSTNAME: "{{ .Release.Name }}-postgresql"

@@ -16,7 +16,7 @@ spec:
   sources:
     - chart: immich
       repoURL: https://immich-app.github.io/immich-charts
-      targetRevision: 0.8.5 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
+      targetRevision: 0.9.3 # Chart version! https://argo-cd.readthedocs.io/en/latest/user-guide/application-specification/
       helm:
         values: |
           env:

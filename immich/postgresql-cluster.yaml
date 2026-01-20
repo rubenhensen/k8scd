@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgres
+  namespace: immich
+spec:
+  instances: 1
+
+  imageName: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+
+  postgresql:
+    shared_preload_libraries:
+      - "vchord.so"
+      - "vectors.so"
+
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS vectors;
+        - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
+        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+
+  storage:
+    size: 20Gi
+    storageClass: longhorn

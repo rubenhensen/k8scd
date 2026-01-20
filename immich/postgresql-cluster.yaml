@@ -7,7 +7,7 @@ spec:
   instances: 1
 
   # Use TensorChord's CNPG-compatible image with pgvecto.rs
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.4.0
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:14-v0.4.0
 
   postgresql:
     shared_preload_libraries:

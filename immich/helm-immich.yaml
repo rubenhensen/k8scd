@@ -16,74 +16,55 @@ spec:
   sources:
     - chart: immich
       repoURL: https://immich-app.github.io/immich-charts
-      targetRevision: 0.10.3
+      targetRevision: 0.8.5
       helm:
         values: |
-          controllers:
-            main:
-              containers:
-                main:
-                  image:
-                    tag: v1.132.3
-                  env:
-                    # External PostgreSQL connection
-                    DB_HOSTNAME: "immich-postgres-rw"
-                    DB_PORT: "5432"
-                    DB_USERNAME: "immich"
-                    DB_DATABASE_NAME: "immich"
-                    # Reference the CNPG secret for password
-                    DB_PASSWORD:
-                      valueFrom:
-                        secretKeyRef:
-                          name: immich-postgres-app
-                          key: password
-                  # env:
-                  #   # Valkey (Redis replacement)
-                  #   REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
-                  #   IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+          env:
+            REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
+            # External PostgreSQL (CloudNativePG)
+            DB_HOSTNAME: "immich-postgres-rw"
+            DB_USERNAME: "immich"
+            DB_DATABASE_NAME: "immich"
+            DB_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: immich-postgres-app
+                  key: password
+            IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+
+          image:
+            tag: v1.125.7
 
           immich:
-            # metrics:
-            #   enabled: false
+            metrics:
+              enabled: false
             persistence:
               library:
                 existingClaim: immich-claim
 
-          # Enable Valkey (Redis replacement)
-          valkey:
+          # Disable built-in PostgreSQL - using CloudNativePG instead
+          postgresql:
+            enabled: false
+
+          redis:
             enabled: true
-            persistence:
-              data:
-                enabled: true
-                size: 1Gi
+            architecture: standalone
+            auth:
+              enabled: false
+            master:
+              persistence:
                 storageClass: longhorn
-                type: persistentVolumeClaim
-                accessMode: ReadWriteOnce
 
           server:
             enabled: true
-            controllers:
-              main:
-                containers:
-                  main:
-                    image:
-                      repository: ghcr.io/immich-app/immich-server
-                      pullPolicy: IfNotPresent
-                    # probes:
-                    #   startup:
-                    #     enabled: true
-                    #     spec:
-                    #       initialDelaySeconds: 0
-                    #       timeoutSeconds: 1
-                    #       periodSeconds: 5
-                    #       failureThreshold: 1000
- 
+            image:
+              repository: ghcr.io/immich-app/immich-server
+              pullPolicy: IfNotPresent
             ingress:
               main:
                 enabled: true
                 ingressClassName: nginx
                 annotations:
-                  # proxy-body-size is set to 0 to remove the body limit on file uploads
                   nginx.ingress.kubernetes.io/proxy-body-size: "0"
                   cert-manager.io/cluster-issuer: prod-cluster-issuer
                 hosts:
@@ -91,16 +72,14 @@ spec:
                     paths:
                       - path: "/"
                         service:
-                          # name: sol-auth-svc
-                          # port: 8002
-                          identifier: main
+                          name: sol-auth-svc
+                          port: 8002
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"
                         service:
-                          # name: sol-auth-svc
-                          # port: 8002
-                          identifier: main
+                          name: sol-auth-svc
+                          port: 8002
                 tls:
                   - secretName: letsencrypt-prod
                     hosts:
@@ -109,23 +88,16 @@ spec:
 
           machine-learning:
             enabled: true
-            controllers:
-              main:
-                containers:
-                  main:
-                    image:
-                      repository: ghcr.io/immich-app/immich-machine-learning
-                      pullPolicy: IfNotPresent
-                    env:
-                      TRANSFORMERS_CACHE: /cache
-                      HF_XET_CACHE: /cache/huggingface-xet
-                      MPLCONFIGDIR: /cache/matplotlib-config
+            image:
+              repository: ghcr.io/immich-app/immich-machine-learning
+              pullPolicy: IfNotPresent
+            env:
+              TRANSFORMERS_CACHE: /cache
             persistence:
               cache:
                 enabled: true
                 size: 10Gi
                 type: emptyDir
-                accessMode: ReadWriteMany
 
   destination:
     server: https://kubernetes.default.svc

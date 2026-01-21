@@ -6,8 +6,8 @@ metadata:
 spec:
   instances: 1
 
-  # Use TensorChord's CNPG-compatible image with pgvecto.rs
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:14-v0.3.0
+  # Use TensorChord's CNPG-compatible image with pgvecto.rs v0.2.1
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:14-v0.2.1
 
   postgresql:
     shared_preload_libraries:
@@ -21,6 +21,7 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS vectors;
         - CREATE EXTENSION IF NOT EXISTS cube;
         - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
+        - ALTER USER immich WITH SUPERUSER;
 
   storage:
     size: 20Gi

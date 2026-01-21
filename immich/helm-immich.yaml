@@ -107,6 +107,8 @@ spec:
                   - host: mbg.hensen.io
                     paths:
                       - path: "/"
+                        service:
+                          identifier: main
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"

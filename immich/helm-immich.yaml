@@ -1,4 +1,4 @@
-apiVersion: argoproj.io/v1alpha1
+0apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: helm-immich
@@ -24,7 +24,7 @@ spec:
               containers:
                 main:
                   image:
-                    tag: v1.125.7
+                    tag: v1.136
                   env:
                     # External PostgreSQL connection
                     DB_HOSTNAME: "immich-postgres-rw"

@@ -40,14 +40,14 @@ spec:
                     # Valkey (Redis replacement)
                     REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
                     IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-                    IMMICH_MEDIA_LOCATION: /data
-
           immich:
             metrics:
               enabled: false
             persistence:
               library:
                 existingClaim: immich-claim
+                globalMounts:
+                  - path: /usr/src/app/upload
 
           # Enable Valkey (Redis replacement)
           valkey:

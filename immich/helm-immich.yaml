@@ -16,25 +16,28 @@ spec:
   sources:
     - chart: immich
       repoURL: https://immich-app.github.io/immich-charts
-      targetRevision: 0.8.5
+      targetRevision: 0.10.3
       helm:
         values: |
-          env:
-            REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
-            # External PostgreSQL (CloudNativePG)
-            DB_HOSTNAME: "immich-postgres-rw"
-            DB_USERNAME: "immich"
-            DB_DATABASE_NAME: "immich"
-            DB_PASSWORD:
-              valueFrom:
-                secretKeyRef:
-                  name: immich-postgres-app
-                  key: password
-            IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-
-          image:
-            tag: v2.4.1
-
+          controllers:
+            main:
+              containers:
+                main:
+                  image:
+                    tag: v2.4.1
+                  env:
+                    REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
+                    IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+                    # External PostgreSQL (CloudNativePG)
+                    DB_HOSTNAME: "immich-postgres-rw"
+                    DB_USERNAME: "immich"
+                    DB_DATABASE_NAME: "immich"
+                    DB_PASSWORD:
+                      valueFrom:
+                        secretKeyRef:
+                          name: immich-postgres-app
+                          key: password
+            
           immich:
             metrics:
               # Enabling this will create the service monitors needed to monitor immich with the prometheus operator
@@ -45,7 +48,6 @@ spec:
                 # Automatically creating the library volume is not supported by this chart
                 # You have to specify an existing PVC to use
                 existingClaim: immich-claim
-                        
             # configuration is immich-config.json converted to yaml
             # ref: https://immich.app/docs/install/config-file/
             #
@@ -59,55 +61,36 @@ spec:
 
           # Dependencies
 
-          postgresql:
+          valkey:
             enabled: true
-            image:
-              repository: tensorchord/pgvecto-rs
-              tag: pg14-v0.2.0
-            global:
-              postgresql:
-                auth:
-                  username: immich
-                  database: immich
-                  password: immich
-            primary:
-              containerSecurityContext:
-                readOnlyRootFilesystem: false
-              initdb:
-                scripts:
-                  create-extensions.sql: |
-                    CREATE EXTENSION cube;
-                    CREATE EXTENSION earthdistance;
-                    CREATE EXTENSION vectors;
-              resources:
-                limits: {}
-                requests:
-                  cpu: 200m
-                  memory: 256Mi
-
-          redis:
-            enabled: true
-            image:
-              repository: bitnamilegacy/redis
-            architecture: standalone
-            auth:
-              enabled: false
+            controllers:
+              main:
+                containers:
+                  main:
+                    image:
+                      repository: docker.io/valkey/valkey
+                      tag: 9.0-alpine@sha256:b4ee67d73e00393e712accc72cfd7003b87d0fcd63f0eba798b23251bfc9c394
+                      pullPolicy: IfNotPresent
+            persistence:
+              data:
+                enabled: true
+                size: 1Gi
+                # Optional: Set this to persistentVolumeClaim to keep job queues persistent
+                type: emptyDir
+                accessMode: ReadWriteOnce
+                storageClass: longhorn
 
           # Immich components
 
           server:
             enabled: true
-            image:
-              repository: ghcr.io/immich-app/immich-server
-              pullPolicy: IfNotPresent
-            probes:
-              startup: 
-                enabled: true
-                spec:
-                  initialDelaySeconds: 0
-                  timeoutSeconds: 1
-                  periodSeconds: 5
-                  failureThreshold: 1000
+            controllers:
+              main:
+                containers:
+                  main:
+                    image:
+                      repository: ghcr.io/immich-app/immich-server
+                      pullPolicy: IfNotPresent
             ingress:
               main:
                 enabled: true
@@ -130,7 +113,6 @@ spec:
                         service:
                           name: sol-auth-svc
                           port: 8002
-                      
                 tls:
                   - secretName:  letsencrypt-prod
                     hosts:
@@ -140,21 +122,26 @@ spec:
 
           machine-learning:
             enabled: true
-            image:
-              repository: ghcr.io/immich-app/immich-machine-learning
-              pullPolicy: IfNotPresent
-            env:
-              TRANSFORMERS_CACHE: /cache
+            controllers:
+              main:
+                containers:
+                  main:
+                    image:
+                      repository: ghcr.io/immich-app/immich-machine-learning
+                      pullPolicy: IfNotPresent
+                    env:
+                      TRANSFORMERS_CACHE: /cache
+                      HF_XET_CACHE: /cache/huggingface-xet
+                      MPLCONFIGDIR: /cache/matplotlib-config
             persistence:
               cache:
                 enabled: true
                 size: 10Gi
-                # Optional: Set this to pvc to avoid downloading the ML models every start.
+                # Optional: Set this to persistentVolumeClaim to avoid downloading the ML models every start.
                 type: emptyDir
                 accessMode: ReadWriteMany
-                # storageClass: your-class
+                # storageClass: longhorn
 
-          
   destination:
     server: https://kubernetes.default.svc
     namespace: immich

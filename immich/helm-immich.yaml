@@ -26,13 +26,25 @@ spec:
                   image:
                     tag: v1.125.7
                   env:
-                    # Valkey (Redis replacement)
-                    REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
-                    IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+                    # External PostgreSQL connection
+                    DB_HOSTNAME: "immich-postgres-rw"
+                    DB_PORT: "5432"
+                    DB_USERNAME: "immich"
+                    DB_DATABASE_NAME: "immich"
+                    # Reference the CNPG secret for password
+                    DB_PASSWORD:
+                      valueFrom:
+                        secretKeyRef:
+                          name: immich-postgres-app
+                          key: password
+                  # env:
+                  #   # Valkey (Redis replacement)
+                  #   REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
+                  #   IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
 
           immich:
-            metrics:
-              enabled: false
+            # metrics:
+            #   enabled: false
             persistence:
               library:
                 existingClaim: immich-claim
@@ -46,6 +58,7 @@ spec:
                 size: 1Gi
                 storageClass: longhorn
                 type: persistentVolumeClaim
+                accessMode: ReadWriteOnce
 
           server:
             enabled: true
@@ -56,27 +69,15 @@ spec:
                     image:
                       repository: ghcr.io/immich-app/immich-server
                       pullPolicy: IfNotPresent
-                    probes:
-                      startup:
-                        enabled: true
-                        spec:
-                          initialDelaySeconds: 0
-                          timeoutSeconds: 1
-                          periodSeconds: 5
-                          failureThreshold: 1000
-                    env:
-                      # External PostgreSQL connection
-                      DB_HOSTNAME: "immich-postgres-rw"
-                      DB_PORT: "5432"
-                      DB_USERNAME: "immich"
-                      DB_DATABASE_NAME: "immich"
-                      # Reference the CNPG secret for password
-                      DB_PASSWORD:
-                        valueFrom:
-                          secretKeyRef:
-                            name: immich-postgres-app
-                            key: password
-                     
+                    # probes:
+                    #   startup:
+                    #     enabled: true
+                    #     spec:
+                    #       initialDelaySeconds: 0
+                    #       timeoutSeconds: 1
+                    #       periodSeconds: 5
+                    #       failureThreshold: 1000
+ 
             ingress:
               main:
                 enabled: true

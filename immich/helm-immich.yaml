@@ -24,7 +24,7 @@ spec:
               containers:
                 main:
                   image:
-                    tag: v2.4.1
+                    tag: v1.132.3
                   env:
                     # External PostgreSQL connection
                     DB_HOSTNAME: "immich-postgres-rw"

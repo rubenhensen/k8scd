@@ -26,17 +26,6 @@ spec:
                   image:
                     tag: v1.125.7
                   env:
-                    # External PostgreSQL connection
-                    DB_HOSTNAME: "immich-postgres-rw"
-                    DB_PORT: "5432"
-                    DB_USERNAME: "immich"
-                    DB_DATABASE_NAME: "immich"
-                    # Reference the CNPG secret for password
-                    DB_PASSWORD:
-                      valueFrom:
-                        secretKeyRef:
-                          name: immich-postgres-app
-                          key: password
                     # Valkey (Redis replacement)
                     REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
                     IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
@@ -75,11 +64,25 @@ spec:
                           timeoutSeconds: 1
                           periodSeconds: 5
                           failureThreshold: 1000
+                    env:
+                      # External PostgreSQL connection
+                      DB_HOSTNAME: "immich-postgres-rw"
+                      DB_PORT: "5432"
+                      DB_USERNAME: "immich"
+                      DB_DATABASE_NAME: "immich"
+                      # Reference the CNPG secret for password
+                      DB_PASSWORD:
+                        valueFrom:
+                          secretKeyRef:
+                            name: immich-postgres-app
+                            key: password
+                     
             ingress:
               main:
                 enabled: true
-                className: nginx
+                ingressClassName: nginx
                 annotations:
+                  # proxy-body-size is set to 0 to remove the body limit on file uploads
                   nginx.ingress.kubernetes.io/proxy-body-size: "0"
                   cert-manager.io/cluster-issuer: prod-cluster-issuer
                 hosts:
@@ -87,12 +90,16 @@ spec:
                     paths:
                       - path: "/"
                         service:
-                          identifier: main
+                          name: sol-auth-svc
+                          port: 8002
+                          # identifier: main
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"
                         service:
-                          identifier: main
+                          name: sol-auth-svc
+                          port: 8002
+                          # identifier: main
                 tls:
                   - secretName: letsencrypt-prod
                     hosts:
@@ -117,6 +124,7 @@ spec:
                 enabled: true
                 size: 10Gi
                 type: emptyDir
+                accessMode: ReadWriteMany
 
   destination:
     server: https://kubernetes.default.svc

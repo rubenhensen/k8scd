@@ -76,6 +76,11 @@ spec:
                           timeoutSeconds: 1
                           periodSeconds: 5
                           failureThreshold: 1000
+            persistence:
+              library:
+                existingClaim: immich-claim
+                globalMounts:
+                  - path: /usr/src/app/upload
             ingress:
               main:
                 enabled: true
@@ -114,6 +119,10 @@ spec:
                       HF_XET_CACHE: /cache/huggingface-xet
                       MPLCONFIGDIR: /cache/matplotlib-config
             persistence:
+              library:
+                existingClaim: immich-claim
+                globalMounts:
+                  - path: /usr/src/app/upload
               cache:
                 enabled: true
                 size: 10Gi

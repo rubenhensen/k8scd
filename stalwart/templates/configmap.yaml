@@ -85,7 +85,7 @@ data:
     secret = "%{env:STALWART_ADMIN_PASSWORD}%"
 
     [queue.strategy]
-    route = [ { if = "is_local_domain('', rcpt_domain)", then = "'relay'" }, 
+    route = [ { if = "is_local_domain('', rcpt_domain)", then = "'smtp2go'" }, 
           { else = "'mx'" } ]
 
     [queue.route."smtp2go"]

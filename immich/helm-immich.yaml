@@ -104,11 +104,11 @@ spec:
                   # - host: immich.hensen.io
                   #   paths:
                   #     - path: "/"
-                  - host: mbg.hensen.io
-                    paths:
-                      - path: "/"
-                        service:
-                          identifier: main
+                  # - host: mbg.hensen.io
+                  #   paths:
+                  #     - path: "/"
+                  #       service:
+                  #         identifier: main
                   - host: foto.scoutingmbg.nl
                     paths:
                       - path: "/"

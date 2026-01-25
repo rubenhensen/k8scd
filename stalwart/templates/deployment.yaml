@@ -66,6 +66,9 @@ spec:
         - name: config
           mountPath: /opt/stalwart/etc/config.toml
           subPath: config.toml
+        - name: tls-certs
+          mountPath: /opt/stalwart/certs
+          readOnly: true
       volumes:
       - name: stalwart-volume
         persistentVolumeClaim:
@@ -73,3 +76,6 @@ spec:
       - name: config
         configMap:
           name: {{ include "stalwart.fullname" . }}-config
+      - name: tls-certs
+        secret:
+          secretName: {{ .Values.tls.secretName }}

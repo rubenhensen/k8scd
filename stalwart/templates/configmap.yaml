@@ -84,17 +84,22 @@ data:
     user = "%{env:STALWART_ADMIN_USER}%"
     secret = "%{env:STALWART_ADMIN_PASSWORD}%"
 
-    [remote."smtp2go"]
+    [queue.strategy]
+    route = [ { else = "'smtp2go'" } ]
+
+    [queue.route."smtp2go"]
+    type = "relay"
     address = "mail-eu.smtp2go.com"
     port = 2525
     protocol = "smtp"
-    auth.username = "%{env:SMTP2GO_USER}%"
-    auth.secret = "%{env:SMTP2GO_PASSWORD}%"
-    tls.enable = true
-    tls.allow-invalid-certs = false
 
-    [queue.outbound]
-    next-hop = ["smtp2go"]
+    [queue.route."smtp2go".tls]
+    implicit = false
+    allow-invalid-certs = false
+
+    [queue.route."smtp2go".auth]
+    username = "%{env:SMTP2GO_USER}%"
+    secret = "%{env:SMTP2GO_PASSWORD}%"
 
     [certificate."default"]
     cert = "%{file:/opt/stalwart/certs/tls.crt}%"

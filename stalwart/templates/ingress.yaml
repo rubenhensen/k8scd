@@ -58,3 +58,41 @@ spec:
         - mail.hensen.io
         - autoconfig.hensen.io
         - autodiscover.hensen.io
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "stalwart.fullname" . }}-wellknown
+  labels:
+    {{- include "stalwart.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Ssl on;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: hensen.io
+    http:
+      paths:
+      - path: /.well-known
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "stalwart.fullname" . }}
+            port:
+              number: 8080
+  tls:
+    - secretName: letsencrypt-prod-wellknown
+      hosts:
+        - hensen.io

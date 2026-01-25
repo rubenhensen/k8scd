@@ -84,6 +84,18 @@ data:
     user = "%{env:STALWART_ADMIN_USER}%"
     secret = "%{env:STALWART_ADMIN_PASSWORD}%"
 
+    [remote."smtp2go"]
+    address = "mail-eu.smtp2go.com"
+    port = 2525
+    protocol = "smtp"
+    auth.username = "%{env:SMTP2GO_USER}%"
+    auth.secret = "%{env:SMTP2GO_PASSWORD}%"
+    tls.enable = true
+    tls.allow-invalid-certs = false
+
+    [queue.outbound]
+    next-hop = ["smtp2go"]
+
     [certificate."default"]
     cert = "%{file:/opt/stalwart/certs/tls.crt}%"
     private-key = "%{file:/opt/stalwart/certs/tls.key}%"

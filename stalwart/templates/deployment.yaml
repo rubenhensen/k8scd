@@ -33,6 +33,16 @@ spec:
             secretKeyRef:
               name: {{ include "stalwart.fullname" . }}-admin
               key: pw
+        - name: SMTP2GO_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "stalwart.fullname" . }}-smtp2go
+              key: user
+        - name: SMTP2GO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "stalwart.fullname" . }}-smtp2go
+              key: pw
         livenessProbe:
           httpGet:
             path: /healthz/live

@@ -36,11 +36,17 @@ spec:
         - containerPort: 8080
         - containerPort: 443
         - containerPort: 25
+          hostPort: 25
         - containerPort: 587
+          hostPort: 587
         - containerPort: 465
+          hostPort: 465
         - containerPort: 143
+          hostPort: 143
         - containerPort: 993
+          hostPort: 993
         - containerPort: 4190
+          hostPort: 4190
         volumeMounts:
         - name: stalwart-volume
           mountPath: {{ .Values.persistence.mountPath }}

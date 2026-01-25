@@ -33,5 +33,3 @@ config:
     - "10.0.0.0/8"
   # Trust X-Forwarded-For header from reverse proxy for real client IP
   useXForwarded: true
-  # Admin password hash (generate with: echo -n 'password' | openssl passwd -6 -stdin)
-  adminPasswordHash: "$6$nUKyIdu3tyREoEza$lfXMSXAmDzokPlsXasZw6gvSKkLE/2xxC4Jp5Wq2cFA0wi1udS.lt5Kvp2EuUA7ZWNbkP7foG4BseXkIR24e40"

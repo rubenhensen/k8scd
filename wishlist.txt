@@ -4,4 +4,26 @@
 - beter begrip van Longhorn en deletion policies enzo. 
 - minder handmatig werk als ik een app wil deployen?
 - 3-node cluster
-- 
+- CI/CD pipeline
+- image registry
+- centralized logging met loki en grafana
+- metrics met prometheus en grafana
+- alertmanager met goede alerts
+- uitzoeken wat goede alerts zijn
+- hardware management met behulp van die idempotem client ding, ben de naam kwijt. 
+Dan een nieuwe server opzetten compleet met dat, 
+en dan overgaan door het als een nieuwe node toe te voegen en de andere uit te zetten. 
+- authentik en alles met sso openid verbinden
+- Renovate voor automatische updates zodat ik niet zo achter raak.
+- Trivy vulnarability scanning (CVE scans)
+- Network policies
+- clean up repo
+- remove hardcodes secrets.
+- health probes to all services
+- limits and requests for all services. 
+- non root security policy for all services. 
+- kube hunter network scans 
+- Draai mijn eigen github alternative
+
+
+

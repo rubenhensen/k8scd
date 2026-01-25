@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "stalwart.fullname" . }}
+  labels:
+    {{- include "stalwart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "stalwart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "stalwart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: stalwart
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthz/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10        
+        ports:
+        - containerPort: 8080
+        - containerPort: 443
+        - containerPort: 25
+        - containerPort: 587
+        - containerPort: 465
+        - containerPort: 143
+        - containerPort: 993
+        - containerPort: 4190
+        volumeMounts:
+        - name: stalwart-volume
+          mountPath: {{ .Values.persistence.mountPath }}
+      volumes:
+      - name: stalwart-volume
+        persistentVolumeClaim:
+          claimName: {{ include "stalwart.fullname" . }}

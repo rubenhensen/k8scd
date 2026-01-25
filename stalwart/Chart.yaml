@@ -1,0 +1,5 @@
+apiVersion: v2
+name: stalwart
+description: Helm chart for Stalwart
+version: 0.1.0
+appVersion: "latest"

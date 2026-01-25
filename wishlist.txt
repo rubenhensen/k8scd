@@ -24,6 +24,7 @@ en dan overgaan door het als een nieuwe node toe te voegen en de andere uit te z
 - non root security policy for all services. 
 - kube hunter network scans 
 - Draai mijn eigen github alternative
+- Scale down pvc immich to 200gb. 
 
 
 

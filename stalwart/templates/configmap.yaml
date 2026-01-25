@@ -80,6 +80,10 @@ data:
     type = "internal"
     store = "rocksdb"
 
+    [authentication.fallback-admin]
+    user = "%{env:STALWART_ADMIN_USER}%"
+    secret = "%{env:STALWART_ADMIN_PASSWORD}%"
+
     [tracer.log]
     type = "log"
     enable = true

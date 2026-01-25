@@ -22,6 +22,17 @@ spec:
       - name: stalwart
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: STALWART_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "stalwart.fullname" . }}-admin
+              key: user
+        - name: STALWART_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "stalwart.fullname" . }}-admin
+              key: pw
         livenessProbe:
           httpGet:
             path: /healthz/live

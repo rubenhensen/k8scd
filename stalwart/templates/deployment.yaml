@@ -11,6 +11,8 @@ spec:
       {{- include "stalwart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "stalwart.selectorLabels" . | nindent 8 }}
     spec:
@@ -31,7 +33,7 @@ spec:
             path: /healthz/ready
             port: 8080
           initialDelaySeconds: 5
-          periodSeconds: 10        
+          periodSeconds: 10
         ports:
         - containerPort: 8080
         - containerPort: 443
@@ -50,7 +52,13 @@ spec:
         volumeMounts:
         - name: stalwart-volume
           mountPath: {{ .Values.persistence.mountPath }}
+        - name: config
+          mountPath: /opt/stalwart/etc/config.toml
+          subPath: config.toml
       volumes:
       - name: stalwart-volume
         persistentVolumeClaim:
           claimName: {{ include "stalwart.fullname" . }}
+      - name: config
+        configMap:
+          name: {{ include "stalwart.fullname" . }}-config

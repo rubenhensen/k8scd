@@ -84,9 +84,9 @@ data:
     user = "%{env:STALWART_ADMIN_USER}%"
     secret = "%{env:STALWART_ADMIN_PASSWORD}%"
 
-    [certificate.default]
-    cert = "file:///opt/stalwart/certs/tls.crt"
-    private-key = "file:///opt/stalwart/certs/tls.key"
+    [certificate."default"]
+    cert = "%{file:/opt/stalwart/certs/tls.crt}%"
+    private-key = "%{file:/opt/stalwart/certs/tls.key}%"
     default = true
 
     [tracer.log]

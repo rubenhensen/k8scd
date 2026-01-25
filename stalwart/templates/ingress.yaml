@@ -21,7 +21,29 @@ spec:
             name: {{ include "stalwart.fullname" . }}
             port:
               number: 8080
+  - host: autoconfig.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "stalwart.fullname" . }}
+            port:
+              number: 8080
+  - host: autodiscover.hensen.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "stalwart.fullname" . }}
+            port:
+              number: 8080
   tls:
     - secretName: letsencrypt-prod
       hosts:
         - mail.hensen.io
+        - autoconfig.hensen.io
+        - autodiscover.hensen.io

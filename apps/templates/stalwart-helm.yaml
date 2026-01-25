@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/rubenhensen/k8scd.git
-    targetRevision: v0.1.0 
+    targetRevision: HEAD
     path: stalwart
   destination:
     server: https://kubernetes.default.svc

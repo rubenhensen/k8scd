@@ -1,0 +1,7 @@
+- staging env
+- automated backup testing
+- conftest policy as code voor clean gitops repo regels. Leg fouten vast zodat ze niet meer gebeuren.
+- beter begrip van Longhorn en deletion policies enzo. 
+- minder handmatig werk als ik een app wil deployen?
+- 3-node cluster
+- 

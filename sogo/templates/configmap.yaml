@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sogo.fullname" . }}-config
+  labels:
+    {{- include "sogo.labels" . | nindent 4 }}
+data:
+  01-database.yaml: |
+    OCSFolderInfoURL: {{ include "sogo.postgresqlURL" . }}/sogo_folder_info
+    OCSSessionsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_sessions_folder
+    OCSEMailAlarmsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_alarms_folder
+    OCSStoreURL: {{ include "sogo.postgresqlURL" . }}/sogo_store
+    OCSAclURL: {{ include "sogo.postgresqlURL" . }}/sogo_acl
+    OCSCacheFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_cache_folder
+
+  02-mail.yaml: |
+    SOGoIMAPServer: {{ .Values.config.mail.imapServer }}
+    SOGoIMAPAclConformsToIMAPExt: YES
+    SOGoMailDomain: {{ .Values.config.domain }}
+    SOGoMailingMechanism: smtp
+    SOGoSMTPServer: {{ .Values.config.mail.smtpServer }}:{{ .Values.config.mail.smtpPort }}
+    SOGoMailSpoolPath: /var/spool/sogo
+    SOGoSentFolderName: Sent
+    SOGoTrashFolderName: Trash
+    SOGoDraftsFolderName: Drafts
+    SOGoJunkFolderName: Junk
+    SOGoForceExternalLoginWithEmail: YES
+
+  03-general.yaml: |
+    SOGoLanguage: {{ .Values.config.language }}
+    SOGoTimeZone: {{ .Values.config.timezone }}
+    SOGoSuperUsername: {{ .Values.config.adminUser }}
+    SOGoProfileURL: {{ include "sogo.postgresqlURL" . }}/sogo_user_profile
+    SOGoUserSources:
+      - type: sql
+        id: users
+        viewURL: {{ include "sogo.postgresqlURL" . }}/sogo_view
+        canAuthenticate: YES
+        isAddressBook: YES
+        userPasswordAlgorithm: none
+    {{- if .Values.config.modules.mail }}
+    SOGoMailAuxiliaryUserAccountsEnabled: YES
+    {{- end }}
+    {{- if .Values.config.modules.calendar }}
+    SOGoCalendarDefaultRoles:
+      - PublicViewer
+      - ConfidentialDAndTViewer
+    {{- end }}
+
+  04-calendar.yaml: |
+    {{- if .Values.config.modules.calendar }}
+    SOGoFirstDayOfWeek: {{ .Values.config.calendar.firstDayOfWeek }}
+    SOGoDayStartTime: {{ .Values.config.calendar.dayStartTime }}
+    SOGoDayEndTime: {{ .Values.config.calendar.dayEndTime }}
+    SOGoTimeFormat: {{ .Values.config.calendar.timeFormat | quote }}
+    SOGoCalendarEventsDefaultClassification: PUBLIC
+    SOGoFirstWeekOfYear: January1
+    {{- end }}
+
+  05-authentication.yaml: |
+    SOGoAuthenticationType: {{ .Values.config.mail.authenticationType }}
+    {{- if eq .Values.config.mail.authenticationType "IMAP" }}
+    SOGoIMAPServer: {{ .Values.config.mail.imapServer }}:{{ .Values.config.mail.imapPort }}
+    {{- end }}
+
+  06-webui.yaml: |
+    SOGoPageTitle: {{ .Values.config.webui.pageTitle | quote }}
+    SOGoLoginModule: Mail
+    SOGoRefreshViewCheck: every_minute
+    SOGoMailReloadOnArrival: YES
+    SOGoMailMessageCheck: every_5_minutes
+    SOGoMailPollingIntervals: (1, 5, 10, 20, 30, 60)
+
+  07-security.yaml: |
+    SOGoXSRFValidation: YES
+    SOGoPasswordChangeEnabled: NO
+    SOGoForceSSL: NO
+    WOUseRelativeURLs: NO
+    WOApplicationRedirectURL: /SOGo
+
+  08-performance.yaml: |
+    WOWorkersCount: {{ .Values.config.workersCount }}
+    WOListenQueueSize: {{ .Values.config.listenQueueSize }}
+    SOGoMaximumPingInterval: 3540
+    SOGoMaximumSyncInterval: 3540
+    SOGoInternalSyncInterval: 30
+    NGImap4DisableIMAP4Pooling: NO
+    SOGoMaximumMessageSizeLimit: 52428800

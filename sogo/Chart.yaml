@@ -1,0 +1,5 @@
+apiVersion: v2
+name: sogo
+description: Helm chart for SOGo groupware server
+version: 0.1.0
+appVersion: "latest"

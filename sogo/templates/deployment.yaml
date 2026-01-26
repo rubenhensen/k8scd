@@ -32,10 +32,10 @@ spec:
         - -c
         - |
           # Copy config files from ConfigMap and substitute environment variables
+          # Use awk to avoid sed regex issues with special characters
           for file in /config-template/*; do
             filename=$(basename "$file")
-            # Use sed to replace ${POSTGRES_PASSWORD} with actual value
-            sed "s|\${POSTGRES_PASSWORD}|${POSTGRES_PASSWORD}|g" "$file" > "/config/$filename"
+            awk -v pwd="$POSTGRES_PASSWORD" '{gsub(/\$\{POSTGRES_PASSWORD\}/, pwd); print}' "$file" > "/config/$filename"
           done
           echo "Configuration files generated successfully"
         volumeMounts:

@@ -12,10 +12,10 @@ data:
     SOGoForceIMAPLoginWithEmail: true
 
     # Database Configuration
-    SOGoProfileURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_user_profile?sslmode=disable"
-    OCSFolderInfoURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_folder_info?sslmode=disable"
-    OCSSessionsFolderURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_sessions_folder?sslmode=disable"
-    OCSAclURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_acl?sslmode=disable"
+    SOGoProfileURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_user_profile?sslmode=require"
+    OCSFolderInfoURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_folder_info?sslmode=require"
+    OCSSessionsFolderURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_sessions_folder?sslmode=require"
+    OCSAclURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_acl?sslmode=require"
 
     # General Settings
     SOGoTimeZone: Europe/Amsterdam

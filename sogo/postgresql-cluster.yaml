@@ -23,4 +23,3 @@ spec:
     parameters:
       max_connections: "100"
       shared_buffers: "256MB"
-      ssl: "off"

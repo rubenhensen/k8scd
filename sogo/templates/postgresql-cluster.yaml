@@ -33,7 +33,6 @@ spec:
       log_filename: 'postgres'
       log_rotation_age: '0'
       log_rotation_size: '0'
-      log_truncate_on_rotation: 'off'
     pg_hba:
       - host all all all scram-sha-256
 

@@ -18,6 +18,31 @@ spec:
       labels:
         {{- include "sogo.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+      - name: config-init
+        image: busybox:latest
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "sogo.fullname" . }}-postgres-credentials
+              key: password
+        command:
+        - sh
+        - -c
+        - |
+          # Copy config files from ConfigMap and substitute environment variables
+          for file in /config-template/*; do
+            filename=$(basename "$file")
+            # Use sed to replace ${POSTGRES_PASSWORD} with actual value
+            sed "s|\${POSTGRES_PASSWORD}|${POSTGRES_PASSWORD}|g" "$file" > "/config/$filename"
+          done
+          echo "Configuration files generated successfully"
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: config
+          mountPath: /config
       containers:
       - name: sogo
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -26,12 +51,6 @@ spec:
         - name: http
           containerPort: 80
           protocol: TCP
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "sogo.fullname" . }}-postgres-credentials
-              key: password
         volumeMounts:
         - name: config
           mountPath: /etc/sogo/sogo.conf.d
@@ -56,9 +75,11 @@ spec:
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
       volumes:
-      - name: config
+      - name: config-template
         configMap:
           name: {{ include "sogo.fullname" . }}-config
+      - name: config
+        emptyDir: {}
       - name: data
         persistentVolumeClaim:
           claimName: {{ include "sogo.fullname" . }}-data

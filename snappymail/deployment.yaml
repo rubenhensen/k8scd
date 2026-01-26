@@ -16,38 +16,6 @@ spec:
       labels:
         app: snappymail
     spec:
-      initContainers:
-        - name: config-init
-          image: busybox:latest
-          command:
-            - sh
-            - -c
-            - |
-              # Create config directory if it doesn't exist
-              mkdir -p /data/_data_/_default_/configs
-
-              # Copy application.ini if it doesn't exist
-              if [ ! -f /data/_data_/_default_/configs/application.ini ]; then
-                echo "Copying application.ini configuration..."
-                cp /config/application.ini /data/_data_/_default_/configs/application.ini
-              else
-                echo "application.ini already exists, skipping..."
-              fi
-
-              # Copy domains.ini if it doesn't exist
-              if [ ! -f /data/_data_/_default_/configs/domains.ini ]; then
-                echo "Copying domains.ini configuration..."
-                cp /config/domains.ini /data/_data_/_default_/configs/domains.ini
-              else
-                echo "domains.ini already exists, skipping..."
-              fi
-
-              echo "Configuration initialization complete"
-          volumeMounts:
-            - name: snappymail-data
-              mountPath: /data
-            - name: config
-              mountPath: /config
       containers:
         - name: snappymail
           image: djmaze/snappymail:latest
@@ -83,6 +51,3 @@ spec:
         - name: snappymail-data
           persistentVolumeClaim:
             claimName: snappymail-data
-        - name: config
-          configMap:
-            name: snappymail-config

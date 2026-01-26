@@ -6,12 +6,12 @@ metadata:
     {{- include "sogo.labels" . | nindent 4 }}
 data:
   01-database.yaml: |
-    OCSFolderInfoURL: {{ include "sogo.postgresqlURL" . }}/sogo_folder_info
-    OCSSessionsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_sessions_folder
-    OCSEMailAlarmsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_alarms_folder
-    OCSStoreURL: {{ include "sogo.postgresqlURL" . }}/sogo_store
-    OCSAclURL: {{ include "sogo.postgresqlURL" . }}/sogo_acl
-    OCSCacheFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_cache_folder
+    OCSFolderInfoURL: {{ include "sogo.postgresqlURL" . }}/sogo_folder_info?sslmode=require
+    OCSSessionsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_sessions_folder?sslmode=require
+    OCSEMailAlarmsFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_alarms_folder?sslmode=require
+    OCSStoreURL: {{ include "sogo.postgresqlURL" . }}/sogo_store?sslmode=require
+    OCSAclURL: {{ include "sogo.postgresqlURL" . }}/sogo_acl?sslmode=require
+    OCSCacheFolderURL: {{ include "sogo.postgresqlURL" . }}/sogo_cache_folder?sslmode=require
 
   02-mail.yaml: |
     SOGoIMAPServer: {{ .Values.config.mail.imapServer }}
@@ -30,11 +30,11 @@ data:
     SOGoLanguage: {{ .Values.config.language }}
     SOGoTimeZone: {{ .Values.config.timezone }}
     SOGoSuperUsername: {{ .Values.config.adminUser }}
-    SOGoProfileURL: {{ include "sogo.postgresqlURL" . }}/sogo_user_profile
+    SOGoProfileURL: {{ include "sogo.postgresqlURL" . }}/sogo_user_profile?sslmode=require
     SOGoUserSources:
       - type: sql
         id: users
-        viewURL: {{ include "sogo.postgresqlURL" . }}/sogo_view
+        viewURL: {{ include "sogo.postgresqlURL" . }}/sogo_view?sslmode=require
         canAuthenticate: YES
         isAddressBook: YES
         userPasswordAlgorithm: none

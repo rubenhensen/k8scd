@@ -31,11 +31,24 @@ spec:
         - sh
         - -c
         - |
-          # Copy config files from ConfigMap and substitute environment variables
-          # Use awk to avoid sed regex issues with special characters
+          # URL-encode the password for PostgreSQL connection strings
+          # This handles special characters like &, ^, etc.
+          encoded_pwd=$(echo -n "$POSTGRES_PASSWORD" | awk '
+            BEGIN {
+              for (i = 0; i < 256; i++) chars[sprintf("%c", i)] = sprintf("%%%02X", i)
+            }
+            {
+              for (i = 1; i <= length($0); i++) {
+                c = substr($0, i, 1)
+                if (c ~ /[A-Za-z0-9._~-]/) printf "%s", c
+                else printf "%s", chars[c]
+              }
+            }
+          ')
+          # Copy config files and substitute the encoded password
           for file in /config-template/*; do
             filename=$(basename "$file")
-            awk -v pwd="$POSTGRES_PASSWORD" '{gsub(/\$\{POSTGRES_PASSWORD\}/, pwd); print}' "$file" > "/config/$filename"
+            sed "s|\${POSTGRES_PASSWORD}|$encoded_pwd|g" "$file" > "/config/$filename"
           done
           echo "Configuration files generated successfully"
         volumeMounts:

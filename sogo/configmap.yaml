@@ -15,6 +15,7 @@ data:
     SOGoProfileURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_user_profile"
     OCSFolderInfoURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_folder_info"
     OCSSessionsFolderURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_sessions_folder"
+    OCSAclURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_acl"
 
     # General Settings
     SOGoTimeZone: Europe/Amsterdam

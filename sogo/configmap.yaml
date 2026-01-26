@@ -4,66 +4,62 @@ metadata:
   name: sogo-config
   namespace: sogo
 data:
-  sogo.conf: |
-    {
-      /* Mail Server Configuration */
-      SOGoIMAPServer = "stalwart.stalwart.svc.cluster.local:143";
-      SOGoSMTPServer = "stalwart.stalwart.svc.cluster.local:587";
-      SOGoMailDomain = "hensen.io";
-      SOGoForceIMAPLoginWithEmail = YES;
+  sogo.yaml: |
+    # Mail Server Configuration
+    SOGoIMAPServer: stalwart.stalwart.svc.cluster.local:143
+    SOGoSMTPServer: stalwart.stalwart.svc.cluster.local:587
+    SOGoMailDomain: hensen.io
+    SOGoForceIMAPLoginWithEmail: true
 
-      /* Database Configuration */
-      SOGoProfileURL = "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_user_profile";
-      OCSFolderInfoURL = "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_folder_info";
-      OCSSessionsFolderURL = "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_sessions_folder";
+    # Database Configuration
+    SOGoProfileURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_user_profile"
+    OCSFolderInfoURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_folder_info"
+    OCSSessionsFolderURL: "postgresql://sogo:${POSTGRES_PASSWORD}@sogo-postgres-rw.sogo.svc.cluster.local:5432/sogo/sogo_sessions_folder"
 
-      /* General Settings */
-      SOGoTimeZone = "Europe/Amsterdam";
-      SOGoLanguage = "English";
-      SOGoSuperUsername = "admin@hensen.io";
+    # General Settings
+    SOGoTimeZone: Europe/Amsterdam
+    SOGoLanguage: English
+    SOGoSuperUsername: admin@hensen.io
 
-      /* Modules */
-      SOGoModules = (
-        "Mail",
-        "Calendar",
-        "Contacts",
-        "Tasks"
-      );
+    # Modules
+    SOGoModules:
+      - Mail
+      - Calendar
+      - Contacts
+      - Tasks
 
-      /* Calendar Settings */
-      SOGoCalendarDefaultRoles = (
-        "PublicViewer",
-        "ConfidentialDAndTViewer"
-      );
-      SOGoFirstDayOfWeek = 1;
-      SOGoFirstWeekOfYear = "January1";
-      SOGoDayStartTime = 8;
-      SOGoDayEndTime = 18;
+    # Calendar Settings
+    SOGoCalendarDefaultRoles:
+      - PublicViewer
+      - ConfidentialDAndTViewer
+    SOGoFirstDayOfWeek: 1
+    SOGoFirstWeekOfYear: January1
+    SOGoDayStartTime: 8
+    SOGoDayEndTime: 18
 
-      /* Authentication */
-      SOGoAuthenticationType = "IMAP";
+    # Authentication
+    SOGoAuthenticationType: IMAP
 
-      /* WebUI Settings */
-      SOGoPageTitle = "SOGo @ hensen.io";
-      SOGoLoginModule = "Mail";
-      SOGoRefreshViewCheck = "every_5_minutes";
-      SOGoMailMessageCheck = "every_5_minutes";
+    # WebUI Settings
+    SOGoPageTitle: "SOGo @ hensen.io"
+    SOGoLoginModule: Mail
+    SOGoRefreshViewCheck: every_5_minutes
+    SOGoMailMessageCheck: every_5_minutes
 
-      /* Mail Preferences */
-      SOGoMailAuxiliaryUserAccountsEnabled = YES;
-      SOGoMailComposeMessageType = "html";
-      SOGoMailReplyPlacement = "below";
-      SOGoMailSignaturePlacement = "below";
+    # Mail Preferences
+    SOGoMailAuxiliaryUserAccountsEnabled: true
+    SOGoMailComposeMessageType: html
+    SOGoMailReplyPlacement: below
+    SOGoMailSignaturePlacement: below
 
-      /* Security */
-      SOGoPasswordChangeEnabled = NO;
-      SOGoXSRFValidationEnabled = YES;
+    # Security
+    SOGoPasswordChangeEnabled: false
+    SOGoXSRFValidationEnabled: true
 
-      /* Performance */
-      SOGoMemcachedHost = "";
-      WOWorkersCount = 3;
-      WOListenQueueSize = 5;
-      WONoDetach = YES;
-      WOLogFile = "-";
-      WOPidFile = "/var/run/sogo/sogo.pid";
-    }
+    # Performance
+    SOGoMemcachedHost: ""
+    WOWorkersCount: 3
+    WOListenQueueSize: 5
+    WONoDetach: true
+    WOLogFile: "-"
+    WOPidFile: /var/run/sogo/sogo.pid

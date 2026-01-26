@@ -19,13 +19,16 @@ spec:
     spec:
       initContainers:
       - name: config-init
-        image: bhgedigital/envsubst:latest
+        image: alpine:latest
         command:
         - sh
         - -c
         - |
-          envsubst < /config-template/sogo.yaml > /config/sogo.yaml
-          echo "Configuration file prepared"
+          apk add --no-cache python3
+          ENCODED_PASSWORD=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${POSTGRES_PASSWORD}', safe=''))")
+          export POSTGRES_PASSWORD="${ENCODED_PASSWORD}"
+          cat /config-template/sogo.yaml | sed "s|\${POSTGRES_PASSWORD}|${POSTGRES_PASSWORD}|g" > /config/sogo.yaml
+          echo "Configuration file prepared with URL-encoded password"
         env:
         - name: POSTGRES_PASSWORD
           valueFrom:

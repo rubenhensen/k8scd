@@ -29,7 +29,6 @@ spec:
       max_connections: {{ .Values.postgresql.maxConnections | quote }}
       log_destination: 'csvlog'
       logging_collector: 'on'
-      log_directory: '/var/log/postgresql'
       log_filename: 'postgres'
       log_rotation_age: '0'
       log_rotation_size: '0'

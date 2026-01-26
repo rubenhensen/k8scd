@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sogo-postgres
+  namespace: sogo
+spec:
+  instances: 1
+
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+
+  bootstrap:
+    initdb:
+      database: sogo
+      owner: sogo
+      secret:
+        name: sogo-postgres-credentials
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+  postgresql:
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"

@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: snappymail-data
-  labels:
-    app: snappymail
+  name: sogo-data
+  namespace: sogo
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   storageClassName: longhorn
   resources:
     requests:

@@ -49,7 +49,7 @@ spec:
             enabled: false
 
           existingSecrets:
-            - sogo-config
+            - sogo-secrets
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       path: sogo

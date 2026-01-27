@@ -15,7 +15,7 @@ spec:
   project: default
   sources:
     - chart: sogo
-      repoURL: https://github.com/sonroyaalmerol/docker-sogo
+      repoURL: https://helm.snry.xyz/docker-sogo/
       targetRevision: v0.3.3
       helm:
         values: |

@@ -56,5 +56,5 @@ PostgreSQL connection URL base (without table name)
 {{- $host := printf "%s-postgres-rw.%s.svc.cluster.local" (include "sogo.fullname" .) .Release.Namespace -}}
 {{- $port := "5432" -}}
 {{- $db := .Values.postgresql.database -}}
-{{- printf "postgresql://%s:${POSTGRES_PASSWORD}@%s:%s/%s" $user $host $port $db -}}
+{{- printf "postgresql://%s:${POSTGRES_PASSWORD}@%s:%s/%s?sslmode=require" $user $host $port $db -}}
 {{- end }}

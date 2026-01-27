@@ -1,0 +1,21 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sogo-postgres
+spec:
+  instances: 1
+
+  primaryUpdateStrategy: unsupervised
+
+  bootstrap:
+    initdb:
+      database: sogo
+      owner: sogo
+      secret:
+        name: sogo-postgres-credentials
+
+  storage:
+    storageClass: longhorn
+    size: 20Gi
+
+

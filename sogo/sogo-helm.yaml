@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-longhorn
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true 
+    automated:
+      prune: true
+      selfHeal: true
+  project: default
+  sources:
+    - chart: sogo
+      repoURL: https://github.com/sonroyaalmerol/docker-sogo
+      targetRevision: v0.3.3
+      helm:
+        values: |
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              kubernetes.io/tls-acme: "true"
+              cert-manager.io/cluster-issuer: prod-cluster-issuer
+              nginx.ingress.kubernetes.io/server-snippet: |-
+                ## requirement to create new calendars in Thunderbird ##
+                proxy_http_version 1.1;
+                proxy_hide_header X-Powered-By;
+
+                location = / {
+                  rewrite ^(.*)$ /SOGo;
+                  allow all;
+                }
+
+            tls:
+              - secretName: sogo-tls
+                hosts:
+                  - post.hensen.io
+            labels: {}
+            path: /
+            pathType: Prefix
+
+          existingSecrets:
+            - sogo-config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sogo

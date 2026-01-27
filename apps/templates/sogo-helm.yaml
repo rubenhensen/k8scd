@@ -21,6 +21,8 @@ spec:
         values: |
           sogo:
             host: post.hensen.io
+            existingSecrets:
+              - sogo-secrets
           ingress:
             enabled: true
             className: nginx
@@ -47,9 +49,6 @@ spec:
           memcached:
             ## Only enable this if you don't have an external database
             enabled: false
-
-          existingSecrets:
-            - sogo-secrets
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       path: sogo

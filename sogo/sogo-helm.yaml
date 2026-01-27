@@ -19,6 +19,8 @@ spec:
       targetRevision: v0.3.3
       helm:
         values: |
+          sogo:
+          host: post.hensen.io
           ingress:
             enabled: true
             className: nginx

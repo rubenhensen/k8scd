@@ -95,6 +95,16 @@ spec:
         resourcesPreset: "small"
         livenessProbe:
           enabled: false
+        readinessProbe:
+          enabled: true
+          httpGet:
+            path: /wp-login.php
+            port: http
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10
+          successThreshold: 1
+          failureThreshold: 6
 
   syncPolicy:
     syncOptions:

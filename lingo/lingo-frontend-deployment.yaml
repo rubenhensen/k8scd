@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: lingo
-  name: lingo
+    app: lingo-frontend
+  name: lingo-frontend
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       labels:
-        app: lingo
+        app: lingo-frontend
     spec:
       containers:
         - image: ghcr.io/rubenhensen/lingo-frontend:master

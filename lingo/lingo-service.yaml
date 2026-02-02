@@ -6,7 +6,10 @@ metadata:
   name: lingo
 spec:
   ports:
-    - name: "8001"
+    - name: "api"
+      port: 8000
+      targetPort: 8000
+    - name: "frontend"
       port: 8001
       targetPort: 8001
   selector:

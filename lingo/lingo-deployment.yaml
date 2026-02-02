@@ -17,7 +17,7 @@ spec:
         app: lingo
     spec:
       containers:
-        - image: rubenhensen/lingo:latest
+        - image: ghcr.io/rubenhensen/lingo:master
           name: lingo
           ports:
             - containerPort: 8001

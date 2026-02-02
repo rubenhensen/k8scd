@@ -16,14 +16,14 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: lingo
+            name: lingo-api
             port:
               number: 8000
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: lingo
+            name: lingo-frontend
             port:
               number: 8001
   tls:

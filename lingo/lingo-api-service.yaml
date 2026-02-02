@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: lingo-api
+  name: lingo-api
+spec:
+  ports:
+    - name: "api"
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: lingo-api

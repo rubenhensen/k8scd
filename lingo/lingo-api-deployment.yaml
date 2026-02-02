@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: lingo
+  name: lingo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lingo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: lingo
+    spec:
+      containers:
+        - image: ghcr.io/rubenhensen/lingo-api:master
+          name: lingo-api
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always

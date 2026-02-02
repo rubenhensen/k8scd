@@ -17,18 +17,6 @@ spec:
         app: lingo
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/lingo-api:master
-          name: lingo-api
-          ports:
-            - containerPort: 8000
-              protocol: TCP
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
         - image: ghcr.io/rubenhensen/lingo-frontend:master
           name: lingo-frontend
           ports:

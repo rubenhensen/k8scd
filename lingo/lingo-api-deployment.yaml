@@ -20,7 +20,7 @@ spec:
         - image: ghcr.io/rubenhensen/lingo-api:master
           name: lingo-api
           ports:
-            - containerPort: 8000
+            - containerPort: 80
               protocol: TCP
           resources:
             requests:

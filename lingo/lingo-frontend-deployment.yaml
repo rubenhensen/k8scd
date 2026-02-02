@@ -20,7 +20,7 @@ spec:
         - image: ghcr.io/rubenhensen/lingo-frontend:master
           name: lingo-frontend
           ports:
-            - containerPort: 8001
+            - containerPort: 80
               protocol: TCP
           resources:
             requests:

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: lingo-ingress
+  name: lingo-api-ingress
   annotations:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     nginx.ingress.kubernetes.io/ssl-passthrough: "false"
@@ -19,6 +19,24 @@ spec:
             name: lingo-api
             port:
               number: 8000
+  tls:
+    - secretName: letsencrypt-prod
+      hosts:
+        - lingo.hensen.io
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lingo-frontend-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: lingo.hensen.io
+    http:
+      paths:
       - path: /
         pathType: Prefix
         backend:

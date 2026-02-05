@@ -17,7 +17,7 @@ spec:
         app: lingo-frontend
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/lingo-frontend:master
+        - image: ghcr.io/rubenhensen/lingo-frontend:master-9af2a4b
           name: lingo-frontend
           ports:
             - containerPort: 80

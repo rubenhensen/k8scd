@@ -17,7 +17,7 @@ spec:
         app: lingo-api
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/lingo-api:master-2af7aa0
+        - image: ghcr.io/rubenhensen/lingo-api:master-4404fe5
           name: lingo-api
           ports:
             - containerPort: 80

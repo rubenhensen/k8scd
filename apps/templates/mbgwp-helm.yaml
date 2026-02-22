@@ -30,7 +30,7 @@ spec:
           ##
           type: ClusterIP
         ingress:
-          enabled: true
+          enabled: false
           ingressClassName: nginx
           hostname: scoutingmbg.nl
           path: /

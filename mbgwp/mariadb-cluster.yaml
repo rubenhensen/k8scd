@@ -1,0 +1,52 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: mbgwp-mariadb
+  namespace: mbgwp
+spec:
+  rootPasswordSecretKeyRef:
+    name: mbgwp-mariadb-credentials
+    key: root-password
+
+  image: mariadb:11.4.5
+  imagePullPolicy: IfNotPresent
+
+  port: 3306
+
+  database: bitnami_wordpress
+  username: bn_wordpress
+  passwordSecretKeyRef:
+    name: mbgwp-mariadb-credentials
+    key: password
+
+  storage:
+    size: 12Gi
+    storageClassName: longhorn
+    resizeInUseVolumes: true
+    waitForVolumeResize: true
+
+  myCnf: |
+    [mysqld]
+    max_allowed_packet=64M
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+    innodb_buffer_pool_size=256M
+    innodb_log_file_size=64M
+    max_connections=150
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+  updateStrategy:
+    type: RollingUpdate

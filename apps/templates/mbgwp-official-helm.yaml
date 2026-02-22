@@ -23,19 +23,12 @@ spec:
           tag: "6.9.1-apache"
           pullPolicy: IfNotPresent
 
-        # External MariaDB database (operator-managed)
-        # Note: Database password comes from extraEnvSecrets
-        externalDatabase:
-          host: mbgwp-mariadb
-          name: bitnami_wordpress
-          user: bn_wordpress
+        # Disable embedded MariaDB
+        mariadb:
+          enabled: false
 
-        # Database secret reference
-        # This will mount the secret as environment variables
-        extraEnvSecrets:
-          - mbgwp-mariadb-credentials
-
-        # Additional environment variables
+        # Database configuration via environment variables
+        # Using external MariaDB (operator-managed)
         env:
           - name: WORDPRESS_DB_HOST
             value: "mbgwp-mariadb:3306"

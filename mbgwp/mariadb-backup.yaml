@@ -1,0 +1,27 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: mbgwp-mariadb-daily
+  namespace: mbgwp
+spec:
+  mariaDbRef:
+    name: mbgwp-mariadb
+
+  schedule:
+    cron: "0 3 * * *"
+    suspend: false
+
+  maxRetention: 720h  # 30 days
+
+  storage:
+    persistentVolumeClaim:
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: longhorn
+      accessModes:
+        - ReadWriteOnce
+
+  logLevel: info
+
+  backoffLimit: 5

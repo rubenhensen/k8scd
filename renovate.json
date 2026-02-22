@@ -2,5 +2,44 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "argocd": {
+    "fileMatch": ["apps/templates/.+\\.yaml$"]
+  },
+  "helm-values": {
+    "fileMatch": ["apps/templates/.+\\.yaml$"]
+  },
+  "kubernetes": {
+    "fileMatch": ["apps/templates/.+\\.yaml$"]
+  },
+  "regexManagers": [
+    {
+      "fileMatch": ["apps/templates/.+\\.yaml$"],
+      "matchStrings": [
+        "repoURL: https://github.com/(?<depName>[^/]+/[^/\\.]+)\\.git\\n\\s+targetRevision: (?<currentValue>.*)"
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "fileMatch": ["apps/templates/.+\\.yaml$"],
+      "matchStrings": [
+        "repoURL: (?<registryUrl>.*?)\\n\\s+targetRevision: (?<currentValue>[^\\s]+)\\n\\s+chart: (?<depName>[^\\s]+)"
+      ],
+      "datasourceTemplate": "helm"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["helm"],
+      "semanticCommits": "enabled",
+      "commitMessageTopic": "helm chart {{depName}}",
+      "separateMinorPatch": true
+    },
+    {
+      "matchDatasources": ["github-tags"],
+      "semanticCommits": "enabled",
+      "commitMessageTopic": "{{depName}}",
+      "separateMinorPatch": true
+    }
   ]
 }

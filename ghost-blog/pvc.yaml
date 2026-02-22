@@ -31,7 +31,6 @@ metadata:
     app.kubernetes.io/version: '5.92'
     app.kubernetes.io/component: database-storage
     app.kubernetes.io/part-of: ghost-blog
-  argocd.argoproj.io/sync-wave: "2"
 spec:
   storageClassName: "longhorn"
   volumeMode: Filesystem

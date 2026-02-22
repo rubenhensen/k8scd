@@ -43,10 +43,7 @@ spec:
       memory: 1Gi
 
   metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: false
-      interval: 30s
+    enabled: false
 
   updateStrategy:
     type: RollingUpdate

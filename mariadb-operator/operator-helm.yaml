@@ -18,6 +18,12 @@ spec:
           enabled: true
           serviceMonitor:
             enabled: false
+        webhook:
+          serviceMonitor:
+            enabled: false
+        certController:
+          serviceMonitor:
+            enabled: false
   syncPolicy:
     automated:
       prune: true

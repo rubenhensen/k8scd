@@ -4,24 +4,36 @@
     "config:recommended"
   ],
   "argocd": {
-    "fileMatch": ["apps/templates/.+\\.yaml$"]
+    "managerFilePatterns": [
+      "/apps/templates/.+\\.yaml$/"
+    ]
   },
   "helm-values": {
-    "fileMatch": ["apps/templates/.+\\.yaml$"]
+    "managerFilePatterns": [
+      "/apps/templates/.+\\.yaml$/"
+    ]
   },
   "kubernetes": {
-    "fileMatch": ["apps/templates/.+\\.yaml$"]
+    "managerFilePatterns": [
+      "/apps/templates/.+\\.yaml$/"
+    ]
   },
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["apps/templates/.+\\.yaml$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/apps/templates/.+\\.yaml$/"
+      ],
       "matchStrings": [
         "repoURL: https://github.com/(?<depName>[^/]+/[^/\\.]+)\\.git\\n\\s+targetRevision: (?<currentValue>.*)"
       ],
       "datasourceTemplate": "github-tags"
     },
     {
-      "fileMatch": ["apps/templates/.+\\.yaml$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/apps/templates/.+\\.yaml$/"
+      ],
       "matchStrings": [
         "repoURL: (?<registryUrl>.*?)\\n\\s+targetRevision: (?<currentValue>[^\\s]+)\\n\\s+chart: (?<depName>[^\\s]+)"
       ],
@@ -30,13 +42,17 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": ["helm"],
+      "matchDatasources": [
+        "helm"
+      ],
       "semanticCommits": "enabled",
       "commitMessageTopic": "helm chart {{depName}}",
       "separateMinorPatch": true
     },
     {
-      "matchDatasources": ["github-tags"],
+      "matchDatasources": [
+        "github-tags"
+      ],
       "semanticCommits": "enabled",
       "commitMessageTopic": "{{depName}}",
       "separateMinorPatch": true

@@ -1,0 +1,138 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mbgwp-official-helm
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: mbgwp
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://groundhog2k.github.io/helm-charts/
+    targetRevision: 0.15.0
+    chart: wordpress
+    helm:
+      values: |
+        # Official WordPress image configuration
+        image:
+          registry: docker.io
+          repository: wordpress
+          tag: "6.9.1-apache"
+          pullPolicy: IfNotPresent
+
+        # External MariaDB database (operator-managed)
+        # Note: Database password comes from extraEnvSecrets
+        externalDatabase:
+          host: mbgwp-mariadb
+          name: bitnami_wordpress
+          user: bn_wordpress
+
+        # Database secret reference
+        # This will mount the secret as environment variables
+        extraEnvSecrets:
+          - mbgwp-mariadb-credentials
+
+        # Additional environment variables
+        env:
+          - name: WORDPRESS_DB_HOST
+            value: "mbgwp-mariadb:3306"
+          - name: WORDPRESS_DB_USER
+            value: "bn_wordpress"
+          - name: WORDPRESS_DB_NAME
+            value: "bitnami_wordpress"
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mbgwp-mariadb-credentials
+                key: password
+
+        # WordPress specific settings
+        settings:
+          tablePrefix: "wp_"
+          maxFileUploadSize: "64M"
+          memoryLimit: "128M"
+
+        # Persistence configuration
+        storage:
+          className: longhorn
+          requestedSize: 10Gi
+          accessModes:
+            - ReadWriteOnce
+          keepPvc: true
+
+        # Service configuration
+        service:
+          type: ClusterIP
+          port: 80
+
+        # Ingress configuration
+        ingress:
+          enabled: true
+          className: nginx
+          maxBodySize: 1024m
+          annotations:
+            cert-manager.io/cluster-issuer: prod-cluster-issuer
+            nginx.ingress.kubernetes.io/proxy-body-size: 1G
+          hosts:
+            - host: scoutingmbg.nl
+              paths:
+                - path: /
+                  pathType: Prefix
+            - host: www.scoutingmbg.nl
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: letsencrypt-prod
+              hosts:
+                - scoutingmbg.nl
+                - www.scoutingmbg.nl
+
+        # Resource limits (matching Bitnami "small" preset)
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "300m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+
+        # Health probes
+        livenessProbe:
+          enabled: false
+
+        readinessProbe:
+          enabled: true
+          httpGet:
+            path: /wp-login.php
+            port: 80
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 6
+
+        startupProbe:
+          enabled: true
+          httpGet:
+            path: /wp-login.php
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+
+        # Custom PHP configuration
+        customPhpConfig: |
+          upload_max_filesize = 64M
+          post_max_size = 64M
+          max_execution_time = 600
+          memory_limit = 128M
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true

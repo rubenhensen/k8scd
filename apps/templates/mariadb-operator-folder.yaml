@@ -13,7 +13,7 @@ spec:
     path: mariadb-operator
   destination:
     server: https://kubernetes.default.svc
-    namespace: mariadb-system
+    namespace: argocd
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

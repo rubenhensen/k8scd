@@ -79,7 +79,7 @@ spec:
                 - path: /
                   pathType: Prefix
           tls:
-            - secretName: letsencrypt-prod
+            - secretName: scoutingmbg-nl-tls
               hosts:
                 - scoutingmbg.nl
                 - www.scoutingmbg.nl

@@ -22,6 +22,7 @@ spec:
           security:
             allowInsecureImages: true
         mariadb:
+          enabled: false
           image:
             repository: bitnamilegacy/mariadb
         service:
@@ -91,6 +92,14 @@ spec:
         existingSecret: wordpress-credentials
         wordpressUsername: rubenhensen
         smtpExistingSecret: wordpress-credentials
+
+        externalDatabase:
+          host: mbgwp-mariadb
+          port: 3306
+          user: bn_wordpress
+          database: bitnami_wordpress
+          existingSecret: mbgwp-mariadb-credentials
+          existingSecretPasswordKey: password
         customHTAccessCM: prod-wordpress-cm
         resourcesPreset: "small"
         livenessProbe:
@@ -111,11 +120,3 @@ spec:
     - CreateNamespace=true
     automated:
       selfHeal: true
-  ignoreDifferences:
-    - group: apps
-      kind: StatefulSet
-      name: mbgwp-helm-mariadb
-      namespace: mbgwp
-      jsonPointers:
-      - /spec/template/spec/containers/0/livenessProbe
-      - /spec/template/spec/containers/0/readinessProbe

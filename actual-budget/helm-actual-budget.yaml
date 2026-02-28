@@ -43,7 +43,7 @@ spec:
         # Persistence configuration
         persistence:
           enabled: true
-          storageClassName: longhorn
+          storageClass: longhorn
           size: 10Gi
           accessModes:
             - ReadWriteOnce

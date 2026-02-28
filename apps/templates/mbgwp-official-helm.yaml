@@ -90,8 +90,8 @@ spec:
             memory: "512Mi"
             cpu: "300m"
           limits:
-            memory: "512Mi"
-            cpu: "1000m"
+            memory: "1024Mi"
+            cpu: "2000m"
 
         # Health probes
         livenessProbe:

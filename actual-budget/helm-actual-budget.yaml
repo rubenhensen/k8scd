@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-actual-budget
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: actual-budget
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://community-charts.github.io/helm-charts
+    targetRevision: 1.8.7
+    chart: actualbudget
+    helm:
+      values: |
+        # Actual Budget configuration
+
+        # Service configuration
+        service:
+          type: ClusterIP
+          port: 5006
+
+        # Ingress configuration
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: prod-cluster-issuer
+            nginx.ingress.kubernetes.io/proxy-body-size: 50m
+          hosts:
+            - host: ynab.rubenhensen.nl
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: actual-budget-tls
+              hosts:
+                - ynab.rubenhensen.nl
+
+        # Persistence configuration
+        persistence:
+          enabled: true
+          storageClassName: longhorn
+          size: 10Gi
+          accessModes:
+            - ReadWriteOnce
+
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true

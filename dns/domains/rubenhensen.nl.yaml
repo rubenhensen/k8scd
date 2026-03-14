@@ -19,6 +19,10 @@ records:
     expire: 86400
     type: CNAME
     content: "@"
+  - name: "authentik"
+    expire: 86400
+    type: CNAME
+    content: "@"
   - name: "@"
     expire: 86400
     type: MX

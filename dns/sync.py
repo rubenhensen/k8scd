@@ -5,14 +5,14 @@ import base64
 import json
 import os
 import sys
-import time
 import uuid
 from glob import glob
 from pathlib import Path
 
-import jwt
 import requests
 import yaml
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
 
 TRANSIP_API = "https://api.transip.nl/v6"
 DOMAINS_DIR = "/config/domains"
@@ -20,24 +20,24 @@ DOMAINS_DIR = "/config/domains"
 
 def get_access_token(account_name: str, private_key: str) -> str:
     """Authenticate with TransIP API and return a bearer token."""
-    now = int(time.time())
-    payload = {
-        "iss": account_name,
-        "sub": account_name,
-        "aud": "api.transip.nl",
-        "jti": str(uuid.uuid4()),
-        "iat": now,
-        "nbf": now,
-        "exp": now + 300,
+    body = json.dumps({
+        "login": account_name,
+        "nonce": uuid.uuid4().hex,
+        "read_only": False,
+        "expiration_time": "5 minutes",
         "global_key": True,
-    }
-    token = jwt.encode(payload, private_key, algorithm="RS512")
+    })
+
+    key = serialization.load_pem_private_key(private_key.encode(), password=None)
+    signature = key.sign(body.encode(), padding.PKCS1v15(), hashes.SHA512())
+    signature_b64 = base64.b64encode(signature).decode()
+
     resp = requests.post(
         f"{TRANSIP_API}/auth",
-        json={"login": account_name, "nonce": payload["jti"], "global_key": True},
+        data=body,
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
+            "Signature": signature_b64,
         },
         timeout=30,
     )

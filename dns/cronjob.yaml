@@ -21,7 +21,7 @@ spec:
                 - sh
                 - -c
                 - |
-                  pip install --quiet PyJWT cryptography requests pyyaml &&
+                  pip install --quiet cryptography requests pyyaml &&
                   python /config/sync.py
               env:
                 - name: TRANSIP_ACCOUNT_NAME

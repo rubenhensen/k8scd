@@ -1,0 +1,87 @@
+---
+stalwart_version: "0.15.5"
+
+stalwart_system_user: "stalwart"
+stalwart_system_group: "stalwart"
+
+stalwart_service_state: "started"
+stalwart_service_enabled: true
+
+stalwart_server_hostname: "mail.rubenhensen.nl"
+stalwart_server_max_connections: 8192
+
+# Storage backend
+stalwart_storage_data: "rocksdb"
+stalwart_storage_fts: "rocksdb"
+stalwart_storage_blob: "rocksdb"
+stalwart_storage_lookup: "rocksdb"
+
+# Admin credentials
+stalwart_fallback_admin_login: "admin"
+stalwart_fallback_admin_password: "changeme!"  # override via vault in host_vars
+
+# Listeners
+stalwart_server_listeners:
+  - name: "smtp"
+    bind: "[::]:25"
+    protocol: "smtp"
+  - name: "submission"
+    bind: "[::]:587"
+    protocol: "smtp"
+  - name: "submissions"
+    bind: "[::]:465"
+    protocol: "smtp"
+    options:
+      tls.implicit: true
+  - name: "imaptls"
+    bind: "[::]:993"
+    protocol: "imap"
+    options:
+      tls.implicit: true
+  - name: "https"
+    bind: "[::]:443"
+    protocol: "http"
+    options:
+      tls.implicit: true
+  - name: "http"
+    bind: "[::]:8080"
+    protocol: "http"
+
+# Stores
+stalwart_stores:
+  - name: "rocksdb"
+    type: "rocksdb"
+    options:
+      path: "{{ stalwart_data_path }}"
+      compression: "lz4"
+
+# Directory
+stalwart_directory_type: "internal"
+stalwart_directory_options:
+  store: "rocksdb"
+
+# Tracers
+stalwart_tracers:
+  - type: "stdout"
+    options:
+      level: "info"
+      ansi: false
+      enable: true
+  - type: "log"
+    options:
+      level: "info"
+      path: "{{ stalwart_logs_path }}"
+      prefix: "stalwart.log"
+      rotate: "daily"
+      ansi: false
+      enable: true
+
+# ACME / Let's Encrypt
+stalwart_acme_enabled: true
+stalwart_acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
+stalwart_acme_contact: "mailto:admin@rubenhensen.nl"
+stalwart_acme_domains:
+  - "mail.rubenhensen.nl"
+
+# Extra config sections (list of {name, options} dicts)
+stalwart_additional_configs: []

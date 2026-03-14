@@ -1,0 +1,22 @@
+---
+- name: Initialize Stalwart
+  ansible.builtin.command:
+    cmd: "{{ stalwart_executable_path }} --init {{ stalwart_install_path }}"
+    creates: "{{ stalwart_config_file_path }}"
+  become: true
+  become_user: "{{ stalwart_system_user }}"
+
+- name: Deploy configuration
+  ansible.builtin.template:
+    src: "config.toml.j2"
+    dest: "{{ stalwart_config_file_path }}"
+    owner: "{{ stalwart_system_user }}"
+    group: "{{ stalwart_system_group }}"
+    mode: "0640"
+  notify: restart stalwart
+
+- name: Ensure service is in correct state
+  ansible.builtin.service:
+    name: "{{ stalwart_service_name }}"
+    state: "{{ stalwart_service_state }}"
+    enabled: "{{ stalwart_service_enabled }}"

@@ -1,0 +1,11 @@
+---
+- name: Configure and harden mail server
+  hosts: mailserver
+  become: true
+
+  roles:
+    - base
+    - ssh
+    - ufw
+    - fail2ban
+    - stalwart

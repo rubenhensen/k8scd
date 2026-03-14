@@ -1,0 +1,88 @@
+---
+- name: Update apt cache and upgrade packages
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: safe
+    cache_valid_time: 3600
+
+- name: Install essential packages
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+      - logrotate
+      - curl
+      - tar
+    state: present
+
+- name: Enable unattended upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+    mode: "0644"
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ base_timezone }}"
+
+- name: Deploy sysctl hardening config
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/99-hardening.conf
+    content: |
+      # Prevent IP spoofing
+      net.ipv4.conf.all.rp_filter = 1
+      net.ipv4.conf.default.rp_filter = 1
+      # Ignore ICMP redirects
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv6.conf.all.accept_redirects = 0
+      net.ipv4.conf.all.send_redirects = 0
+      # Ignore source-routed packets
+      net.ipv4.conf.all.accept_source_route = 0
+      net.ipv6.conf.all.accept_source_route = 0
+      # SYN flood protection
+      net.ipv4.tcp_syncookies = 1
+      # Log martians
+      net.ipv4.conf.all.log_martians = 1
+    mode: "0644"
+  notify: reload sysctl
+
+- name: Create swap file
+  when: base_swap_enabled
+  block:
+    - name: Check if swap file exists
+      ansible.builtin.stat:
+        path: /swapfile
+      register: swap_file
+
+    - name: Create swap file
+      ansible.builtin.command:
+        cmd: "fallocate -l {{ base_swap_size }} /swapfile"
+      when: not swap_file.stat.exists
+      changed_when: true
+
+    - name: Set swap file permissions
+      ansible.builtin.file:
+        path: /swapfile
+        mode: "0600"
+      when: not swap_file.stat.exists
+
+    - name: Format swap file
+      ansible.builtin.command:
+        cmd: mkswap /swapfile
+      when: not swap_file.stat.exists
+      changed_when: true
+
+    - name: Enable swap file
+      ansible.builtin.command:
+        cmd: swapon /swapfile
+      when: not swap_file.stat.exists
+      changed_when: true
+
+    - name: Add swap to fstab
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        line: "/swapfile none swap sw 0 0"
+        state: present

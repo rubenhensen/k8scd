@@ -1,0 +1,2 @@
+---
+stalwart_fallback_admin_password: "{{ vault_stalwart_fallback_admin_password }}"

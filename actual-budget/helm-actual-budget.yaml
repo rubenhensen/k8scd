@@ -18,6 +18,9 @@ spec:
       values: |
         # Actual Budget configuration
 
+        image:
+          tag: "26.3.0"
+
         # Service configuration
         service:
           type: ClusterIP

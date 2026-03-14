@@ -1,64 +1,61 @@
 apiVersion: batch/v1
-kind: CronJob
+kind: Job
 metadata:
   name: dns-sync
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
-  schedule: "*/5 * * * *"
-  concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 3
-  jobTemplate:
+  backoffLimit: 1
+  template:
     spec:
-      backoffLimit: 1
-      template:
-        spec:
-          serviceAccountName: dns-sync
-          restartPolicy: Never
-          containers:
-            - name: sync
-              image: python:3.12-alpine
-              command:
-                - sh
-                - -c
-                - |
-                  pip install --quiet cryptography requests pyyaml &&
-                  python /config/sync.py
-              env:
-                - name: TRANSIP_ACCOUNT_NAME
-                  valueFrom:
-                    secretKeyRef:
-                      name: transip-credentials
-                      key: account_name
-                - name: TRANSIP_PRIVATE_KEY_PATH
-                  value: /secrets/private_key
-              volumeMounts:
-                - name: secrets
-                  mountPath: /secrets
-                  readOnly: true
-                - name: script
-                  mountPath: /config/sync.py
-                  subPath: sync.py
-                  readOnly: true
-                - name: domains
-                  mountPath: /config/domains
-                  readOnly: true
-              resources:
-                requests:
-                  memory: "128Mi"
-                  cpu: "50m"
-                limits:
-                  memory: "256Mi"
-                  cpu: "200m"
-          volumes:
+      serviceAccountName: dns-sync
+      restartPolicy: Never
+      containers:
+        - name: sync
+          image: python:3.12-alpine
+          command:
+            - sh
+            - -c
+            - |
+              pip install --quiet cryptography requests pyyaml &&
+              python /config/sync.py
+          env:
+            - name: TRANSIP_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: transip-credentials
+                  key: account_name
+            - name: TRANSIP_PRIVATE_KEY_PATH
+              value: /secrets/private_key
+          volumeMounts:
             - name: secrets
-              secret:
-                secretName: transip-credentials
-                items:
-                  - key: private_key
-                    path: private_key
+              mountPath: /secrets
+              readOnly: true
             - name: script
-              configMap:
-                name: dns-sync-script
+              mountPath: /config/sync.py
+              subPath: sync.py
+              readOnly: true
             - name: domains
-              configMap:
-                name: dns-domains
+              mountPath: /config/domains
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      volumes:
+        - name: secrets
+          secret:
+            secretName: transip-credentials
+            items:
+              - key: private_key
+                path: private_key
+        - name: script
+          configMap:
+            name: dns-sync-script
+        - name: domains
+          configMap:
+            name: dns-domains

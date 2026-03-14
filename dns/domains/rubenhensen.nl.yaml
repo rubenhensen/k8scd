@@ -15,3 +15,7 @@ records:
     expire: 86400
     type: CNAME
     content: "@"
+  - name: "test"
+    expire: 86400
+    type: CNAME
+    content: "@"

@@ -15,7 +15,63 @@ records:
     expire: 86400
     type: CNAME
     content: "@"
-  - name: "test"
+  - name: "@"
+    expire: 86400
+    type: MX
+    content: "10 mail.rubenhensen.nl."
+  - name: "202603e._domainkey"
+    expire: 86400
+    type: TXT
+    content: "v=DKIM1; k=ed25519; h=sha256; p=XFKYZdcbUomy5U2kCLAqo6M2uimoerYJMmdquNS/Rxc="
+  - name: "202603r._domainkey"
+    expire: 86400
+    type: TXT
+    content: "v=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxVEP+pDBE8/KdL34dYMVAoQW6cr9ARE/kho7KF2MP7lCjkigcjbbkgn3wGRdhoVjuoMlShaup0Bsycb4pJtalFObRUOxMkZG6yK2w67Hz1Lq5MtUMvVANCsdsoztkTmaWpnU5UYXYYGOtetupvNdIJTg6qEg5AJO51LrqqTDpv5CM0cgFbXkQiyF5srZ+B7czjFOiJkGQ9y4xqT4nggl+Ph/l9sA/VXJYB7WjvhzxrBVKcOlI32AMJkIJZYUg+9wbjJ1TBkpFpyClORTsTaF2SJOwWMm5q64OUf4/pTpTmG6TPXZ7lO429G0ulZcTkdq/fTrZZA6G5fruD7pyIkGNwIDAQAB"
+  - name: mail
+    expire: 86400
+    type: TXT
+    content: "v=spf1 a ra=postmaster -all"
+  - name: "@"
+    expire: 86400
+    type: TXT
+    content: "v=spf1 mx ra=postmaster -all"
+  - name: "_jmap._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 443 mail.rubenhensen.nl."
+  - name: "_caldavs._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 443 mail.rubenhensen.nl."
+  - name: "_carddavs._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 443 mail.rubenhensen.nl."
+  - name: "_imaps._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 993 mail.rubenhensen.nl."
+  - name: "_submissions._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 465 mail.rubenhensen.nl."
+  - name: "_submission._tcp"
+    expire: 86400
+    type: SRV
+    content: "0 1 587 mail.rubenhensen.nl."
+  - name: autoconfig
     expire: 86400
     type: CNAME
-    content: "@"
+    content: "mail.rubenhensen.nl."
+  - name: autodiscover
+    expire: 86400
+    type: CNAME
+    content: "mail.rubenhensen.nl."
+  - name: "_dmarc"
+    expire: 86400
+    type: TXT
+    content: "v=DMARC1; p=reject; rua=mailto:postmaster@rubenhensen.nl; ruf=mailto:postmaster@rubenhensen.nl"
+  - name: "_smtp._tls"
+    expire: 86400
+    type: TXT
+    content: "v=TLSRPTv1; rua=mailto:postmaster@rubenhensen.nl"

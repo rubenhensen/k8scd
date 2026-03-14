@@ -7,6 +7,10 @@ records:
     expire: 86400
     type: A
     content: "46.224.26.65"
+  - name: stalwart
+    expire: 86400
+    type: A
+    content: "46.224.26.65"
   - name: "phocaslustrum"
     expire: 86400
     type: CNAME

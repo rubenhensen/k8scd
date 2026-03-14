@@ -47,6 +47,15 @@ spec:
                   secretKeyRef:
                     name: authentik-secrets
                     key: bootstrap_token
+              - name: AUTHENTIK_POSTGRESQL__HOST
+                value: authentik-postgres-rw
+              - name: AUTHENTIK_POSTGRESQL__NAME
+                value: authentik
+              - name: AUTHENTIK_POSTGRESQL__USER
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-postgres-credentials
+                    key: username
               - name: AUTHENTIK_POSTGRESQL__PASSWORD
                 valueFrom:
                   secretKeyRef:

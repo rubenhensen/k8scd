@@ -1,0 +1,82 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  project: default
+  sources:
+    - chart: authentik
+      repoURL: https://charts.goauthentik.io
+      targetRevision: 2026.2.1
+      helm:
+        values: |
+          authentik:
+            secret_key: ""
+            bootstrap_password: ""
+            bootstrap_token: ""
+            postgresql:
+              password: ""
+          global:
+            env:
+              - name: AUTHENTIK_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secrets
+                    key: secret_key
+              - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secrets
+                    key: bootstrap_password
+              - name: AUTHENTIK_BOOTSTRAP_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-secrets
+                    key: bootstrap_token
+          server:
+            ingress:
+              enabled: true
+              ingressClassName: nginx
+              annotations:
+                cert-manager.io/cluster-issuer: prod-cluster-issuer
+              hosts:
+                - authentik.rubenhensen.nl
+              tls:
+                - secretName: authentik-tls
+                  hosts:
+                    - authentik.rubenhensen.nl
+          postgresql:
+            enabled: true
+            auth:
+              password: ""
+              postgresPassword: ""
+            primary:
+              persistence:
+                storageClass: longhorn
+                size: 8Gi
+              existingSecret: authentik-secrets
+              existingSecretKey: postgres_password
+          redis:
+            enabled: true
+            master:
+              persistence:
+                storageClass: longhorn
+                size: 2Gi
+    - repoURL: https://github.com/rubenhensen/k8scd.git
+      targetRevision: HEAD
+      path: authentik
+      directory:
+        include: "*.yaml"
+        exclude: "authentik-helm.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: authentik

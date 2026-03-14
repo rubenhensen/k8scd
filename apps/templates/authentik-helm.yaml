@@ -24,7 +24,12 @@ spec:
             bootstrap_password: ""
             bootstrap_token: ""
             postgresql:
+              host: authentik-postgres-rw
+              name: authentik
+              user: authentik
               password: ""
+            existingSecret:
+              secretName: authentik-secrets
           global:
             env:
               - name: AUTHENTIK_SECRET_KEY
@@ -42,6 +47,11 @@ spec:
                   secretKeyRef:
                     name: authentik-secrets
                     key: bootstrap_token
+              - name: AUTHENTIK_POSTGRESQL__PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: authentik-postgres-credentials
+                    key: password
           server:
             ingress:
               enabled: true
@@ -55,16 +65,7 @@ spec:
                   hosts:
                     - authentik.rubenhensen.nl
           postgresql:
-            enabled: true
-            auth:
-              password: ""
-              postgresPassword: ""
-            primary:
-              persistence:
-                storageClass: longhorn
-                size: 8Gi
-              existingSecret: authentik-secrets
-              existingSecretKey: postgres_password
+            enabled: false
           redis:
             enabled: true
             master:

@@ -160,7 +160,10 @@ in
         filter.verify = "(&(objectClass=user)(|(mail=*?*)(cn=*?*)))";
         filter.expand = "(&(objectClass=group)(cn=?))";
         attribute.name = "cn";
+        attribute.type = "class";
         attribute.email = "mail";
+        attribute.secret = "userPassword";
+        attribute.groups = "memberOf";
         attribute.description = "displayName";
       };
 
@@ -255,7 +258,7 @@ in
   systemd.services.nginx.serviceConfig.LimitNOFILE = 65536;
   systemd.services.nginx.preStart = lib.mkBefore ''
     mkdir -p /run/nginx
-    test -f /run/nginx/k8s-upstream.conf || printf 'upstream k8s_tls {\n    server 127.0.0.1:443;\n}\n\nupstream k8s_ldap {\n    server 127.0.0.1:3389;\n}\n' > /run/nginx/k8s-upstream.conf
+    test -f /run/nginx/k8s-upstream.conf || printf 'upstream k8s_tls {\n    server 127.0.0.1:1;\n}\n\nupstream k8s_ldap {\n    server 127.0.0.1:1;\n}\n' > /run/nginx/k8s-upstream.conf
     test -f /run/nginx/k8s-http-upstream.conf || printf 'upstream k8s_http {\n    server 127.0.0.1:80;\n}\n' > /run/nginx/k8s-http-upstream.conf
   '';
 

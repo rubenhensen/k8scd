@@ -36,9 +36,7 @@ spec:
           image: hashicorp/vault:1.15
           env:
             - name: VAULT_ADDR
-              value: "https://vault-active.vault.svc:8200"
-            - name: VAULT_CACERT
-              value: "/vault-tls/vault.ca"
+              value: "http://vault-active.vault.svc:8200"
             - name: VAULT_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -49,10 +47,6 @@ spec:
                 secretKeyRef:
                   name: vault-oidc-config
                   key: client_secret
-          volumeMounts:
-            - name: vault-tls
-              mountPath: /vault-tls
-              readOnly: true
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -68,8 +62,4 @@ spec:
                 user_claim="preferred_username" \
                 groups_claim="groups" \
                 policies="default"
-      volumes:
-        - name: vault-tls
-          secret:
-            secretName: vault-ha-tls
       restartPolicy: OnFailure

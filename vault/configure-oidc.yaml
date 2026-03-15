@@ -1,0 +1,75 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: vault-oidc-config
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  refreshInterval: 15m
+  target:
+    name: vault-oidc-config
+    creationPolicy: Owner
+  data:
+    - secretKey: client_secret
+      remoteRef:
+        key: kv/vault-oidc
+        property: client_secret
+    - secretKey: admin_token
+      remoteRef:
+        key: kv/vault-oidc
+        property: admin_token
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-configure-oidc
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+        - name: configure
+          image: hashicorp/vault:1.15
+          env:
+            - name: VAULT_ADDR
+              value: "https://vault-active.vault.svc:8200"
+            - name: VAULT_CACERT
+              value: "/vault-tls/vault.ca"
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault-oidc-config
+                  key: admin_token
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vault-oidc-config
+                  key: client_secret
+          volumeMounts:
+            - name: vault-tls
+              mountPath: /vault-tls
+              readOnly: true
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              vault auth enable oidc 2>/dev/null || true
+              vault write auth/oidc/config \
+                oidc_discovery_url="https://authentik.rubenhensen.nl/application/o/vault/" \
+                oidc_client_id="vault" \
+                oidc_client_secret="$OIDC_CLIENT_SECRET" \
+                default_role="default"
+              vault write auth/oidc/role/default \
+                allowed_redirect_uris="https://vault.hensen.io/ui/vault/auth/oidc/oidc/callback" \
+                allowed_redirect_uris="http://localhost:8250/oidc/callback" \
+                user_claim="preferred_username" \
+                groups_claim="groups" \
+                policies="default"
+      volumes:
+        - name: vault-tls
+          secret:
+            secretName: vault-ha-tls
+      restartPolicy: OnFailure

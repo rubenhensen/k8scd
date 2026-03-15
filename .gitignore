@@ -3,3 +3,6 @@ repomix-output.txt
 credentials-velero
 velero-credentials
 .env
+nix-infra-machine/ssh/
+nix-infra-machine/.env
+nix-infra-machine/nix/

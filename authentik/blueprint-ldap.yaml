@@ -6,7 +6,7 @@ data:
   ldap.yaml: |
     version: 1
     metadata:
-      name: LDAP Outpost
+      name: LDAP Provider
     entries:
       - model: authentik_providers_ldap.ldapprovider
         id: ldap-provider

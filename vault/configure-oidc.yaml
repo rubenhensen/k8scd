@@ -51,6 +51,7 @@ spec:
           args:
             - |
               vault auth enable oidc 2>/dev/null || true
+              vault auth tune -listing_visibility=unauth oidc/
               vault write auth/oidc/config \
                 oidc_discovery_url="https://authentik.rubenhensen.nl/application/o/vault/" \
                 oidc_client_id="vault" \

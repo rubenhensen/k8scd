@@ -54,7 +54,7 @@ records:
   - name: "@"
     expire: 86400
     type: MX
-    content: "10 mail.rubenhensen.nl."
+    content: "10 stalwart.rubenhensen.nl."
   - name: "202603e._domainkey"
     expire: 86400
     type: TXT

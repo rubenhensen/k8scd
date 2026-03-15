@@ -16,6 +16,7 @@ data:
         attrs:
           name: LDAP
           authorization_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
           base_dn: "DC=ldap,DC=goauthentik,DC=io"
           bind_mode: direct
           search_mode: direct

@@ -4,6 +4,24 @@
     name: nginx
     state: present
 
+- name: Install nginx stream modules
+  ansible.builtin.apt:
+    name: libnginx-mod-stream
+    state: present
+
+- name: Create stream.d directory
+  ansible.builtin.file:
+    path: /etc/nginx/stream.d
+    state: directory
+    mode: "0755"
+
+- name: Deploy nginx.conf
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+  notify: reload nginx
+
 - name: Remove default site
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
@@ -23,6 +41,76 @@
     dest: /etc/nginx/sites-enabled/mail.conf
     state: link
   notify: reload nginx
+
+- name: Deploy K8s upstream config (initial only)
+  ansible.builtin.template:
+    src: k8s-upstream.conf.j2
+    dest: "{{ nginx_k8s_upstream_conf }}"
+    mode: "0644"
+    force: false
+  notify: reload nginx
+
+- name: Deploy K8s backend IP config (initial only)
+  ansible.builtin.template:
+    src: k8s-backend-ip.conf.j2
+    dest: /etc/nginx/k8s-backend-ip.conf
+    mode: "0644"
+    force: false
+  notify: reload nginx
+
+- name: Deploy K8s HTTP proxy config
+  ansible.builtin.template:
+    src: k8s-proxy.conf.j2
+    dest: /etc/nginx/sites-available/k8s-proxy.conf
+    mode: "0644"
+  notify: reload nginx
+
+- name: Enable K8s proxy site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/k8s-proxy.conf
+    dest: /etc/nginx/sites-enabled/k8s-proxy.conf
+    state: link
+  notify: reload nginx
+
+- name: Deploy K8s IP update script
+  ansible.builtin.copy:
+    dest: /usr/local/bin/update-k8s-ip
+    content: |
+      #!/bin/bash
+      NEW_IP="$SSH_ORIGINAL_COMMAND"
+
+      if ! echo "$NEW_IP" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "Invalid IP: $NEW_IP"
+          exit 1
+      fi
+
+      CONF="{{ nginx_k8s_upstream_conf }}"
+      CURRENT_IP=$(grep -oP 'server \K[0-9.]+' "$CONF" 2>/dev/null)
+
+      if [ "$CURRENT_IP" = "$NEW_IP" ]; then
+          echo "IP unchanged: $NEW_IP"
+          exit 0
+      fi
+
+      printf 'upstream k8s_tls {\n    server %s:443;\n}\n' "$NEW_IP" > "$CONF"
+      printf 'set $k8s_ip %s;\n' "$NEW_IP" > /etc/nginx/k8s-backend-ip.conf
+
+      nginx -t && systemctl reload nginx
+      echo "Updated K8s backend IP to $NEW_IP"
+    mode: "0755"
+
+- name: Ensure .ssh directory exists for root
+  ansible.builtin.file:
+    path: /root/.ssh
+    state: directory
+    mode: "0700"
+
+- name: Deploy SSH authorized key for K8s IP updater
+  ansible.builtin.authorized_key:
+    user: root
+    key: "{{ nginx_k8s_updater_ssh_pubkey }}"
+    key_options: 'command="/usr/local/bin/update-k8s-ip",no-port-forwarding,no-X11-forwarding,no-agent-forwarding'
+  when: nginx_k8s_updater_ssh_pubkey is defined
 
 - name: Enable and start Nginx
   ansible.builtin.systemd:

@@ -15,8 +15,7 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen 127.0.0.1:8443 ssl http2;
     server_name {{ nginx_server_name }};
 
     ssl_certificate {{ nginx_tls_cert }};
@@ -94,8 +93,7 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen 127.0.0.1:8443 ssl http2;
     server_name {{ nginx_stalwart_server_name }};
 
     ssl_certificate {{ nginx_tls_cert }};

@@ -21,24 +21,3 @@ data:
           bind_mode: direct
           search_mode: direct
           mfa_support: false
-      - model: authentik_core.application
-        id: ldap-app
-        state: present
-        identifiers:
-          slug: ldap
-        attrs:
-          name: LDAP
-          slug: ldap
-          backchannel_providers:
-            - !KeyOf ldap-provider
-      - model: authentik_outposts.outpost
-        id: ldap-outpost
-        state: present
-        identifiers:
-          name: LDAP Outpost
-        attrs:
-          name: LDAP Outpost
-          type: ldap
-          providers:
-            - !KeyOf ldap-provider
-          service_connection: !Find [authentik_outposts.kubernetesserviceconnection, [local, true]]

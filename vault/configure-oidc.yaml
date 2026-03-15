@@ -52,6 +52,11 @@ spec:
             - |
               vault auth enable oidc 2>/dev/null || true
               vault auth tune -listing_visibility=unauth oidc/
+              vault policy write admin - <<'POLICY'
+              path "*" {
+                capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+              }
+              POLICY
               vault write auth/oidc/config \
                 oidc_discovery_url="https://authentik.rubenhensen.nl/application/o/vault/" \
                 oidc_client_id="vault" \
@@ -63,5 +68,5 @@ spec:
                 user_claim="preferred_username" \
                 oidc_scopes="openid,profile,email" \
                 groups_claim="groups" \
-                policies="default"
+                policies="default,admin"
       restartPolicy: OnFailure

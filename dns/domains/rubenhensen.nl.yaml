@@ -5,8 +5,8 @@ records:
     content: "46.224.26.65"
   - name: mail
     expire: 86400
-    type: A
-    content: "46.224.26.65"
+    type: CNAME
+    content: "hensen.io."
   - name: stalwart
     expire: 86400
     type: A

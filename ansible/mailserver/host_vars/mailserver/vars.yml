@@ -1,5 +1,0 @@
----
-stalwart_fallback_admin_password: "{{ vault_stalwart_fallback_admin_password }}"
-stalwart_db_password: "{{ vault_stalwart_db_password }}"
-sogo_db_password: "{{ vault_sogo_db_password }}"
-nginx_k8s_updater_ssh_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII5cMc73rlUCn3mS5FXlu3nO+AUeW2L28jRh22VYIPY4 k8s-ip-updater"

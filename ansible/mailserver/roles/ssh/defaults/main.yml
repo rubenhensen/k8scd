@@ -1,6 +1,0 @@
----
-ssh_port: 22
-ssh_permit_root_login: "prohibit-password"  # allows key-based root login
-ssh_password_authentication: "no"
-ssh_max_auth_tries: 3
-ssh_allowed_users: "root"  # space-separated list

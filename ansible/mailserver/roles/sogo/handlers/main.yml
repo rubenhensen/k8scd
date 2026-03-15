@@ -1,5 +1,0 @@
----
-- name: restart sogo
-  ansible.builtin.systemd:
-    name: sogo
-    state: restarted

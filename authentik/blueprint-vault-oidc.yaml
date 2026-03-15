@@ -11,6 +11,8 @@ data:
       - model: authentik_crypto.certificatekeypair
         id: vault-signing-key
         state: present
+        identifiers:
+          name: vault-signing-key
         attrs:
           name: vault-signing-key
           generate: true

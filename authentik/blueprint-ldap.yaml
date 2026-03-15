@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-ldap
+data:
+  ldap.yaml: |
+    version: 1
+    metadata:
+      name: LDAP Outpost
+    entries:
+      - model: authentik_providers_ldap.ldapprovider
+        id: ldap-provider
+        state: present
+        identifiers:
+          name: LDAP
+        attrs:
+          name: LDAP
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          base_dn: "DC=ldap,DC=goauthentik,DC=io"
+          bind_mode: direct
+          search_mode: direct
+      - model: authentik_core.application
+        id: ldap-app
+        state: present
+        identifiers:
+          slug: ldap
+        attrs:
+          name: LDAP
+          provider: !KeyOf ldap-provider
+      - model: authentik_outposts.outpost
+        id: ldap-outpost
+        state: present
+        identifiers:
+          name: LDAP Outpost
+        attrs:
+          name: LDAP Outpost
+          type: ldap
+          providers:
+            - !KeyOf ldap-provider
+          service_connection: !Find [authentik_outposts.kubernetesserviceconnection, [local, true]]

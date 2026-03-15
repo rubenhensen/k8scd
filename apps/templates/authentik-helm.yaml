@@ -66,15 +66,32 @@ spec:
                   secretKeyRef:
                     name: vault-oidc-client-secret
                     key: client_secret
+              - name: STALWART_OIDC_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: stalwart-oidc-client-secret
+                    key: client_secret
           server:
             volumes:
-              - name: custom-blueprints
+              - name: blueprint-vault
                 configMap:
                   name: authentik-blueprint-vault
+              - name: blueprint-mail
+                configMap:
+                  name: authentik-blueprint-mail
+              - name: blueprint-ldap
+                configMap:
+                  name: authentik-blueprint-ldap
             volumeMounts:
-              - name: custom-blueprints
+              - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
                 subPath: vault-oidc.yaml
+              - name: blueprint-mail
+                mountPath: /blueprints/custom/mail-oidc.yaml
+                subPath: mail-oidc.yaml
+              - name: blueprint-ldap
+                mountPath: /blueprints/custom/ldap.yaml
+                subPath: ldap.yaml
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -88,13 +105,25 @@ spec:
                     - authentik.rubenhensen.nl
           worker:
             volumes:
-              - name: custom-blueprints
+              - name: blueprint-vault
                 configMap:
                   name: authentik-blueprint-vault
+              - name: blueprint-mail
+                configMap:
+                  name: authentik-blueprint-mail
+              - name: blueprint-ldap
+                configMap:
+                  name: authentik-blueprint-ldap
             volumeMounts:
-              - name: custom-blueprints
+              - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
                 subPath: vault-oidc.yaml
+              - name: blueprint-mail
+                mountPath: /blueprints/custom/mail-oidc.yaml
+                subPath: mail-oidc.yaml
+              - name: blueprint-ldap
+                mountPath: /blueprints/custom/ldap.yaml
+                subPath: ldap.yaml
           postgresql:
             enabled: false
           redis:

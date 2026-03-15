@@ -25,6 +25,8 @@ data:
             - matching_mode: strict
               url: https://vault.hensen.io/ui/vault/auth/oidc/oidc/callback
             - matching_mode: strict
+              url: https://vault.rubenhensen.nl/ui/vault/auth/oidc/oidc/callback
+            - matching_mode: strict
               url: http://localhost:8250/oidc/callback
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
           property_mappings:

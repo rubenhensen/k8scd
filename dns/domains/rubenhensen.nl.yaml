@@ -23,6 +23,34 @@ records:
     expire: 86400
     type: CNAME
     content: "@"
+  - name: "argocd"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "vault"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "rss"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "ha"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "longhorn"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "lingo"
+    expire: 86400
+    type: CNAME
+    content: "@"
+  - name: "blog"
+    expire: 86400
+    type: CNAME
+    content: "@"
   - name: "@"
     expire: 86400
     type: MX

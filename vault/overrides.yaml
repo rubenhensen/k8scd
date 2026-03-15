@@ -37,5 +37,7 @@ server:
           - secretName: letsencrypt-prod
             hosts:
               - vault.hensen.io
+              - vault.rubenhensen.nl
       hosts:
         - host: "vault.hensen.io"
+        - host: "vault.rubenhensen.nl"

@@ -17,12 +17,21 @@ spec:
         backend:
           service:
             name: freshrss
-            port: 
-              number: 8080            
-  # TLS configuration for HTTPS
+            port:
+              number: 8080
+  - host: rss.rubenhensen.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: freshrss
+            port:
+              number: 8080
   tls:
-    # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
         - rss.hensen.io
+        - rss.rubenhensen.nl
 

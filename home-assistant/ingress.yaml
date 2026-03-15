@@ -32,13 +32,21 @@ spec:
         backend:
           service:
             name: home-assistant-external
-            port: 
+            port:
               number: 8123
-            
-  # TLS configuration for HTTPS
+  - host: ha.rubenhensen.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: home-assistant-external
+            port:
+              number: 8123
   tls:
-    # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
         - ha.hensen.io
+        - ha.rubenhensen.nl
 

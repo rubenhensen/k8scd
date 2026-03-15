@@ -22,13 +22,21 @@ spec:
         backend:
           service:
             name: argocd-server
-            port: 
+            port:
               name: https
-            
-  # TLS configuration for HTTPS
+  - host: argocd.rubenhensen.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              name: https
   tls:
-    # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
         - argocd.hensen.io
+        - argocd.rubenhensen.nl
 

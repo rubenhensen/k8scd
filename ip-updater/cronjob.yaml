@@ -19,6 +19,8 @@ spec:
                   apk add --no-cache openssh-client curl > /dev/null 2>&1
                   cp /ssh-key/private_key /tmp/ssh_key
                   chmod 600 /tmp/ssh_key
+                  echo "Key starts with: $(head -1 /tmp/ssh_key)"
+                  wc -c /tmp/ssh_key
                   IP=$(curl -s --max-time 10 https://api.ipify.org)
                   if [ -z "$IP" ]; then
                     echo "Failed to get external IP"

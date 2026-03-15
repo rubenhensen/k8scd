@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ip-updater
+spec:
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ip-updater
+              image: alpine:3.19
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  apk add --no-cache openssh-client curl > /dev/null 2>&1
+                  cp /ssh-key/private_key /tmp/ssh_key
+                  chmod 600 /tmp/ssh_key
+                  IP=$(curl -s --max-time 10 https://api.ipify.org)
+                  if [ -z "$IP" ]; then
+                    echo "Failed to get external IP"
+                    exit 1
+                  fi
+                  echo "Current external IP: $IP"
+                  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+                    -i /tmp/ssh_key root@46.224.26.65 "$IP"
+              volumeMounts:
+                - name: ssh-key
+                  mountPath: /ssh-key
+                  readOnly: true
+          volumes:
+            - name: ssh-key
+              secret:
+                secretName: ip-updater-ssh-key
+                defaultMode: 0400
+          restartPolicy: OnFailure

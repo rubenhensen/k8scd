@@ -31,14 +31,3 @@ data:
           slug: ldap
           backchannel_providers:
             - !KeyOf ldap-provider
-      - model: authentik_outposts.outpost
-        id: ldap-outpost
-        state: present
-        identifiers:
-          name: LDAP Outpost
-        attrs:
-          name: LDAP Outpost
-          type: ldap
-          providers:
-            - !KeyOf ldap-provider
-          service_connection: !Find [authentik_outposts.kubernetesserviceconnection, [local, true]]

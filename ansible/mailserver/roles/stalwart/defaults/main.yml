@@ -39,12 +39,12 @@ stalwart_server_listeners:
     options:
       tls.implicit: true
   - name: "https"
-    bind: "[::]:443"
+    bind: "127.0.0.1:8443"
     protocol: "http"
     options:
       tls.implicit: true
   - name: "http"
-    bind: "[::]:8080"
+    bind: "127.0.0.1:8080"
     protocol: "http"
 
 # Stores
@@ -54,11 +54,24 @@ stalwart_stores:
     options:
       path: "{{ stalwart_data_path }}"
       compression: "lz4"
+  - name: "postgresql"
+    type: "postgresql"
+    options:
+      host: "127.0.0.1"
+      port: 5432
+      database: "{{ stalwart_db_name }}"
+      user: "{{ stalwart_db_user }}"
+      password: "{{ stalwart_db_password }}"
 
 # Directory
-stalwart_directory_type: "internal"
+stalwart_directory_type: "sql"
 stalwart_directory_options:
-  store: "rocksdb"
+  store: "postgresql"
+
+# Database
+stalwart_db_name: "stalwart"
+stalwart_db_user: "stalwart"
+stalwart_db_password: "{{ vault_stalwart_db_password }}"
 
 # Tracers
 stalwart_tracers:
@@ -76,12 +89,9 @@ stalwart_tracers:
       ansi: false
       enable: true
 
-# ACME / Let's Encrypt
-stalwart_acme_enabled: true
-stalwart_acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
-stalwart_acme_contact: "mailto:admin@rubenhensen.nl"
-stalwart_acme_domains:
-  - "mail.rubenhensen.nl"
+# TLS certificate (managed by certbot)
+stalwart_tls_cert: "/etc/letsencrypt/live/{{ stalwart_server_hostname }}/fullchain.pem"
+stalwart_tls_key: "/etc/letsencrypt/live/{{ stalwart_server_hostname }}/privkey.pem"
 
 # Extra config sections (list of {name, options} dicts)
 stalwart_additional_configs: []

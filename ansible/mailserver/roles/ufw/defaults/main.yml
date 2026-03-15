@@ -8,4 +8,4 @@ ufw_allowed_ports:
   - { port: "587", proto: "tcp", comment: "SMTP submission (STARTTLS)" }
   - { port: "993", proto: "tcp", comment: "IMAP (implicit TLS)" }
   - { port: "443", proto: "tcp", comment: "HTTPS (web admin + JMAP)" }
-  - { port: "8080", proto: "tcp", comment: "HTTP (certbot + redirect)" }
+  - { port: "80", proto: "tcp", comment: "HTTP (ACME + redirect)" }

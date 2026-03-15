@@ -20,3 +20,54 @@
     name: "{{ stalwart_service_name }}"
     state: "{{ stalwart_service_state }}"
     enabled: "{{ stalwart_service_enabled }}"
+
+- name: Flush handlers to ensure Stalwart is running
+  ansible.builtin.meta: flush_handlers
+
+- name: Wait for Stalwart API
+  ansible.builtin.wait_for:
+    port: 8080
+    host: 127.0.0.1
+    delay: 2
+    timeout: 30
+
+- name: Read TLS certificate
+  ansible.builtin.slurp:
+    src: "{{ stalwart_tls_cert }}"
+  register: tls_cert_content
+
+- name: Read TLS private key
+  ansible.builtin.slurp:
+    src: "{{ stalwart_tls_key }}"
+  register: tls_key_content
+
+- name: Push TLS certificate to Stalwart
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:8080/api/settings"
+    method: POST
+    user: "{{ stalwart_fallback_admin_login }}"
+    password: "{{ stalwart_fallback_admin_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      - type: "insert"
+        assert_empty: false
+        values:
+          - - "certificate.default.cert"
+            - "{{ tls_cert_content.content | b64decode }}"
+          - - "certificate.default.private-key"
+            - "{{ tls_key_content.content | b64decode }}"
+          - - "certificate.default.default"
+            - "true"
+          - - "server.tls.certificate"
+            - "default"
+    status_code: [200, 204]
+
+- name: Reload Stalwart to apply certificate
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:8080/api/reload"
+    method: GET
+    user: "{{ stalwart_fallback_admin_login }}"
+    password: "{{ stalwart_fallback_admin_password }}"
+    force_basic_auth: true
+    status_code: [200, 204]

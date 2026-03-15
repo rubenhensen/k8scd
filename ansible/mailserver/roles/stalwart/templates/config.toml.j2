@@ -1,9 +1,6 @@
 [server]
 hostname = "{{ stalwart_server_hostname }}"
 max-connections = {{ stalwart_server_max_connections }}
-{% if stalwart_acme_enabled %}
-tls.certificate = "acme"
-{% endif %}
 
 {% for listener in stalwart_server_listeners %}
 [server.listener.{{ listener.name }}]
@@ -19,19 +16,6 @@ protocol = "{{ listener.protocol }}"
 {% endfor %}
 
 {% endfor %}
-{% if stalwart_acme_enabled %}
-[certificate.acme]
-type = "acme"
-provider = "letsencrypt"
-domains = [{% for d in stalwart_acme_domains %}"{{ d }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-
-[acme.letsencrypt]
-directory = "{{ stalwart_acme_directory }}"
-contact = ["{{ stalwart_acme_contact }}"]
-challenge = "tls-alpn-01"
-default = true
-{% endif %}
-
 [storage]
 data = "{{ stalwart_storage_data }}"
 fts = "{{ stalwart_storage_fts }}"
@@ -62,6 +46,21 @@ type = "{{ stalwart_directory_type }}"
 {%- endif %}
 
 {% endfor %}
+{% if stalwart_directory_type == "sql" %}
+columns.secret = "password"
+columns.description = "description"
+columns.email = "email"
+columns.quota = "quota"
+columns.class = "type"
+
+[store.postgresql.query]
+name = "SELECT name, type, password, description, email, quota FROM accounts WHERE name = $1 AND active = true"
+members = "SELECT member_of FROM group_members WHERE name = $1"
+recipients = "SELECT name FROM emails WHERE address = $1"
+emails = "SELECT address FROM emails WHERE name = $1 ORDER BY type DESC, address ASC"
+secrets = "SELECT password FROM accounts WHERE name = $1 AND active = true"
+{% endif %}
+
 
 {% for tracer in stalwart_tracers %}
 [tracer.{{ tracer.type }}]

@@ -1,0 +1,113 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ nginx_server_name }};
+
+    # ACME challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/acme;
+    }
+
+    # Redirect everything else to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {{ nginx_server_name }};
+
+    ssl_certificate {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # SOGo
+    location ^~ /SOGo {
+        proxy_pass http://{{ nginx_sogo_backend }};
+        proxy_redirect http://{{ nginx_sogo_backend }} /;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header x-webobjects-server-protocol HTTP/1.0;
+        proxy_set_header x-webobjects-remote-host $remote_addr;
+        proxy_set_header x-webobjects-server-name $server_name;
+        proxy_set_header x-webobjects-server-url $scheme://$host;
+        proxy_set_header x-webobjects-server-port $server_port;
+        proxy_buffer_size 128k;
+        proxy_buffers 64 512k;
+        proxy_busy_buffers_size 512k;
+        client_max_body_size 100m;
+    }
+
+    # SOGo static resources
+    location ^~ /SOGo.woa/WebServerResources/ {
+        alias /usr/lib/GNUstep/SOGo/WebServerResources/;
+    }
+
+    location /SOGo/WebServerResources/ {
+        alias /usr/lib/GNUstep/SOGo/WebServerResources/;
+    }
+
+    # Microsoft AutoDiscover / ActiveSync
+    location ^~ /Microsoft-Server-ActiveSync {
+        proxy_pass http://{{ nginx_sogo_backend }}/SOGo/Microsoft-Server-ActiveSync;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_connect_timeout 360;
+        proxy_send_timeout 360;
+        proxy_read_timeout 360;
+    }
+
+    # CalDAV/CardDAV well-known
+    location /.well-known/caldav {
+        return 301 https://$host/SOGo/dav;
+    }
+    location /.well-known/carddav {
+        return 301 https://$host/SOGo/dav;
+    }
+
+    # Default: SOGo
+    location / {
+        return 301 https://$host/SOGo;
+    }
+}
+
+# Stalwart web admin
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ nginx_stalwart_server_name }};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/acme;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {{ nginx_stalwart_server_name }};
+
+    ssl_certificate {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass https://{{ nginx_stalwart_backend }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+}

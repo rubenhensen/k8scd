@@ -1,0 +1,6 @@
+---
+certbot_email: "admin@rubenhensen.nl"
+certbot_domains:
+  - "mail.rubenhensen.nl"
+  - "stalwart.rubenhensen.nl"
+certbot_webroot: "/var/www/acme"

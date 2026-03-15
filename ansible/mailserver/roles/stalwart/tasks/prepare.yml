@@ -21,6 +21,37 @@
     group: "{{ stalwart_system_group }}"
     mode: "0755"
 
+- name: Create Stalwart database user
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "{{ stalwart_db_user }}"
+    password: "{{ stalwart_db_password }}"
+  when: stalwart_directory_type == "sql"
+
+- name: Create Stalwart database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ stalwart_db_name }}"
+    owner: "{{ stalwart_db_user }}"
+  when: stalwart_directory_type == "sql"
+
+- name: Deploy database schema
+  ansible.builtin.copy:
+    src: schema.sql
+    dest: /tmp/stalwart-schema.sql
+    mode: "0644"
+  when: stalwart_directory_type == "sql"
+
+- name: Apply database schema
+  become: true
+  become_user: postgres
+  ansible.builtin.command:
+    cmd: psql -d {{ stalwart_db_name }} -f /tmp/stalwart-schema.sql
+  changed_when: false
+  when: stalwart_directory_type == "sql"
+
 - name: Check if already installed
   ansible.builtin.stat:
     path: "{{ stalwart_executable_path }}"

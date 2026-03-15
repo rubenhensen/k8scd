@@ -1,2 +1,4 @@
 ---
 stalwart_fallback_admin_password: "{{ vault_stalwart_fallback_admin_password }}"
+stalwart_db_password: "{{ vault_stalwart_db_password }}"
+sogo_db_password: "{{ vault_sogo_db_password }}"

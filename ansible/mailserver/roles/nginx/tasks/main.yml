@@ -1,0 +1,31 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Remove default site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: Deploy mail site config
+  ansible.builtin.template:
+    src: mail.conf.j2
+    dest: /etc/nginx/sites-available/mail.conf
+    mode: "0644"
+  notify: reload nginx
+
+- name: Enable mail site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/mail.conf
+    dest: /etc/nginx/sites-enabled/mail.conf
+    state: link
+  notify: reload nginx
+
+- name: Enable and start Nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: true
+    state: started

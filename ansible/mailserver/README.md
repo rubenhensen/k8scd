@@ -89,7 +89,7 @@ From the web UI you can manage domains, accounts, DKIM keys, and other mail sett
 
 ## TLS certificates
 
-Handled automatically by Stalwart's built-in ACME support (Let's Encrypt, `tls-alpn-01` challenge on port 443). No certbot needed. Certificates auto-renew.
+Managed by certbot (Let's Encrypt). On first run, certbot uses standalone mode (temporarily stops Stalwart to bind port 80/443). Renewals happen automatically via `certbot.timer` and a deploy hook restarts Stalwart. Certs are at `/etc/letsencrypt/live/mail.rubenhensen.nl/`.
 
 ## Ports
 
@@ -101,7 +101,7 @@ Handled automatically by Stalwart's built-in ACME support (Let's Encrypt, `tls-a
 | 587 | SMTP submission (STARTTLS) |
 | 993 | IMAP (implicit TLS) |
 | 443 | HTTPS (web admin + JMAP + ACME) |
-| 8080 | HTTP |
+| 80 | HTTP (ACME + redirect) |
 
 ## If something breaks
 

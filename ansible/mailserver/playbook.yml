@@ -4,8 +4,11 @@
   become: true
 
   roles:
-    - base
-    - ssh
-    - ufw
-    - fail2ban
-    - stalwart
+    - { role: base, tags: [base] }
+    - { role: ssh, tags: [ssh] }
+    - { role: ufw, tags: [ufw] }
+    - { role: fail2ban, tags: [fail2ban] }
+    - { role: certbot, tags: [certbot] }
+    - { role: stalwart, tags: [stalwart] }
+    - { role: sogo, tags: [sogo] }
+    - { role: nginx, tags: [nginx] }

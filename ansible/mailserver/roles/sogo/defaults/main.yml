@@ -1,0 +1,11 @@
+---
+sogo_db_name: "sogo"
+sogo_db_user: "sogo"
+sogo_db_password: "{{ vault_sogo_db_password }}"
+
+sogo_imap_server: "127.0.0.1"
+sogo_smtp_server: "127.0.0.1"
+sogo_mail_domain: "rubenhensen.nl"
+
+sogo_time_zone: "Europe/Amsterdam"
+sogo_page_title: "Mail - rubenhensen.nl"

@@ -248,7 +248,7 @@ if [ "$CMD" = "update" ]; then
   $NIX_INFRA fleet deploy-apps -d "$WORK_DIR" --env="$ENV" --batch \
     --target="$REST"
 
-  $NIX_INFRA fleet cmd -d "$WORK_DIR" --env="$ENV" --target="$REST" "nixos-rebuild switch --fast"
+  $NIX_INFRA fleet cmd -d "$WORK_DIR" --env="$ENV" --target="$REST" "nixos-rebuild switch"
   exit 0
 fi
 

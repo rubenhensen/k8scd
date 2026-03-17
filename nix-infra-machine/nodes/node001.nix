@@ -91,7 +91,7 @@
         fts = "rocksdb";
         blob = "rocksdb";
         lookup = "rocksdb";
-        directory = "internal";
+        directory = "authentik";
       };
 
       store.rocksdb = {
@@ -110,6 +110,28 @@
         level = "info";
         ansi = false;
         enable = true;
+      };
+
+      directory.authentik = {
+        type = "ldap";
+        url = "ldap://ldap.rubenhensen.nl:389";
+        timeout = "30s";
+        tls.enable = false;
+        base-dn = "DC=ldap,DC=goauthentik,DC=io";
+
+        bind.auth.method = "lookup";
+
+        filter = {
+          name = "(&(objectClass=user)(cn=?))";
+          email = "(&(objectClass=user)(|(mail=?)(mailAlias=?)))";
+        };
+
+        attributes = {
+          name = "cn";
+          class = "objectClass";
+          email = "mail";
+          groups = "memberOf";
+        };
       };
 
       authentication.fallback-admin = {

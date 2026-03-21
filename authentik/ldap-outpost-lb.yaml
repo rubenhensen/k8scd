@@ -6,7 +6,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: ak-outpost-ldap-outpost
+    app.kubernetes.io/name: authentik-outpost-ldap
   ports:
     - name: ldap
       port: 389

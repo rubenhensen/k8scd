@@ -45,7 +45,7 @@ spec:
             path: /
             pathType: Prefix
           memcached:
-            enabled: false
+            enabled: true
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       path: sogo-mail

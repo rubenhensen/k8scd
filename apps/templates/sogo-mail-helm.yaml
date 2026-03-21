@@ -21,6 +21,8 @@ spec:
         values: |
           sogo:
             host: mail.rubenhensen.nl
+            image:
+              tag: "5.12.5"
             existingSecrets:
               - sogo-mail-secrets
           ingress:

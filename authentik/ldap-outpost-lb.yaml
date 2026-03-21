@@ -4,15 +4,17 @@ metadata:
   name: ldap-outpost-external
   namespace: authentik
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app.kubernetes.io/name: ak-outpost-ldap-outpost
   ports:
     - name: ldap
       port: 389
       targetPort: 3389
+      nodePort: 30389
       protocol: TCP
     - name: ldaps
       port: 636
       targetPort: 6636
+      nodePort: 30636
       protocol: TCP

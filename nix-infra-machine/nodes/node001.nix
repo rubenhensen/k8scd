@@ -119,11 +119,13 @@
         tls.enable = false;
         base-dn = "DC=ldap,DC=goauthentik,DC=io";
 
+        bind.dn = "cn=ldapservice,ou=users,DC=ldap,DC=goauthentik,DC=io";
+        bind.secret = "%{file:/run/credentials/stalwart-mail.service/ldap_bind_password}%";
         bind.auth.method = "lookup";
 
         filter = {
-          name = "(&(objectClass=user)(cn=?))";
-          email = "(&(objectClass=user)(|(mail=?)(mailAlias=?)))";
+          name = "(&(objectClass=user)(|(cn=?)(mail=?)))";
+          email = "(&(objectClass=user)(mail=?))";
         };
 
         attributes = {
@@ -143,6 +145,7 @@
 
   systemd.services.stalwart-mail.serviceConfig.LoadCredentialEncrypted = [
     "stalwart-admin-password:/root/secrets/[%%secrets/stalwart-admin-password%%]"
+    "ldap_bind_password:/root/secrets/[%%secrets/ldap_bind_password%%]"
   ];
 
   users.users.stalwart-mail.extraGroups = [ "acme" ];

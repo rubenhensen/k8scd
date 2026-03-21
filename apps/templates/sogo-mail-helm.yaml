@@ -19,10 +19,10 @@ spec:
       targetRevision: 0.3.5
       helm:
         values: |
+          image:
+            tag: "5.12.5"
           sogo:
             host: mail.rubenhensen.nl
-            image:
-              tag: "5.12.5"
             existingSecrets:
               - sogo-mail-secrets
           ingress:

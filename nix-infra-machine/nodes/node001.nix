@@ -136,6 +136,34 @@
         };
       };
 
+      signature."rsa" = {
+        private-key = "%{file:/run/credentials/stalwart-mail.service/dkim-rsa.key}%";
+        domain = "rubenhensen.nl";
+        selector = "202603r2";
+        headers = ["From" "To" "Cc" "Date" "Subject" "Message-ID" "Organization" "MIME-Version" "Content-Type" "In-Reply-To" "References" "List-Id"];
+        algorithm = "rsa-sha-256";
+        canonicalization = "relaxed/relaxed";
+        expire = "10d";
+        set-body-length = false;
+        report = true;
+      };
+
+      signature."ed25519" = {
+        private-key = "%{file:/run/credentials/stalwart-mail.service/dkim-ed25519.key}%";
+        domain = "rubenhensen.nl";
+        selector = "202603e2";
+        headers = ["From" "To" "Cc" "Date" "Subject" "Message-ID" "Organization" "MIME-Version" "Content-Type" "In-Reply-To" "References" "List-Id"];
+        algorithm = "ed25519-sha256";
+        canonicalization = "relaxed/relaxed";
+        set-body-length = false;
+        report = false;
+      };
+
+      auth.dkim.sign = [
+        { "if" = "listener != 'smtp'"; "then" = "['rsa', 'ed25519']"; }
+        { "else" = false; }
+      ];
+
       authentication.fallback-admin = {
         user = "admin";
         secret = "%{file:/run/credentials/stalwart-mail.service/stalwart-admin-password}%";
@@ -146,6 +174,8 @@
   systemd.services.stalwart-mail.serviceConfig.LoadCredentialEncrypted = [
     "stalwart-admin-password:/root/secrets/[%%secrets/stalwart-admin-password%%]"
     "ldap_bind_password:/root/secrets/[%%secrets/ldap_bind_password%%]"
+    "dkim-rsa.key:/root/secrets/[%%secrets/dkim-rsa.key%%]"
+    "dkim-ed25519.key:/root/secrets/[%%secrets/dkim-ed25519.key%%]"
   ];
 
   users.users.stalwart-mail.extraGroups = [ "acme" ];

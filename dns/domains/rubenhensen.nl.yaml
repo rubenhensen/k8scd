@@ -67,6 +67,14 @@ records:
     expire: 86400
     type: TXT
     content: "v=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxVEP+pDBE8/KdL34dYMVAoQW6cr9ARE/kho7KF2MP7lCjkigcjbbkgn3wGRdhoVjuoMlShaup0Bsycb4pJtalFObRUOxMkZG6yK2w67Hz1Lq5MtUMvVANCsdsoztkTmaWpnU5UYXYYGOtetupvNdIJTg6qEg5AJO51LrqqTDpv5CM0cgFbXkQiyF5srZ+B7czjFOiJkGQ9y4xqT4nggl+Ph/l9sA/VXJYB7WjvhzxrBVKcOlI32AMJkIJZYUg+9wbjJ1TBkpFpyClORTsTaF2SJOwWMm5q64OUf4/pTpTmG6TPXZ7lO429G0ulZcTkdq/fTrZZA6G5fruD7pyIkGNwIDAQAB"
+  - name: "202603e2._domainkey"
+    expire: 86400
+    type: TXT
+    content: "v=DKIM1; k=ed25519; h=sha256; p=6m4ORRmP9njy97OoQI6LNCebE2AJVLVo4Vkn/5cNfPI="
+  - name: "202603r2._domainkey"
+    expire: 86400
+    type: TXT
+    content: "v=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApBm+QIOPtVAWlnpcd1Sh/FjTLU4oXNdyYMZ4uo+uj+8PkewhzN+6gb9CD/M6NB8Wa+8kchcVlziB1GD4z07QAAJg8pGSs1UZ7Ggfp7RgE6CkiPvMxAE6PkP9mBKcPH9YFR0xQaoi0BHQD1EKmPq2vXOc3BFtgkoeO+Myo6ELenpf17Iv6PcBxyLBOBnnFB4Uhos8qJ8qHb+hHhL6wR8sxk+OAPLXDWVRtrTXvOrlDoRBjz9X0xKdyE3aOQ6xg+qHusVIszLFz8iO6L5ia/rtwnm9v92NR9g0r3/lJE3AJFYqKIF7kPcdjyowvuUjlpDQedXSaEkytGzc84JbkHE+jQIDAQAB"
   - name: stalwart
     expire: 86400
     type: TXT

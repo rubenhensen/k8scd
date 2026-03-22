@@ -23,6 +23,7 @@ spec:
             tag: "5.12.5"
           sogo:
             host: mail.rubenhensen.nl
+            enableVerboseLogs: true
             existingSecrets:
               - sogo-mail-secrets
           ingress:

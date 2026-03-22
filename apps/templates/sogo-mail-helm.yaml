@@ -24,6 +24,9 @@ spec:
           sogo:
             host: mail.rubenhensen.nl
             enableVerboseLogs: true
+            extraEnv:
+              - name: PGSSLMODE
+                value: "disable"
             existingSecrets:
               - sogo-mail-secrets
           ingress:

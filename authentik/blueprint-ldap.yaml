@@ -18,8 +18,8 @@ data:
           authorization_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
           invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
           base_dn: "DC=ldap,DC=goauthentik,DC=io"
-          bind_mode: direct
-          search_mode: direct
+          bind_mode: cached
+          search_mode: cached
           mfa_support: false
       - model: authentik_core.application
         id: ldap-app

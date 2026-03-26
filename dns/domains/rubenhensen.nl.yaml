@@ -13,12 +13,12 @@ records:
     content: "46.224.26.65"
   - name: "phocaslustrum"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "ynab"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "authentik"
     expire: 86400
     type: A
@@ -29,32 +29,32 @@ records:
     content: "62.41.87.114"
   - name: "argocd"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "vault"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "rss"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "ha"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "longhorn"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "lingo"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "blog"
     expire: 86400
-    type: CNAME
-    content: "@"
+    type: A
+    content: "62.41.87.114"
   - name: "@"
     expire: 86400
     type: MX

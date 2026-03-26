@@ -22,6 +22,11 @@
       group = "stalwart-mail";
       reloadServices = [ "stalwart-mail" ];
       webroot = "/var/lib/acme/acme-challenge";
+      extraDomainNames = [
+        "autoconfig.rubenhensen.nl"
+        "autodiscover.rubenhensen.nl"
+        "rubenhensen.nl"
+      ];
     };
   };
 
@@ -33,6 +38,42 @@
   services.nginx = {
     enable = true;
     virtualHosts."stalwart.rubenhensen.nl" = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/.well-known/acme-challenge/" = {
+        root = "/var/lib/acme/acme-challenge";
+      };
+      locations."/" = {
+        return = "301 https://$host$request_uri";
+      };
+    };
+    virtualHosts."autoconfig.rubenhensen.nl" = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/.well-known/acme-challenge/" = {
+        root = "/var/lib/acme/acme-challenge";
+      };
+      locations."/" = {
+        return = "301 https://$host$request_uri";
+      };
+    };
+    virtualHosts."autodiscover.rubenhensen.nl" = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/.well-known/acme-challenge/" = {
+        root = "/var/lib/acme/acme-challenge";
+      };
+      locations."/" = {
+        return = "301 https://$host$request_uri";
+      };
+    };
+    virtualHosts."rubenhensen.nl" = {
       listen = [
         { addr = "0.0.0.0"; port = 80; }
         { addr = "[::]"; port = 80; }

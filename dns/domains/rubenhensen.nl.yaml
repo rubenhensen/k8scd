@@ -1,165 +1,165 @@
 records:
   - name: "@"
-    expire: 86400
+    expire: 300
     type: A
     content: "46.224.26.65"
   - name: mail
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: stalwart
-    expire: 86400
+    expire: 300
     type: A
     content: "46.224.26.65"
   - name: "phocaslustrum"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "ynab"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "authentik"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "ldap"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "argocd"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "vault"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "rss"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "ha"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "longhorn"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "lingo"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "blog"
-    expire: 86400
+    expire: 300
     type: A
     content: "62.41.87.114"
   - name: "@"
-    expire: 86400
+    expire: 300
     type: MX
     content: "10 stalwart.rubenhensen.nl."
   - name: "202603e._domainkey"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=DKIM1; k=ed25519; h=sha256; p=XFKYZdcbUomy5U2kCLAqo6M2uimoerYJMmdquNS/Rxc="
   - name: "202603r._domainkey"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxVEP+pDBE8/KdL34dYMVAoQW6cr9ARE/kho7KF2MP7lCjkigcjbbkgn3wGRdhoVjuoMlShaup0Bsycb4pJtalFObRUOxMkZG6yK2w67Hz1Lq5MtUMvVANCsdsoztkTmaWpnU5UYXYYGOtetupvNdIJTg6qEg5AJO51LrqqTDpv5CM0cgFbXkQiyF5srZ+B7czjFOiJkGQ9y4xqT4nggl+Ph/l9sA/VXJYB7WjvhzxrBVKcOlI32AMJkIJZYUg+9wbjJ1TBkpFpyClORTsTaF2SJOwWMm5q64OUf4/pTpTmG6TPXZ7lO429G0ulZcTkdq/fTrZZA6G5fruD7pyIkGNwIDAQAB"
   - name: "202603e2._domainkey"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=DKIM1; k=ed25519; h=sha256; p=6m4ORRmP9njy97OoQI6LNCebE2AJVLVo4Vkn/5cNfPI="
   - name: "202603r2._domainkey"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApBm+QIOPtVAWlnpcd1Sh/FjTLU4oXNdyYMZ4uo+uj+8PkewhzN+6gb9CD/M6NB8Wa+8kchcVlziB1GD4z07QAAJg8pGSs1UZ7Ggfp7RgE6CkiPvMxAE6PkP9mBKcPH9YFR0xQaoi0BHQD1EKmPq2vXOc3BFtgkoeO+Myo6ELenpf17Iv6PcBxyLBOBnnFB4Uhos8qJ8qHb+hHhL6wR8sxk+OAPLXDWVRtrTXvOrlDoRBjz9X0xKdyE3aOQ6xg+qHusVIszLFz8iO6L5ia/rtwnm9v92NR9g0r3/lJE3AJFYqKIF7kPcdjyowvuUjlpDQedXSaEkytGzc84JbkHE+jQIDAQAB"
   - name: stalwart
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=spf1 a ra=postmaster -all"
   - name: "@"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=spf1 mx ra=postmaster -all"
   - name: "_jmap._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 443 stalwart.rubenhensen.nl."
   - name: "_caldavs._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 443 stalwart.rubenhensen.nl."
   - name: "_carddavs._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 443 stalwart.rubenhensen.nl."
   - name: "_imaps._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 993 stalwart.rubenhensen.nl."
   - name: "_submissions._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 465 stalwart.rubenhensen.nl."
   - name: "_submission._tcp"
-    expire: 86400
+    expire: 300
     type: SRV
     content: "0 1 587 stalwart.rubenhensen.nl."
   - name: autoconfig
-    expire: 86400
+    expire: 300
     type: CNAME
     content: "stalwart.rubenhensen.nl."
   - name: autodiscover
-    expire: 86400
+    expire: 300
     type: CNAME
     content: "stalwart.rubenhensen.nl."
   - name: mta-sts
-    expire: 86400
+    expire: 300
     type: CNAME
     content: "stalwart.rubenhensen.nl."
   - name: "_mta-sts"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=STSv1; id=5231774485839263837"
   - name: "_dmarc"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=DMARC1; p=reject; rua=mailto:postmaster@rubenhensen.nl; ruf=mailto:postmaster@rubenhensen.nl"
   - name: "_smtp._tls"
-    expire: 86400
+    expire: 300
     type: TXT
     content: "v=TLSRPTv1; rua=mailto:postmaster@rubenhensen.nl"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "3 0 1 7926a9616cea1a7fb851fbdab631b2b2f6f71d3a775178d3288e539b9f53b18d"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "3 0 2 2218e33f102e805841f2f6a368e6416d884a8658cd9f45ef9b28c233dc6803320cff976e8ffdb1c0603a7abe60ccf78de422c31753b6cece8bc7ec1b80de5b66"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "3 1 1 e473431a9f296a8d93dfbed7c6c9485d6dadf7b460879edc0fe905183fe78a41"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "3 1 2 4c6cdab2a9cad307ba5b77ef34bde0cc2846b3d27aef6ce9625c56ef11b5c9cd1ede662c3afa759a3190e6317df494564ac83e4bfe3e6467f3c1bf307d781d4a"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "2 0 1 aeb1fd7410e83bc96f5da3c6a7c2c1bb836d1fa5cb86e708515890e428a8770b"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "2 0 2 e18f3d6ccbc578f025c3c7c29ed7bffe1b8eef5b1f839c17298dcf218303d2a63e305f6c1f489691774a18bad836035e5af2de1fc42a3a26cfe9e530f92e3855"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "2 1 1 cbbc559b44d524d6a132bdac672744da3407f12aae5d5f722c5f6c7913871c75"
   - name: "_25._tcp.stalwart"
-    expire: 86400
+    expire: 300
     type: TLSA
     content: "2 1 2 7d779dd26d37ca5a72fd05f1b815a06078c8e09777697c651fbe012c8d2894e048fcfe24160ee1562602240b6bef44e00f2b7340c84546d6110842bbdeb484a7"

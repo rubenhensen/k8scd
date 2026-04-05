@@ -165,14 +165,15 @@
         bind.auth.method = "lookup";
 
         filter = {
-          name = "(&(objectClass=user)(|(cn=?)(mail=?)))";
-          email = "(&(objectClass=user)(mail=?))";
+          name = "(&(objectClass=user)(|(cn=?)(mail=?)(mailAlternativeAddress=?)))";
+          email = "(&(objectClass=user)(|(mail=?)(mailAlternativeAddress=?)))";
         };
 
         attributes = {
           name = "cn";
           class = "objectClass";
           email = "mail";
+          email-alias = "mailAlternativeAddress";
           groups = "memberOf";
         };
       };

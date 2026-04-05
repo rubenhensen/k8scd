@@ -8,15 +8,6 @@ data:
     metadata:
       name: LDAP Provider
     entries:
-      - model: authentik_providers_ldap.ldapprovidermapping
-        id: ldap-mail-aliases-mapping
-        state: present
-        identifiers:
-          name: "Mail Aliases"
-        attrs:
-          name: "Mail Aliases"
-          expression: |
-            return {"mailAlternativeAddress": list(request.user.attributes.get("mailAliases", []))}
       - model: authentik_providers_ldap.ldapprovider
         id: ldap-provider
         state: present
@@ -30,8 +21,6 @@ data:
           bind_mode: cached
           search_mode: cached
           mfa_support: false
-          extra_property_mappings:
-            - !KeyOf ldap-mail-aliases-mapping
       - model: authentik_core.application
         id: ldap-app
         state: present

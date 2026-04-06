@@ -8,6 +8,7 @@ namespace: argocd
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v2.14.2/manifests/install.yaml
 - ingress.yaml
+- oidc-secret.yaml
 
 patches:
   - target:

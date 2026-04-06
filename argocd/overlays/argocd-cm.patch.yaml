@@ -6,7 +6,16 @@ metadata:
     app.kubernetes.io/name: argocd-cm
     app.kubernetes.io/part-of: argocd
 data:
-  # kustomize.buildOptions: "--enable-helm" 
+  url: https://argocd.rubenhensen.nl
+  oidc.config: |
+    name: Authentik
+    issuer: https://authentik.rubenhensen.nl/application/o/argocd/
+    clientID: argocd
+    clientSecret: $oidc.authentik.clientSecret
+    requestedScopes:
+      - openid
+      - profile
+      - email
   resource.exclusions: |
     - apiGroups:
       - "velero.io"

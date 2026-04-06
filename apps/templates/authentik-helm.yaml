@@ -71,6 +71,11 @@ spec:
                   secretKeyRef:
                     name: stalwart-oidc-client-secret
                     key: client_secret
+              - name: ARGOCD_OIDC_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: argocd-oidc-client-secret
+                    key: client_secret
           server:
             volumes:
               - name: blueprint-vault
@@ -82,6 +87,9 @@ spec:
               - name: blueprint-ldap
                 configMap:
                   name: authentik-blueprint-ldap
+              - name: blueprint-argocd
+                configMap:
+                  name: authentik-blueprint-argocd
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -92,6 +100,9 @@ spec:
               - name: blueprint-ldap
                 mountPath: /blueprints/custom/ldap.yaml
                 subPath: ldap.yaml
+              - name: blueprint-argocd
+                mountPath: /blueprints/custom/argocd-oidc.yaml
+                subPath: argocd-oidc.yaml
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -114,6 +125,9 @@ spec:
               - name: blueprint-ldap
                 configMap:
                   name: authentik-blueprint-ldap
+              - name: blueprint-argocd
+                configMap:
+                  name: authentik-blueprint-argocd
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -124,6 +138,9 @@ spec:
               - name: blueprint-ldap
                 mountPath: /blueprints/custom/ldap.yaml
                 subPath: ldap.yaml
+              - name: blueprint-argocd
+                mountPath: /blueprints/custom/argocd-oidc.yaml
+                subPath: argocd-oidc.yaml
           postgresql:
             enabled: false
           redis:

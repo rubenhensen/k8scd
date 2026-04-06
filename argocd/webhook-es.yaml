@@ -10,12 +10,16 @@ spec:
     kind: ClusterSecretStore
   target:
     template:
-      type: kubernetes.io/dockerconfigjson
       data:
-        webhook.github.secret: "{{ .mysecret | toString }}"
+        webhook.github.secret: "{{ .webhook_secret | toString }}"
+        oidc.authentik.clientSecret: "{{ .oidc_client_secret | toString }}"
     name: argocd-secret
-    creationPolicy: Owner
+    creationPolicy: Merge
   data:
-  - secretKey: mysecret
+  - secretKey: webhook_secret
     remoteRef:
       key: github_secret
+  - secretKey: oidc_client_secret
+    remoteRef:
+      key: kv/argocd-oidc
+      property: client_secret

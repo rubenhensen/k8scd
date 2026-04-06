@@ -8,6 +8,7 @@
     465   # SMTP submissions (implicit TLS)
     587   # SMTP submission (STARTTLS)
     993   # IMAP (implicit TLS)
+    4190  # ManageSieve
     443   # HTTPS (webadmin)
     80    # HTTP (ACME)
   ];
@@ -113,6 +114,10 @@
             bind = "[::]:993";
             protocol = "imap";
             tls.implicit = true;
+          };
+          managesieve = {
+            bind = "[::]:4190";
+            protocol = "managesieve";
           };
           https = {
             bind = "[::]:443";

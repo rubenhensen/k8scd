@@ -18,20 +18,9 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - blog.hensen.io
     - blog.rubenhensen.nl
     secretName: ghost-tls-secret
   rules:
-  - host: blog.hensen.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: ghost-service
-            port:
-              name: ghost
   - host: blog.rubenhensen.nl
     http:
       paths:

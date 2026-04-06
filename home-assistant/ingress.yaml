@@ -24,16 +24,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: ha.hensen.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: home-assistant-external
-            port:
-              number: 8123
   - host: ha.rubenhensen.nl
     http:
       paths:
@@ -47,6 +37,5 @@ spec:
   tls:
     - secretName:  letsencrypt-prod
       hosts:
-        - ha.hensen.io
         - ha.rubenhensen.nl
 

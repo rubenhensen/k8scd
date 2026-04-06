@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: nas.hensen.io
+  - host: nas.rubenhensen.nl
     http:
       paths:
       - path: /
@@ -25,5 +25,5 @@ spec:
     # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
-        - nas.hensen.io
+        - nas.rubenhensen.nl
 

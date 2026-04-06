@@ -9,16 +9,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: rss.hensen.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: freshrss
-            port:
-              number: 8080
   - host: rss.rubenhensen.nl
     http:
       paths:
@@ -32,6 +22,5 @@ spec:
   tls:
     - secretName:  letsencrypt-prod
       hosts:
-        - rss.hensen.io
         - rss.rubenhensen.nl
 

@@ -92,7 +92,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: blog.hensen.io
+              value: blog.rubenhensen.nl
           periodSeconds: 10
           timeoutSeconds: 3
           successThreshold: 1
@@ -106,7 +106,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: blog.hensen.io
+              value: blog.rubenhensen.nl
           periodSeconds: 300
           timeoutSeconds: 3
           successThreshold: 1
@@ -135,7 +135,7 @@ spec:
               name: ghost-mysql-env
               key: MYSQL_DATABASE
         - name: url
-          value: https://blog.hensen.io
+          value: https://blog.rubenhensen.nl
         envFrom:
         - secretRef:
             name: ghost-mail-config

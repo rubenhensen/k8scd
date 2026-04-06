@@ -23,8 +23,6 @@ data:
           client_secret: !Env [VAULT_OIDC_CLIENT_SECRET, ""]
           redirect_uris:
             - matching_mode: strict
-              url: https://vault.hensen.io/ui/vault/auth/oidc/oidc/callback
-            - matching_mode: strict
               url: https://vault.rubenhensen.nl/ui/vault/auth/oidc/oidc/callback
             - matching_mode: strict
               url: http://localhost:8250/oidc/callback
@@ -41,4 +39,4 @@ data:
         attrs:
           name: Vault
           provider: !KeyOf vault-provider
-          meta_launch_url: https://vault.hensen.io
+          meta_launch_url: https://vault.rubenhensen.nl

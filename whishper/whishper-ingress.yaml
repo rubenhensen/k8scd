@@ -24,7 +24,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: alv.hensen.io
+  - host: alv.rubenhensen.nl
     http:
       paths:
       - path: /
@@ -40,4 +40,4 @@ spec:
     # TLS secretName used on ClusterIssuer
     - secretName:  letsencrypt-prod
       hosts:
-        - alv.hensen.io
+        - alv.rubenhensen.nl

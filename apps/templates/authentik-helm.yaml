@@ -99,12 +99,10 @@ spec:
                 cert-manager.io/cluster-issuer: prod-cluster-issuer
               hosts:
                 - authentik.rubenhensen.nl
-                - authentik.hensen.io
               tls:
                 - secretName: authentik-tls
                   hosts:
                     - authentik.rubenhensen.nl
-                    - authentik.hensen.io
           worker:
             volumes:
               - name: blueprint-vault

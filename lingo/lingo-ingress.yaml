@@ -9,16 +9,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: lingo.hensen.io
-    http:
-      paths:
-      - path: /api(/|$)(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: lingo-api
-            port:
-              number: 8000
   - host: lingo.rubenhensen.nl
     http:
       paths:
@@ -32,7 +22,6 @@ spec:
   tls:
     - secretName: letsencrypt-prod
       hosts:
-        - lingo.hensen.io
         - lingo.rubenhensen.nl
 ---
 apiVersion: networking.k8s.io/v1
@@ -45,16 +34,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: lingo.hensen.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: lingo-frontend
-            port:
-              number: 8001
   - host: lingo.rubenhensen.nl
     http:
       paths:
@@ -68,5 +47,4 @@ spec:
   tls:
     - secretName: letsencrypt-prod
       hosts:
-        - lingo.hensen.io
         - lingo.rubenhensen.nl

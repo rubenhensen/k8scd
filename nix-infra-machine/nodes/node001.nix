@@ -19,7 +19,7 @@
   security.acme = {
     acceptTerms = true;
     defaults.email = "admin@rubenhensen.nl";
-    certs."stalwart.rubenhensen.nl" = {
+    certs."mail.rubenhensen.nl" = {
       group = "stalwart-mail";
       reloadServices = [ "stalwart-mail" ];
       webroot = "/var/lib/acme/acme-challenge";
@@ -38,7 +38,7 @@
   # Serve ACME challenges via nginx on port 80
   services.nginx = {
     enable = true;
-    virtualHosts."stalwart.rubenhensen.nl" = {
+    virtualHosts."mail.rubenhensen.nl" = {
       listen = [
         { addr = "0.0.0.0"; port = 80; }
         { addr = "[::]"; port = 80; }
@@ -95,7 +95,7 @@
     enable = true;
     settings = {
       server = {
-        hostname = "stalwart.rubenhensen.nl";
+        hostname = "mail.rubenhensen.nl";
         listener = {
           smtp = {
             bind = "[::]:25";
@@ -128,8 +128,8 @@
       };
 
       certificate.default = {
-        cert = "%{file:/var/lib/acme/stalwart.rubenhensen.nl/fullchain.pem}%";
-        private-key = "%{file:/var/lib/acme/stalwart.rubenhensen.nl/key.pem}%";
+        cert = "%{file:/var/lib/acme/mail.rubenhensen.nl/fullchain.pem}%";
+        private-key = "%{file:/var/lib/acme/mail.rubenhensen.nl/key.pem}%";
       };
 
       storage = {
@@ -137,7 +137,7 @@
         fts = "rocksdb";
         blob = "rocksdb";
         lookup = "rocksdb";
-        directory = "authentik";
+        directory = "internal";
       };
 
       store.rocksdb = {
@@ -158,29 +158,10 @@
         enable = true;
       };
 
-      directory.authentik = {
-        type = "ldap";
-        url = "ldap://ldap.rubenhensen.nl:389";
-        timeout = "30s";
-        tls.enable = false;
-        base-dn = "DC=ldap,DC=goauthentik,DC=io";
-
-        bind.dn = "cn=ldapservice,ou=users,DC=ldap,DC=goauthentik,DC=io";
-        bind.secret = "%{file:/run/credentials/stalwart-mail.service/ldap_bind_password}%";
-        bind.auth.method = "lookup";
-
-        filter = {
-          name = "(&(objectClass=user)(|(cn=?)(mail=?)(mailAliases=?)))";
-          email = "(&(objectClass=user)(|(mail=?)(mailAliases=?)))";
-        };
-
-        attributes = {
-          name = "cn";
-          class = "objectClass";
-          email = "mail";
-          email-alias = "mailAliases";
-          groups = "memberOf";
-        };
+      oauth.oidc = {
+        issuer-url = "https://authentik.rubenhensen.nl/application/o/stalwart/";
+        client-id = "%{file:/run/credentials/stalwart-mail.service/oidc-client-id}%";
+        client-secret = "%{file:/run/credentials/stalwart-mail.service/oidc-client-secret}%";
       };
 
       signature."rsa" = {
@@ -220,7 +201,8 @@
 
   systemd.services.stalwart-mail.serviceConfig.LoadCredentialEncrypted = [
     "stalwart-admin-password:/root/secrets/[%%secrets/stalwart-admin-password%%]"
-    "ldap_bind_password:/root/secrets/[%%secrets/ldap_bind_password%%]"
+    "oidc-client-id:/root/secrets/[%%secrets/oidc-client-id%%]"
+    "oidc-client-secret:/root/secrets/[%%secrets/oidc-client-secret%%]"
     "dkim-rsa.key:/root/secrets/[%%secrets/dkim-rsa.key%%]"
     "dkim-ed25519.key:/root/secrets/[%%secrets/dkim-ed25519.key%%]"
   ];

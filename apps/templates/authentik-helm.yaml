@@ -98,6 +98,9 @@ spec:
               - name: blueprint-freshrss
                 configMap:
                   name: authentik-blueprint-freshrss
+              - name: blueprint-actualbudget
+                configMap:
+                  name: authentik-blueprint-actualbudget
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -114,6 +117,9 @@ spec:
               - name: blueprint-freshrss
                 mountPath: /blueprints/custom/freshrss-oidc.yaml
                 subPath: freshrss-oidc.yaml
+              - name: blueprint-actualbudget
+                mountPath: /blueprints/custom/actualbudget-proxy.yaml
+                subPath: actualbudget-proxy.yaml
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -142,6 +148,9 @@ spec:
               - name: blueprint-freshrss
                 configMap:
                   name: authentik-blueprint-freshrss
+              - name: blueprint-actualbudget
+                configMap:
+                  name: authentik-blueprint-actualbudget
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -158,6 +167,9 @@ spec:
               - name: blueprint-freshrss
                 mountPath: /blueprints/custom/freshrss-oidc.yaml
                 subPath: freshrss-oidc.yaml
+              - name: blueprint-actualbudget
+                mountPath: /blueprints/custom/actualbudget-proxy.yaml
+                subPath: actualbudget-proxy.yaml
           postgresql:
             enabled: false
           redis:

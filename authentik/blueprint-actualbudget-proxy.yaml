@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-actualbudget
+data:
+  actualbudget-proxy.yaml: |
+    version: 1
+    metadata:
+      name: Actual Budget Proxy
+    entries:
+      - model: authentik_providers_proxy.proxyprovider
+        id: actualbudget-provider
+        state: present
+        identifiers:
+          name: Actual Budget
+        attrs:
+          name: Actual Budget
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          authentication_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://ynab.rubenhensen.nl
+      - model: authentik_core.application
+        id: actualbudget-app
+        state: present
+        identifiers:
+          slug: actualbudget
+        attrs:
+          name: Actual Budget
+          provider: !KeyOf actualbudget-provider
+          meta_launch_url: https://ynab.rubenhensen.nl

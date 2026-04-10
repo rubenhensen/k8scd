@@ -81,6 +81,11 @@ spec:
                   secretKeyRef:
                     name: freshrss-oidc-client-secret
                     key: client_secret
+              - name: ACTUALBUDGET_OIDC_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: actualbudget-oidc-client-secret
+                    key: client_secret
           server:
             volumes:
               - name: blueprint-vault

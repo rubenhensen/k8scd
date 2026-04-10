@@ -21,6 +21,20 @@ spec:
         image:
           tag: "26.3.0"
 
+        # OIDC configuration
+        env:
+          - name: ACTUAL_OPENID_DISCOVERY_URL
+            value: https://authentik.rubenhensen.nl/application/o/actualbudget/
+          - name: ACTUAL_OPENID_CLIENT_ID
+            value: actualbudget
+          - name: ACTUAL_OPENID_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: actualbudget-oidc-client-secret
+                key: client_secret
+          - name: ACTUAL_OPENID_SERVER_HOSTNAME
+            value: https://ynab.rubenhensen.nl
+
         # Service configuration
         service:
           type: ClusterIP
@@ -33,14 +47,6 @@ spec:
           annotations:
             cert-manager.io/cluster-issuer: prod-cluster-issuer
             nginx.ingress.kubernetes.io/proxy-body-size: 50m
-            nginx.ingress.kubernetes.io/auth-url: |-
-              http://authentik-server.authentik.svc.cluster.local/outpost.goauthentik.io/auth/nginx
-            nginx.ingress.kubernetes.io/auth-signin: |-
-              https://authentik.rubenhensen.nl/outpost.goauthentik.io/start?rd=$scheme%3A%2F%2F$host$escaped_request_uri
-            nginx.ingress.kubernetes.io/auth-response-headers: |-
-              Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-entitlements,X-authentik-email,X-authentik-name,X-authentik-uid
-            nginx.ingress.kubernetes.io/auth-snippet: |-
-              proxy_set_header X-Forwarded-Host $http_host;
           hosts:
             - host: ynab.rubenhensen.nl
               paths:

@@ -76,6 +76,11 @@ spec:
                   secretKeyRef:
                     name: argocd-oidc-client-secret
                     key: client_secret
+              - name: FRESHRSS_OIDC_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: freshrss-oidc-client-secret
+                    key: client_secret
           server:
             volumes:
               - name: blueprint-vault
@@ -90,6 +95,9 @@ spec:
               - name: blueprint-argocd
                 configMap:
                   name: authentik-blueprint-argocd
+              - name: blueprint-freshrss
+                configMap:
+                  name: authentik-blueprint-freshrss
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -103,6 +111,9 @@ spec:
               - name: blueprint-argocd
                 mountPath: /blueprints/custom/argocd-oidc.yaml
                 subPath: argocd-oidc.yaml
+              - name: blueprint-freshrss
+                mountPath: /blueprints/custom/freshrss-oidc.yaml
+                subPath: freshrss-oidc.yaml
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -128,6 +139,9 @@ spec:
               - name: blueprint-argocd
                 configMap:
                   name: authentik-blueprint-argocd
+              - name: blueprint-freshrss
+                configMap:
+                  name: authentik-blueprint-freshrss
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -141,6 +155,9 @@ spec:
               - name: blueprint-argocd
                 mountPath: /blueprints/custom/argocd-oidc.yaml
                 subPath: argocd-oidc.yaml
+              - name: blueprint-freshrss
+                mountPath: /blueprints/custom/freshrss-oidc.yaml
+                subPath: freshrss-oidc.yaml
           postgresql:
             enabled: false
           redis:

@@ -42,7 +42,20 @@ spec:
             - name: CRON_MIN
               value: "13,43"
             - name: OIDC_ENABLED
-              value: "0"
+              value: "1"
+            - name: OIDC_PROVIDER_METADATA_URL
+              value: https://authentik.rubenhensen.nl/application/o/freshrss/.well-known/openid-configuration
+            - name: OIDC_CLIENT_ID
+              value: freshrss
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: freshrss-oidc-client-secret
+                  key: client_secret
+            - name: OIDC_SCOPES
+              value: "openid email profile"
+            - name: OIDC_X_FORWARDED_HEADERS
+              value: X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host
             - name: TZ
               value: Europe/Amsterdam
           image: freshrss/freshrss:latest

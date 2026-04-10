@@ -21,19 +21,21 @@ spec:
         image:
           tag: "26.3.0"
 
-        # OIDC configuration
-        env:
-          - name: ACTUAL_OPENID_DISCOVERY_URL
-            value: https://authentik.rubenhensen.nl/application/o/actualbudget/
-          - name: ACTUAL_OPENID_CLIENT_ID
-            value: actualbudget
-          - name: ACTUAL_OPENID_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: actualbudget-oidc-client-secret
-                key: client_secret
-          - name: ACTUAL_OPENID_SERVER_HOSTNAME
-            value: https://ynab.rubenhensen.nl
+        # Authentication configuration
+        login:
+          method: openid
+          openid:
+            enforce: true
+            providerName: Authentik
+            discoveryUrl: https://authentik.rubenhensen.nl/application/o/actualbudget/
+            authMethod: openid
+            existingSecret:
+              name: actualbudget-oidc-client-secret
+              clientIdKey: client_id
+              clientSecretKey: client_secret
+
+        extraEnvVars:
+          ACTUAL_OPENID_SERVER_HOSTNAME: https://ynab.rubenhensen.nl
 
         # Service configuration
         service:

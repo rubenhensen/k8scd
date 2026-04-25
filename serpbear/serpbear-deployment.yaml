@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: serpbear
+  name: serpbear
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: serpbear
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: serpbear
+    spec:
+      containers:
+        - env:
+            - name: USER
+              valueFrom:
+                secretKeyRef:
+                  name: serpbear-secrets
+                  key: user
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: serpbear-secrets
+                  key: password
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: serpbear-secrets
+                  key: secret
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: serpbear-secrets
+                  key: apikey
+            - name: NEXT_PUBLIC_APP_URL
+              value: https://serpbear.rubenhensen.nl
+            - name: TZ
+              value: Europe/Amsterdam
+          image: towfiqi/serpbear:3.1.0
+          name: serpbear
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/data
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data

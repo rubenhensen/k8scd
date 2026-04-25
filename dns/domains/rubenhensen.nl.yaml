@@ -51,6 +51,10 @@ records:
     expire: 300
     type: A
     content: "62.41.87.114"
+  - name: "serpbear"
+    expire: 300
+    type: A
+    content: "62.41.87.114"
   - name: "@"
     expire: 300
     type: MX

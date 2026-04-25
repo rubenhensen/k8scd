@@ -16,6 +16,8 @@ spec:
       labels:
         io.kompose.service: serpbear
     spec:
+      securityContext:
+        fsGroup: 1001
       containers:
         - env:
             - name: USER

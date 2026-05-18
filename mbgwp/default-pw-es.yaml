@@ -20,3 +20,7 @@ spec:
       remoteRef:
         key: kv/mbgwp
         property: smtp-password
+    - secretKey: wf-encryption-key
+      remoteRef:
+        key: kv/mbgwp
+        property: wf-encryption-key

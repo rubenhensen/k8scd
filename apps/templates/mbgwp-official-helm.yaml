@@ -41,6 +41,11 @@ spec:
               secretKeyRef:
                 name: mbgwp-mariadb-credentials
                 key: password
+          - name: WF_ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: wordpress-credentials
+                key: wf-encryption-key
 
         # WordPress specific settings
         settings:

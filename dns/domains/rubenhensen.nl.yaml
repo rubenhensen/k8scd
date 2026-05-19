@@ -55,6 +55,10 @@ records:
     expire: 300
     type: A
     content: "46.224.26.65"
+  - name: "git"
+    expire: 300
+    type: A
+    content: "46.224.26.65"
   - name: "@"
     expire: 300
     type: MX

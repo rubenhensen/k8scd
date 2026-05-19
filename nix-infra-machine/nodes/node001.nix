@@ -1,4 +1,9 @@
 { config, pkgs, lib, ... }:
+let
+  # Public IP of the home network where the k8s cluster ingress lives.
+  # Keep in sync with dns/domains/rubenhensen.nl.yaml.
+  homeIP = "62.41.87.114";
+in
 {
   # ──────────────────────────────────────────────
   # Firewall
@@ -35,9 +40,44 @@
     "d /var/lib/acme/acme-challenge 0755 acme acme -"
   ];
 
-  # Serve ACME challenges via nginx on port 80
+  # Serve ACME challenges via nginx on port 80.
+  # Also reverse-proxy tunneled hosts to the home k8s cluster, and do
+  # SNI-based TCP passthrough on 443 so the cluster's cert-manager keeps
+  # owning the TLS certificate for those hosts.
   services.nginx = {
     enable = true;
+    recommendedProxySettings = true;
+
+    # SNI passthrough on 443:
+    #   - mail.rubenhensen.nl (and anything else) → local stalwart on 8443
+    #   - tunneled hosts → home cluster ingress on 443
+    streamConfig = ''
+      map $ssl_preread_server_name $tunnel_upstream {
+        rss.rubenhensen.nl  ${homeIP}:443;
+        default             127.0.0.1:8443;
+      }
+
+      server {
+        listen 443;
+        listen [::]:443;
+        proxy_pass $tunnel_upstream;
+        ssl_preread on;
+      }
+    '';
+
+    # Tunneled hosts: forward plain HTTP to the home cluster so the
+    # cluster's nginx-ingress handles HTTP→HTTPS redirects and
+    # cert-manager HTTP-01 ACME challenges.
+    virtualHosts."rss.rubenhensen.nl" = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/" = {
+        proxyPass = "http://${homeIP}";
+      };
+    };
+
     virtualHosts."mail.rubenhensen.nl" = {
       listen = [
         { addr = "0.0.0.0"; port = 80; }
@@ -120,7 +160,9 @@
             protocol = "managesieve";
           };
           https = {
-            bind = "[::]:443";
+            # nginx owns the public :443 and does SNI passthrough to here
+            # for the mail.rubenhensen.nl SNI. Stalwart still terminates TLS.
+            bind = "127.0.0.1:8443";
             protocol = "http";
             tls.implicit = true;
           };

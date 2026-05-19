@@ -3,6 +3,39 @@ let
   # Public IP of the home network where the k8s cluster ingress lives.
   # Keep in sync with dns/domains/rubenhensen.nl.yaml.
   homeIP = "62.41.87.114";
+
+  # Hosts tunneled to the home k8s cluster. Each entry gets:
+  #   * an SNI map entry for TCP passthrough on :443
+  #   * an HTTP vhost on :80 that reverse-proxies to the cluster
+  # The cluster's nginx-ingress terminates TLS with cert-manager.
+  tunneledHosts = [
+    "rss.rubenhensen.nl"
+    "authentik.rubenhensen.nl"
+    "vault.rubenhensen.nl"
+    "ynab.rubenhensen.nl"
+    "argocd.rubenhensen.nl"
+    "ha.rubenhensen.nl"
+    "longhorn.rubenhensen.nl"
+    "lingo.rubenhensen.nl"
+    "blog.rubenhensen.nl"
+    "serpbear.rubenhensen.nl"
+  ];
+
+  sniMapEntries =
+    lib.concatMapStringsSep "\n"
+      (h: "        ${h} ${homeIP}:443;")
+      tunneledHosts;
+
+  tunneledVhosts = lib.listToAttrs (map (h: {
+    name = h;
+    value = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/".proxyPass = "http://${homeIP}";
+    };
+  }) tunneledHosts);
 in
 {
   # ──────────────────────────────────────────────
@@ -53,11 +86,8 @@ in
     #   - tunneled hosts → home cluster ingress on 443
     streamConfig = ''
       map $ssl_preread_server_name $tunnel_upstream {
-        rss.rubenhensen.nl        ${homeIP}:443;
-        authentik.rubenhensen.nl  ${homeIP}:443;
-        vault.rubenhensen.nl      ${homeIP}:443;
-        ynab.rubenhensen.nl       ${homeIP}:443;
-        default                   127.0.0.1:8443;
+${sniMapEntries}
+        default 127.0.0.1:8443;
       }
 
       server {
@@ -68,95 +98,42 @@ in
       }
     '';
 
-    # Tunneled hosts: forward plain HTTP to the home cluster so the
-    # cluster's nginx-ingress handles HTTP→HTTPS redirects and
-    # cert-manager HTTP-01 ACME challenges.
-    virtualHosts."rss.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/" = {
-        proxyPass = "http://${homeIP}";
+    # Port 80: tunneled hosts reverse-proxy to the home cluster so its
+    # nginx-ingress handles HTTP→HTTPS redirects and cert-manager
+    # HTTP-01 ACME challenges. Mail-related hosts serve ACME challenges
+    # locally for stalwart's cert and redirect everything else to HTTPS.
+    virtualHosts = tunneledVhosts // {
+      "mail.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+        ];
+        locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
+        locations."/".return = "301 https://$host$request_uri";
       };
-    };
-
-    virtualHosts."authentik.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/" = {
-        proxyPass = "http://${homeIP}";
+      "autoconfig.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+        ];
+        locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
+        locations."/".return = "301 https://$host$request_uri";
       };
-    };
-
-    virtualHosts."vault.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/" = {
-        proxyPass = "http://${homeIP}";
+      "autodiscover.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+        ];
+        locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
+        locations."/".return = "301 https://$host$request_uri";
       };
-    };
-
-    virtualHosts."ynab.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/" = {
-        proxyPass = "http://${homeIP}";
-      };
-    };
-
-    virtualHosts."mail.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/.well-known/acme-challenge/" = {
-        root = "/var/lib/acme/acme-challenge";
-      };
-      locations."/" = {
-        return = "301 https://$host$request_uri";
-      };
-    };
-    virtualHosts."autoconfig.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/.well-known/acme-challenge/" = {
-        root = "/var/lib/acme/acme-challenge";
-      };
-      locations."/" = {
-        return = "301 https://$host$request_uri";
-      };
-    };
-    virtualHosts."autodiscover.rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/.well-known/acme-challenge/" = {
-        root = "/var/lib/acme/acme-challenge";
-      };
-      locations."/" = {
-        return = "301 https://$host$request_uri";
-      };
-    };
-    virtualHosts."rubenhensen.nl" = {
-      listen = [
-        { addr = "0.0.0.0"; port = 80; }
-        { addr = "[::]"; port = 80; }
-      ];
-      locations."/.well-known/acme-challenge/" = {
-        root = "/var/lib/acme/acme-challenge";
-      };
-      locations."/" = {
-        return = "301 https://$host$request_uri";
+      "rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+        ];
+        locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
+        locations."/".return = "301 https://$host$request_uri";
       };
     };
   };

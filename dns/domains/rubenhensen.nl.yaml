@@ -26,7 +26,7 @@ records:
   - name: "argocd"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "vault"
     expire: 300
     type: A
@@ -38,23 +38,23 @@ records:
   - name: "ha"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "longhorn"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "lingo"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "blog"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "serpbear"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "@"
     expire: 300
     type: MX

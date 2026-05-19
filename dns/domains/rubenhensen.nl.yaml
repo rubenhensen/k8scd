@@ -18,7 +18,7 @@ records:
   - name: "authentik"
     expire: 300
     type: A
-    content: "62.41.87.114"
+    content: "46.224.26.65"
   - name: "ldap"
     expire: 300
     type: A

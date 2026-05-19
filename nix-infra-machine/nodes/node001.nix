@@ -53,8 +53,9 @@ in
     #   - tunneled hosts → home cluster ingress on 443
     streamConfig = ''
       map $ssl_preread_server_name $tunnel_upstream {
-        rss.rubenhensen.nl  ${homeIP}:443;
-        default             127.0.0.1:8443;
+        rss.rubenhensen.nl        ${homeIP}:443;
+        authentik.rubenhensen.nl  ${homeIP}:443;
+        default                   127.0.0.1:8443;
       }
 
       server {
@@ -69,6 +70,16 @@ in
     # cluster's nginx-ingress handles HTTP→HTTPS redirects and
     # cert-manager HTTP-01 ACME challenges.
     virtualHosts."rss.rubenhensen.nl" = {
+      listen = [
+        { addr = "0.0.0.0"; port = 80; }
+        { addr = "[::]"; port = 80; }
+      ];
+      locations."/" = {
+        proxyPass = "http://${homeIP}";
+      };
+    };
+
+    virtualHosts."authentik.rubenhensen.nl" = {
       listen = [
         { addr = "0.0.0.0"; port = 80; }
         { addr = "[::]"; port = 80; }

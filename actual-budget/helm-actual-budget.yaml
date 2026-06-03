@@ -12,14 +12,14 @@ spec:
   project: default
   source:
     repoURL: https://community-charts.github.io/helm-charts
-    targetRevision: 1.8.7
+    targetRevision: 1.8.9
     chart: actualbudget
     helm:
       values: |
         # Actual Budget configuration
 
         image:
-          tag: "26.3.0"
+          tag: "26.6.0"
 
         # Authentication configuration
         login:

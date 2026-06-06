@@ -2,7 +2,7 @@
 let
   # Public IP of the home network where the k8s cluster ingress lives.
   # Keep in sync with dns/domains/rubenhensen.nl.yaml.
-  homeIP = "62.41.87.114";
+  homeIP = "62.41.86.27";
 
   # Hosts tunneled to the home k8s cluster. Each entry gets:
   #   * an SNI map entry for TCP passthrough on :443

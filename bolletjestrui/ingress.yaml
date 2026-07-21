@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bolletjestrui-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: prod-cluster-issuer
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: vic.rubenhensen.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bolletjestrui
+                port:
+                  number: 3000
+  tls:
+    - secretName: letsencrypt-prod
+      hosts:
+        - vic.rubenhensen.nl

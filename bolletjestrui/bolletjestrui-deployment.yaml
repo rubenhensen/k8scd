@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bolletjestrui
+  name: bolletjestrui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bolletjestrui
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bolletjestrui
+    spec:
+      containers:
+        - image: ghcr.io/rubenhensen/bolletjestrui:main-bb54c6a
+          name: bolletjestrui
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: /app/data/bolletjestrui.db
+            - name: ORIGIN
+              value: https://vic.rubenhensen.nl
+            - name: PROTOCOL_HEADER
+              value: x-forwarded-proto
+            - name: HOST_HEADER
+              value: x-forwarded-host
+            # route GPX uploads can be a few MB; raise adapter-node's 512K default
+            - name: BODY_SIZE_LIMIT
+              value: "10M"
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: SITE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bolletjestrui-secrets
+                  key: site_password
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bolletjestrui-secrets
+                  key: admin_password
+            - name: KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bolletjestrui-secrets
+                  key: key_secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - mountPath: /app/data
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: bolletjestrui-data

@@ -16,7 +16,8 @@
   "kubernetes": {
     "managerFilePatterns": [
       "/apps/templates/.+\\.yaml$/",
-      "/serpbear/.+\\.yaml$/"
+      "/serpbear/.+\\.yaml$/",
+      "/bolletjestrui/.+\\.yaml$/"
     ]
   },
   "customManagers": [

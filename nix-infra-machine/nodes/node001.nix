@@ -20,6 +20,7 @@ let
     "blog.rubenhensen.nl"
     "serpbear.rubenhensen.nl"
     "git.rubenhensen.nl"
+    "vic.rubenhensen.nl"
   ];
 
   sniMapEntries =

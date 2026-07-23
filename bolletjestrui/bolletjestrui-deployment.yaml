@@ -17,7 +17,7 @@ spec:
         app: bolletjestrui
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/bolletjestrui:main-923b40f
+        - image: ghcr.io/rubenhensen/bolletjestrui:main-7e1236d
           name: bolletjestrui
           ports:
             - containerPort: 3000

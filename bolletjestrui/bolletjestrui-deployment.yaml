@@ -17,7 +17,7 @@ spec:
         app: bolletjestrui
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/bolletjestrui:main-7e1236d
+        - image: ghcr.io/rubenhensen/bolletjestrui:main-b3bfe55
           name: bolletjestrui
           ports:
             - containerPort: 3000
@@ -31,9 +31,9 @@ spec:
               value: x-forwarded-proto
             - name: HOST_HEADER
               value: x-forwarded-host
-            # route GPX uploads can be a few MB; raise adapter-node's 512K default
+            # GPX routes and profile photos (up to 20 MB); raise adapter-node's 512K default
             - name: BODY_SIZE_LIMIT
-              value: "10M"
+              value: "25M"
             - name: TZ
               value: Europe/Amsterdam
             - name: SITE_PASSWORD

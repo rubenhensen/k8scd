@@ -6,7 +6,8 @@ metadata:
     cert-manager.io/cluster-issuer: prod-cluster-issuer
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    # matches the app's BODY_SIZE_LIMIT: a bulk route import posts every GPX at once
+    nginx.ingress.kubernetes.io/proxy-body-size: "25m"
 spec:
   ingressClassName: nginx
   rules:

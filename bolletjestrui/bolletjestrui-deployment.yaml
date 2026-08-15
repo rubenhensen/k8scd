@@ -17,7 +17,7 @@ spec:
         app: bolletjestrui
     spec:
       containers:
-        - image: ghcr.io/rubenhensen/bolletjestrui:main-8f17b5d
+        - image: ghcr.io/rubenhensen/bolletjestrui:main-10268f1
           name: bolletjestrui
           ports:
             - containerPort: 3000
@@ -51,6 +51,24 @@ spec:
                 secretKeyRef:
                   name: bolletjestrui-secrets
                   key: key_secret
+            # Push notifications. optional:true is load-bearing: without it a missing
+            # key leaves the pod in CreateContainerConfigError and the site is down,
+            # which would make deploying this depend on the Vault entries landing
+            # first. The app already treats absent VAPID keys as "send nothing".
+            - name: VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bolletjestrui-secrets
+                  key: vapid_public_key
+                  optional: true
+            - name: VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bolletjestrui-secrets
+                  key: vapid_private_key
+                  optional: true
+            - name: VAPID_SUBJECT
+              value: mailto:ruben.hensen@protonmail.com
           resources:
             requests:
               memory: "128Mi"

@@ -11,6 +11,22 @@ Authentik is deployed as the central identity provider, providing OIDC and LDAP 
   - `blueprint-ldap.yaml` — LDAP provider (base DN: `DC=ldap,DC=goauthentik,DC=io`)
   - `blueprint-mail-oidc.yaml` — OAuth2/OIDC provider for Stalwart mail
   - `blueprint-vault-oidc.yaml` — OIDC provider for Vault
+  - `blueprint-argocd-oidc.yaml` — OIDC provider for ArgoCD
+  - `blueprint-freshrss-oidc.yaml` — OIDC provider for FreshRSS
+  - `blueprint-actualbudget-proxy.yaml` — Proxy provider for Actual Budget
+  - `blueprint-session-duration.yaml` — Session lifetime of the default authentication flow
+
+## Session lifetime
+
+Authentik ships the login stage of `default-authentication-flow` with
+`session_duration: seconds=0`, i.e. the SSO session dies when the browser closes.
+`blueprint-session-duration.yaml` raises this to 30 days for every app that uses
+that flow (FreshRSS, ArgoCD, Vault, Actual Budget, mail).
+
+The expiry is **absolute** — Authentik does not extend a session on activity. A
+sliding window has to come from the application itself; FreshRSS does this via
+`OIDC_SESSION_INACTIVITY_TIMEOUT` (see `freshrss/freshrss-deployment.yaml`), which
+Apache mod_auth_openidc refreshes on every request.
 
 ## LDAP Outpost
 

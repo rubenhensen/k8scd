@@ -56,6 +56,20 @@ spec:
               value: "openid email profile"
             - name: OIDC_X_FORWARDED_HEADERS
               value: X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host
+            # Session handling for the Apache mod_auth_openidc layer that guards /i/.
+            # Defaults are 5 min inactivity / ~7.5 h max, which is what caused the
+            # constant bounces back to authentik.
+            # Sliding window: refreshed on every request, so any visit within the
+            # period extends it by another 30 days.
+            - name: OIDC_SESSION_INACTIVITY_TIMEOUT
+              value: "2592000" # 30 days
+            # Hard cap, counted from login and never extended.
+            - name: OIDC_SESSION_MAX_DURATION
+              value: "7776000" # 90 days
+            # ":persistent" makes the session cookie survive a browser restart
+            # (its expiry tracks OIDC_SESSION_INACTIVITY_TIMEOUT).
+            - name: OIDC_SESSION_TYPE
+              value: "server-cache:persistent"
             - name: TZ
               value: Europe/Amsterdam
           image: freshrss/freshrss:latest

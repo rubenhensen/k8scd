@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-session
+data:
+  session-duration.yaml: |
+    version: 1
+    metadata:
+      name: Session duration
+    entries:
+      # Overrides the login stage of the built-in `default-authentication-flow`,
+      # which every OIDC/proxy provider in this cluster authenticates against.
+      # authentik ships this stage with `session_duration: seconds=0`, which means
+      # "until the browser is closed" — that is why re-logins were so frequent.
+      #
+      # Note: authentik's session expiry is absolute (counted from login), it does
+      # not slide on activity. The sliding window lives in the applications, e.g.
+      # OIDC_SESSION_INACTIVITY_TIMEOUT in freshrss/freshrss-deployment.yaml.
+      - model: authentik_stages_user_login.userloginstage
+        state: present
+        identifiers:
+          name: default-authentication-login
+        attrs:
+          session_duration: days=30
+          # Uncomment to show a "Remember me on this device" checkbox that adds
+          # this offset on top of session_duration when ticked (0 = hidden).
+          # remember_me_offset: days=60

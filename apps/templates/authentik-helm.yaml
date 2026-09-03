@@ -106,6 +106,9 @@ spec:
               - name: blueprint-actualbudget
                 configMap:
                   name: authentik-blueprint-actualbudget
+              - name: blueprint-session
+                configMap:
+                  name: authentik-blueprint-session
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -125,6 +128,9 @@ spec:
               - name: blueprint-actualbudget
                 mountPath: /blueprints/custom/actualbudget-proxy.yaml
                 subPath: actualbudget-proxy.yaml
+              - name: blueprint-session
+                mountPath: /blueprints/custom/session-duration.yaml
+                subPath: session-duration.yaml
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -156,6 +162,9 @@ spec:
               - name: blueprint-actualbudget
                 configMap:
                   name: authentik-blueprint-actualbudget
+              - name: blueprint-session
+                configMap:
+                  name: authentik-blueprint-session
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -175,6 +184,9 @@ spec:
               - name: blueprint-actualbudget
                 mountPath: /blueprints/custom/actualbudget-proxy.yaml
                 subPath: actualbudget-proxy.yaml
+              - name: blueprint-session
+                mountPath: /blueprints/custom/session-duration.yaml
+                subPath: session-duration.yaml
           postgresql:
             enabled: false
           redis:

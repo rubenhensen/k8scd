@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: gitea
-          image: gitea/gitea:1
+          image: gitea/gitea:1.27.3
           env:
             - name: USER_UID
               value: "1000"

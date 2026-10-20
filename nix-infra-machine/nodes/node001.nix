@@ -63,9 +63,14 @@ let
     "rss.rubenhensen.nl".headers.Accept = "text/html";
   };
 
+  # s1 is the outside view of home, so it alerts on what runs there and on
+  # s2. Mail lives on this box, so s2 alerts on that.
+  gatusAlert = { alerts = [ { type = "ntfy"; } ]; };
+
   gatusEndpoints =
     map (h:
       gatusHttp "rubenhensen.nl" (lib.removeSuffix ".rubenhensen.nl" h) "https://${h}"
+      // gatusAlert
       // (gatusOverrides.${h} or { })) tunneledHosts
     ++ [
       (gatusHttp "mail" "webmail" "https://mail.rubenhensen.nl")
@@ -83,16 +88,25 @@ let
         interval = "60s";
         conditions = [ "[CONNECTED] == true" "[CERTIFICATE_EXPIRATION] > 168h" ];
       }
-      (gatusHttp "Scouting MBG" "scoutingmbg.nl" "https://scoutingmbg.nl")
-      (gatusHttp "Scouting MBG" "foto.scoutingmbg.nl" "https://foto.scoutingmbg.nl/_app")
-      {
+      (gatusHttp "Scouting MBG" "scoutingmbg.nl" "https://scoutingmbg.nl" // gatusAlert)
+      (gatusHttp "Scouting MBG" "foto.scoutingmbg.nl" "https://foto.scoutingmbg.nl/_app" // gatusAlert)
+      ({
         name = "s2 (homelab)";
         group = "watchers";
         url = "https://s2.rubenhensen.nl/health";
         interval = "60s";
         conditions = [ "[STATUS] == 200" "[BODY].status == UP" ];
-      }
+      } // gatusAlert)
     ];
+
+  # Runs a service with secrets from LoadCredentialEncrypted exported as
+  # env vars, for services that only take secrets through the environment.
+  withCredentialEnv = name: vars: cmd: pkgs.writeShellScript "${name}-with-credentials" ''
+    ${lib.concatStrings (lib.mapAttrsToList (var: cred: ''
+      export ${var}="$(cat "$CREDENTIALS_DIRECTORY/${cred}")"
+    '') vars)}
+    exec ${cmd}
+  '';
 in
 {
   # ──────────────────────────────────────────────
@@ -141,11 +155,12 @@ in
     # SNI passthrough on 443:
     #   - mail.rubenhensen.nl (and anything else) → local stalwart on 8443
     #   - tunneled hosts → home cluster ingress on 443
-    #   - s1.rubenhensen.nl → local nginx on 8444 (Gatus)
+    #   - s1 / ntfy1.rubenhensen.nl → local nginx on 8444 (Gatus, ntfy)
     streamConfig = ''
       map $ssl_preread_server_name $tunnel_upstream {
 ${sniMapEntries}
         s1.rubenhensen.nl 127.0.0.1:8444;
+        ntfy1.rubenhensen.nl 127.0.0.1:8444;
         default 127.0.0.1:8443;
       }
 
@@ -206,7 +221,61 @@ ${sniMapEntries}
         forceSSL = true;
         locations."/".proxyPass = "http://127.0.0.1:8090";
       };
+      # ntfy for Gatus alerts, same TLS setup as s1. Proxy settings follow
+      # the ntfy docs so subscriptions can stay open.
+      "ntfy1.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+          { addr = "127.0.0.1"; port = 8444; ssl = true; }
+        ];
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:2586";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_buffering off;
+            proxy_request_buffering off;
+            proxy_connect_timeout 3m;
+            proxy_send_timeout 3m;
+            proxy_read_timeout 3m;
+            client_max_body_size 0;
+          '';
+        };
+      };
     };
+  };
+
+  # ──────────────────────────────────────────────
+  # ntfy (ntfy1.rubenhensen.nl)
+  # ──────────────────────────────────────────────
+  # Users and tokens come from secrets, everything else is denied. The
+  # same login works on ntfy2.rubenhensen.nl at home.
+  services.ntfy-sh = {
+    enable = true;
+    settings = {
+      base-url = "https://ntfy1.rubenhensen.nl";
+      listen-http = "127.0.0.1:2586";
+      behind-proxy = true;
+      auth-file = "/var/lib/ntfy-sh/user.db";
+      auth-default-access = "deny-all";
+      cache-file = "/var/lib/ntfy-sh/cache.db";
+      # Needed for instant delivery on iOS. ntfy.sh only gets the message
+      # ID, never the content.
+      upstream-base-url = "https://ntfy.sh";
+    };
+  };
+
+  systemd.services.ntfy-sh.serviceConfig = {
+    LoadCredentialEncrypted = [
+      "ntfy-auth-users:/root/secrets/[%%secrets/ntfy-auth-users%%]"
+      "ntfy-auth-tokens:/root/secrets/[%%secrets/ntfy-auth-tokens%%]"
+    ];
+    ExecStart = lib.mkForce (withCredentialEnv "ntfy-sh" {
+      NTFY_AUTH_USERS = "ntfy-auth-users";
+      NTFY_AUTH_TOKENS = "ntfy-auth-tokens";
+    } "${config.services.ntfy-sh.package}/bin/ntfy serve -c /etc/ntfy/server.yml");
   };
 
   # ──────────────────────────────────────────────
@@ -230,7 +299,31 @@ ${sniMapEntries}
           { name = "s2 (homelab)"; link = "https://s2.rubenhensen.nl"; }
         ];
       };
+      alerting.ntfy = {
+        url = "http://127.0.0.1:2586";
+        topic = "alerts";
+        token = "\${NTFY_TOKEN}";
+        priority = 4;
+        click = "https://s1.rubenhensen.nl";
+        default-alert = {
+          failure-threshold = 3;
+          success-threshold = 2;
+          send-on-resolved = true;
+        };
+      };
       endpoints = gatusEndpoints;
+    };
+  };
+
+  systemd.services.gatus = {
+    after = [ "ntfy-sh.service" ];
+    serviceConfig = {
+      LoadCredentialEncrypted = [
+        "ntfy-gatus-token:/root/secrets/[%%secrets/ntfy-gatus-token%%]"
+      ];
+      ExecStart = lib.mkForce (withCredentialEnv "gatus" {
+        NTFY_TOKEN = "ntfy-gatus-token";
+      } (lib.getExe config.services.gatus.package));
     };
   };
 

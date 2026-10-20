@@ -38,6 +38,61 @@ let
       locations."/".proxyPass = "http://${homeIP}";
     };
   }) tunneledHosts);
+
+  # Gatus endpoints for s1.rubenhensen.nl. Its twin s2.rubenhensen.nl runs
+  # on the home cluster with the same list, see gatus/config.yaml in k8scd.
+  # Keep the two in sync.
+  gatusHttp = group: name: url: {
+    inherit name group url;
+    interval = "60s";
+    conditions = [
+      "[STATUS] == 200"
+      "[CERTIFICATE_EXPIRATION] > 168h"
+    ];
+  };
+
+  # Per-host tweaks on top of the default check.
+  gatusOverrides = {
+    # Behind basic auth, so 401 means it's up
+    "longhorn.rubenhensen.nl".conditions = [
+      "[STATUS] == 401"
+      "[CERTIFICATE_EXPIRATION] > 168h"
+    ];
+    # mod_auth_openidc answers 401 instead of redirecting to the login
+    # page unless the client asks for HTML
+    "rss.rubenhensen.nl".headers.Accept = "text/html";
+  };
+
+  gatusEndpoints =
+    map (h:
+      gatusHttp "rubenhensen.nl" (lib.removeSuffix ".rubenhensen.nl" h) "https://${h}"
+      // (gatusOverrides.${h} or { })) tunneledHosts
+    ++ [
+      (gatusHttp "mail" "webmail" "https://mail.rubenhensen.nl")
+      {
+        name = "smtp";
+        group = "mail";
+        url = "tcp://mail.rubenhensen.nl:25";
+        interval = "60s";
+        conditions = [ "[CONNECTED] == true" ];
+      }
+      {
+        name = "imaps";
+        group = "mail";
+        url = "tls://mail.rubenhensen.nl:993";
+        interval = "60s";
+        conditions = [ "[CONNECTED] == true" "[CERTIFICATE_EXPIRATION] > 168h" ];
+      }
+      (gatusHttp "Scouting MBG" "scoutingmbg.nl" "https://scoutingmbg.nl")
+      (gatusHttp "Scouting MBG" "foto.scoutingmbg.nl" "https://foto.scoutingmbg.nl/_app")
+      {
+        name = "s2 (homelab)";
+        group = "watchers";
+        url = "https://s2.rubenhensen.nl/health";
+        interval = "60s";
+        conditions = [ "[STATUS] == 200" "[BODY].status == UP" ];
+      }
+    ];
 in
 {
   # ──────────────────────────────────────────────
@@ -86,9 +141,11 @@ in
     # SNI passthrough on 443:
     #   - mail.rubenhensen.nl (and anything else) → local stalwart on 8443
     #   - tunneled hosts → home cluster ingress on 443
+    #   - s1.rubenhensen.nl → local nginx on 8444 (Gatus)
     streamConfig = ''
       map $ssl_preread_server_name $tunnel_upstream {
 ${sniMapEntries}
+        s1.rubenhensen.nl 127.0.0.1:8444;
         default 127.0.0.1:8443;
       }
 
@@ -137,6 +194,43 @@ ${sniMapEntries}
         locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
         locations."/".return = "301 https://$host$request_uri";
       };
+      # Gatus status page. The stream block above passes its SNI to
+      # 8444, where nginx terminates TLS with its own ACME cert.
+      "s1.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+          { addr = "127.0.0.1"; port = 8444; ssl = true; }
+        ];
+        enableACME = true;
+        forceSSL = true;
+        locations."/".proxyPass = "http://127.0.0.1:8090";
+      };
+    };
+  };
+
+  # ──────────────────────────────────────────────
+  # Gatus (s1.rubenhensen.nl)
+  # ──────────────────────────────────────────────
+  services.gatus = {
+    enable = true;
+    settings = {
+      web = {
+        address = "127.0.0.1";
+        port = 8090;
+      };
+      storage = {
+        type = "sqlite";
+        path = "/var/lib/gatus/data.db";
+      };
+      ui = {
+        title = "Status (Hetzner)";
+        header = "s1 · Hetzner";
+        buttons = [
+          { name = "s2 (homelab)"; link = "https://s2.rubenhensen.nl"; }
+        ];
+      };
+      endpoints = gatusEndpoints;
     };
   };
 

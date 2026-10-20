@@ -12,6 +12,21 @@ ui:
     - name: s1 (Hetzner)
       link: https://s1.rubenhensen.nl
 
+# NTFY_TOKEN comes from the gatus-ntfy secret (Vault kv/ntfy)
+alerting:
+  ntfy:
+    url: http://ntfy.ntfy.svc.cluster.local
+    topic: alerts
+    token: ${NTFY_TOKEN}
+    priority: 4
+    click: https://s2.rubenhensen.nl
+    default-alert:
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+
+# s2 is the outside view of Hetzner, so it alerts on mail and on s1. The
+# home services are left to s1.
 endpoints:
   # Tunneled through Hetzner to the home cluster
   - name: rss
@@ -90,12 +105,15 @@ endpoints:
     url: https://mail.rubenhensen.nl
     interval: 60s
     conditions: *http-ok
+    alerts: &ntfy
+      - type: ntfy
   - name: smtp
     group: mail
     url: tcp://mail.rubenhensen.nl:25
     interval: 60s
     conditions:
       - "[CONNECTED] == true"
+    alerts: *ntfy
   - name: imaps
     group: mail
     url: tls://mail.rubenhensen.nl:993
@@ -103,6 +121,7 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
       - "[CERTIFICATE_EXPIRATION] > 168h"
+    alerts: *ntfy
 
   # Served straight from the home IP
   - name: scoutingmbg.nl
@@ -124,3 +143,4 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == UP"
+    alerts: *ntfy

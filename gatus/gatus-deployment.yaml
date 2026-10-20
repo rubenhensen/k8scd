@@ -22,6 +22,9 @@ spec:
               value: /config/config.yaml
             - name: TZ
               value: Europe/Amsterdam
+          envFrom:
+            - secretRef:
+                name: gatus-ntfy
           ports:
             - containerPort: 8080
               protocol: TCP

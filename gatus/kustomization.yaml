@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: gatus
 
 resources:
+  - external-secret.yaml
   - data-persistentvolumeclaim.yaml
   - gatus-deployment.yaml
   - gatus-service.yaml

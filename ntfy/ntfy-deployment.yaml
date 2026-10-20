@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ntfy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ntfy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ntfy
+    spec:
+      containers:
+        - name: ntfy
+          image: binwiederhier/ntfy:v2.28.0
+          args: ["serve"]
+          env:
+            - name: NTFY_BASE_URL
+              value: https://ntfy2.rubenhensen.nl
+            - name: NTFY_LISTEN_HTTP
+              value: ":80"
+            - name: NTFY_BEHIND_PROXY
+              value: "true"
+            - name: NTFY_AUTH_FILE
+              value: /var/lib/ntfy/user.db
+            - name: NTFY_AUTH_DEFAULT_ACCESS
+              value: deny-all
+            - name: NTFY_CACHE_FILE
+              value: /var/lib/ntfy/cache.db
+            # Needed for instant delivery on iOS. ntfy.sh only gets the
+            # message ID, never the content.
+            - name: NTFY_UPSTREAM_BASE_URL
+              value: https://ntfy.sh
+            - name: TZ
+              value: Europe/Amsterdam
+          envFrom:
+            - secretRef:
+                name: ntfy-auth
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /v1/health
+              port: 80
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 80
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "256Mi"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/ntfy
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ntfy-data

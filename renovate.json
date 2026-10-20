@@ -19,7 +19,8 @@
       "/serpbear/.+\\.yaml$/",
       "/bolletjestrui/.+\\.yaml$/",
       "/gitea/.+\\.yaml$/",
-      "/gatus/.+\\.yaml$/"
+      "/gatus/.+\\.yaml$/",
+      "/ntfy/.+\\.yaml$/"
     ]
   },
   "customManagers": [

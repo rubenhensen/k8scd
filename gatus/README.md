@@ -15,6 +15,32 @@ The endpoint list exists twice, so a new service has to be added in both
 places. s1 builds its list from `tunneledHosts`, so new tunneled hosts show up
 there automatically. s2 needs them added by hand.
 
+## Alerting
+
+Each Gatus sends alerts to an ntfy instance on its own node:
+`ntfy1.rubenhensen.nl` (Hetzner, node001.nix) and `ntfy2.rubenhensen.nl`
+(home, `ntfy/` in this repo). Subscribe the phone app to topic `alerts` on
+both servers, with the same login on each.
+
+Only the watcher that sees a service from outside alerts on it:
+
+- s1 alerts on everything that runs at home (all tunneled apps, Scouting MBG)
+  and on s2.
+- s2 alerts on mail and on s1.
+
+An outage on either node still reaches you, through the other node's ntfy,
+and you get one notification per outage instead of two. An alert fires after
+3 failed checks in a row (about 3 minutes), and you get another notification
+when the service recovers.
+
+Both ntfy servers deny everything except the provisioned user. The
+credentials are the same on both:
+
+- Home: Vault `kv/ntfy` with `auth_users`, `auth_tokens` and `gatus_token`,
+  pulled in by External Secrets.
+- Hetzner: the nix-infra secrets `ntfy-auth-users`, `ntfy-auth-tokens` and
+  `ntfy-gatus-token`.
+
 ## Reading the two pages
 
 - s1 sees the homelab from outside, so trust it for homelab services. s2 sees

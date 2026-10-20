@@ -1,0 +1,126 @@
+# s2.rubenhensen.nl: Gatus on the home cluster.
+# Its twin s1.rubenhensen.nl runs on the Hetzner box, see
+# nix-infra-machine/nodes/node001.nix. Keep the endpoint lists in sync.
+storage:
+  type: sqlite
+  path: /data/data.db
+
+ui:
+  title: Status (homelab)
+  header: s2 · homelab
+  buttons:
+    - name: s1 (Hetzner)
+      link: https://s1.rubenhensen.nl
+
+endpoints:
+  # Tunneled through Hetzner to the home cluster
+  - name: rss
+    group: rubenhensen.nl
+    url: https://rss.rubenhensen.nl
+    interval: 60s
+    # mod_auth_openidc answers 401 instead of redirecting to the login
+    # page unless the client asks for HTML
+    headers:
+      Accept: text/html
+    conditions: &http-ok
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+  - name: authentik
+    group: rubenhensen.nl
+    url: https://authentik.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: vault
+    group: rubenhensen.nl
+    url: https://vault.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: ynab
+    group: rubenhensen.nl
+    url: https://ynab.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: argocd
+    group: rubenhensen.nl
+    url: https://argocd.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: ha
+    group: rubenhensen.nl
+    url: https://ha.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: longhorn
+    group: rubenhensen.nl
+    url: https://longhorn.rubenhensen.nl
+    interval: 60s
+    # Behind basic auth, so 401 means it's up
+    conditions:
+      - "[STATUS] == 401"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+  - name: lingo
+    group: rubenhensen.nl
+    url: https://lingo.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: blog
+    group: rubenhensen.nl
+    url: https://blog.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: serpbear
+    group: rubenhensen.nl
+    url: https://serpbear.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: git
+    group: rubenhensen.nl
+    url: https://git.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: vic
+    group: rubenhensen.nl
+    url: https://vic.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+
+  # Stalwart on Hetzner
+  - name: webmail
+    group: mail
+    url: https://mail.rubenhensen.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: smtp
+    group: mail
+    url: tcp://mail.rubenhensen.nl:25
+    interval: 60s
+    conditions:
+      - "[CONNECTED] == true"
+  - name: imaps
+    group: mail
+    url: tls://mail.rubenhensen.nl:993
+    interval: 60s
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
+
+  # Served straight from the home IP
+  - name: scoutingmbg.nl
+    group: Scouting MBG
+    url: https://scoutingmbg.nl
+    interval: 60s
+    conditions: *http-ok
+  - name: foto.scoutingmbg.nl
+    group: Scouting MBG
+    url: https://foto.scoutingmbg.nl/_app
+    interval: 60s
+    conditions: *http-ok
+
+  # The other watcher
+  - name: s1 (Hetzner)
+    group: watchers
+    url: https://s1.rubenhensen.nl/health
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == UP"

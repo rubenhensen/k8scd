@@ -63,6 +63,16 @@ records:
     expire: 300
     type: A
     content: "46.224.26.65"
+  # Gatus status pages. s2 points straight at home, not through the
+  # Hetzner tunnel, so it stays reachable when Hetzner is down.
+  - name: "s1"
+    expire: 300
+    type: A
+    content: "46.224.26.65"
+  - name: "s2"
+    expire: 300
+    type: A
+    content: "62.41.86.27"
   - name: "@"
     expire: 300
     type: MX

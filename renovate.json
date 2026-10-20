@@ -18,7 +18,8 @@
       "/apps/templates/.+\\.yaml$/",
       "/serpbear/.+\\.yaml$/",
       "/bolletjestrui/.+\\.yaml$/",
-      "/gitea/.+\\.yaml$/"
+      "/gitea/.+\\.yaml$/",
+      "/gatus/.+\\.yaml$/"
     ]
   },
   "customManagers": [

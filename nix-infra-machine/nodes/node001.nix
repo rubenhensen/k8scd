@@ -123,6 +123,17 @@ in
   ];
 
   # ──────────────────────────────────────────────
+  # Trust store
+  # ──────────────────────────────────────────────
+  # Distrust the roots above the compromised eMudhra intermediates until
+  # nixpkgs ships NSS 3.131.1, see https://emudhra.we-have-a-problem.com.
+  # Everything this box talks to chains to ISRG Root X1.
+  security.pki.caCertificateBlacklist = [
+    "Comodo AAA Services root"
+    "emSign ECC Root CA - G3"
+  ];
+
+  # ──────────────────────────────────────────────
   # ACME / Let's Encrypt
   # ──────────────────────────────────────────────
   security.acme = {

@@ -16,15 +16,13 @@ spec:
     chart: wordpress
     helm:
       values: |
-        # Stopped until PHP is patched (CERT-EU 2026-018, CVE-2026-109618,
-        # CVE-2026-109619). Set back to 1 once the image ships a fixed PHP.
-        replicaCount: 0
-
-        # Official WordPress image configuration
+        # Official WordPress image configuration. WordPress core lives on the
+        # volume, so the tag only sets PHP and Apache; 7.1.3-php8.3-apache
+        # ships PHP 8.3.36, which fixes CVE-2026-109618 and CVE-2026-109619.
         image:
           registry: docker.io
           repository: wordpress
-          tag: "6.9.1-apache"
+          tag: "7.1.3-php8.3-apache"
           pullPolicy: IfNotPresent
 
         # Disable embedded MariaDB

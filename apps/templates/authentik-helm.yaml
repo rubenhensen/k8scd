@@ -86,8 +86,18 @@ spec:
                   secretKeyRef:
                     name: actualbudget-oidc-client-secret
                     key: client_secret
+              # Point OpenSSL and requests (which uses certifi otherwise) at
+              # patched-ca-bundle, mounted below until the image drops the
+              # compromised eMudhra intermediates.
+              - name: SSL_CERT_FILE
+                value: /etc/ssl/certs/ca-certificates.crt
+              - name: REQUESTS_CA_BUNDLE
+                value: /etc/ssl/certs/ca-certificates.crt
           server:
             volumes:
+              - name: patched-ca-bundle
+                configMap:
+                  name: patched-ca-bundle
               - name: blueprint-vault
                 configMap:
                   name: authentik-blueprint-vault
@@ -131,6 +141,9 @@ spec:
               - name: blueprint-session
                 mountPath: /blueprints/custom/session-duration.yaml
                 subPath: session-duration.yaml
+              - name: patched-ca-bundle
+                mountPath: /etc/ssl/certs
+                readOnly: true
             ingress:
               enabled: true
               ingressClassName: nginx
@@ -144,6 +157,9 @@ spec:
                     - authentik.rubenhensen.nl
           worker:
             volumes:
+              - name: patched-ca-bundle
+                configMap:
+                  name: patched-ca-bundle
               - name: blueprint-vault
                 configMap:
                   name: authentik-blueprint-vault
@@ -187,6 +203,9 @@ spec:
               - name: blueprint-session
                 mountPath: /blueprints/custom/session-duration.yaml
                 subPath: session-duration.yaml
+              - name: patched-ca-bundle
+                mountPath: /etc/ssl/certs
+                readOnly: true
           postgresql:
             enabled: false
           redis:

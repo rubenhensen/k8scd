@@ -36,6 +36,20 @@ spec:
 
         extraEnvVars:
           ACTUAL_OPENID_SERVER_HOSTNAME: https://ynab.rubenhensen.nl
+          # Node trusts its built-in roots, which still include the ones
+          # above the compromised eMudhra intermediates. Use patched-ca-bundle
+          # through OpenSSL instead until Node ships a fix.
+          NODE_OPTIONS: --use-openssl-ca
+          SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+
+        volumes:
+          - name: patched-ca-bundle
+            configMap:
+              name: patched-ca-bundle
+        volumeMounts:
+          - name: patched-ca-bundle
+            mountPath: /etc/ssl/certs
+            readOnly: true
 
         # Service configuration
         service:

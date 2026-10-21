@@ -4,7 +4,7 @@ metadata:
   name: nas-minio-external
 spec:
   type: ExternalName
-  externalName: 192.168.1.99
+  externalName: 192.168.1.10
   ports:
     - port: 9000
       protocol: TCP

@@ -4,7 +4,7 @@ metadata:
   name: nas-external
 spec:
   type: ExternalName
-  externalName: 192.168.1.99
+  externalName: 192.168.1.10
   ports:
     - name: nas-5000
       protocol: TCP 

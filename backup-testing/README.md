@@ -72,7 +72,7 @@ This will:
 | `--s3-secret-key KEY` | S3/MinIO secret key | (required) |
 | `--s3-bucket BUCKET` | S3 bucket containing backups | `velero-backups` |
 | `--s3-region REGION` | S3 region | `minio` |
-| `--s3-url URL` | S3 endpoint URL | `http://192.168.1.99:9000` |
+| `--s3-url URL` | S3 endpoint URL | `http://192.168.1.10:9000` |
 | `--original-namespace NS` | Namespace in the original backup | (required) |
 | `--test-namespace NS` | Namespace for restoration | `default` |
 | `--original-domain DOMAIN` | Domain to replace in ingresses | `hensen.io` |

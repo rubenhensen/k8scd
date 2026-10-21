@@ -48,13 +48,15 @@ spec:
         nodeAgent:
           containerSecurityContext:
             privileged: true
+        # 512Mi got the server OOMKilled 314 times, including halfway
+        # through a backup of ~14.7k items.
         resources:
           requests:
             cpu: 100m
-            memory: 256Mi
+            memory: 512Mi
           limits:
             cpu: 500m
-            memory: 512Mi
+            memory: 2Gi
         
   destination:
     server: https://kubernetes.default.svc

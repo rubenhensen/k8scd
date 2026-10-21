@@ -8,7 +8,9 @@ metadata:
     io.kompose.service: freshrss
   name: freshrss
 spec:
-  replicas: 1
+  # Stopped until PHP is patched (CERT-EU 2026-018, CVE-2026-109618,
+  # CVE-2026-109619). Set back to 1 once the image ships a fixed PHP.
+  replicas: 0
   selector:
     matchLabels:
       io.kompose.service: freshrss

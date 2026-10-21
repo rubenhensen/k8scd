@@ -16,6 +16,10 @@ spec:
     chart: wordpress
     helm:
       values: |
+        # Stopped until PHP is patched (CERT-EU 2026-018, CVE-2026-109618,
+        # CVE-2026-109619). Set back to 1 once the image ships a fixed PHP.
+        replicaCount: 0
+
         # Official WordPress image configuration
         image:
           registry: docker.io

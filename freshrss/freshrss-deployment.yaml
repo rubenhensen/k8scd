@@ -8,9 +8,7 @@ metadata:
     io.kompose.service: freshrss
   name: freshrss
 spec:
-  # Stopped until PHP is patched (CERT-EU 2026-018, CVE-2026-109618,
-  # CVE-2026-109619). Set back to 1 once the image ships a fixed PHP.
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       io.kompose.service: freshrss
@@ -74,7 +72,9 @@ spec:
               value: "server-cache:persistent"
             - name: TZ
               value: Europe/Amsterdam
-          image: freshrss/freshrss:latest
+          # 1.30.3 ships PHP 8.4.27, which fixes CVE-2026-109618 and
+          # CVE-2026-109619.
+          image: freshrss/freshrss:1.30.3
           name: freshrss
           ports:
             - containerPort: 80

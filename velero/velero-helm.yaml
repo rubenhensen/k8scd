@@ -11,6 +11,11 @@ spec:
     targetRevision: 8.4.0
     helm:
       values: |
+        # The CRD upgrade hook pulls docker.io/bitnami/kubectl, which Bitnami
+        # has removed, so every sync hangs on it. The CRDs only change with
+        # the chart version; turn this back on (with another kubectl image)
+        # when bumping targetRevision.
+        upgradeCRDs: false
         initContainers:
           - name: velero-plugin-for-aws
             image: velero/velero-plugin-for-aws:v1.11.1

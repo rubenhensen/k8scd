@@ -9,6 +9,7 @@ resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v2.14.2/manifests/install.yaml
 - ingress.yaml
 - oidc-secret.yaml
+- patched-ca-bundle.yaml
 
 patches:
   - target:
@@ -19,3 +20,4 @@ patches:
     path: overlays/argocd-notifications-controller-patch.yaml
   - path: overlays/argocd-cm.patch.yaml
   - path: overlays/argocd-rbac-cm.patch.yaml
+  - path: overlays/patched-ca-bundle.patch.yaml

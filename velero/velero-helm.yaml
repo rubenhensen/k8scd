@@ -30,7 +30,7 @@ spec:
               config:
                 region: minio
                 s3ForcePathStyle: true
-                s3Url: http://192.168.1.10:9000
+                s3Url: http://192.168.1.99:9000
                 insecureSkipTLSVerify: "true"
           volumeSnapshotLocation:
             - name: default

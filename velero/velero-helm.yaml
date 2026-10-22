@@ -17,9 +17,9 @@ spec:
         # cleaned up.
         fullnameOverride: velero
         # The CRD upgrade hook pulls docker.io/bitnami/kubectl, which Bitnami
-        # has removed, so every sync hangs on it. The CRDs only change with
-        # the chart version; turn this back on (with another kubectl image)
-        # when bumping targetRevision.
+        # has removed, so every sync hangs on it. Not needed anyway: Argo CD
+        # applies the chart's crds/ directory on every sync, which is how the
+        # 1.16 CRDs got in.
         upgradeCRDs: false
         initContainers:
           - name: velero-plugin-for-aws

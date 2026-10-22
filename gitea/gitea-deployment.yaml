@@ -53,8 +53,16 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            # Trust store without the compromised eMudhra intermediates,
+            # see ca-bundle/. Drop once the image ships a fixed bundle.
+            - mountPath: /etc/ssl/certs
+              name: patched-ca-bundle
+              readOnly: true
       restartPolicy: Always
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: gitea-data
+        - name: patched-ca-bundle
+          configMap:
+            name: patched-ca-bundle

@@ -45,7 +45,16 @@ spec:
               name: translate-claim0
             - mountPath: /home/libretranslate/.local/cache
               name: translate-claim1
+            - mountPath: /etc/ssl/certs
+              name: patched-ca-bundle
+              readOnly: true
           env:
+            # Trust store without the compromised eMudhra intermediates, see
+            # ca-bundle/. requests would otherwise use certifi.
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/ca-certificates.crt
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/ssl/certs/ca-certificates.crt
             - name: DB_PASS
               valueFrom:
                 configMapKeyRef:
@@ -77,6 +86,9 @@ spec:
                   name: env
       restartPolicy: Always
       volumes:
+        - name: patched-ca-bundle
+          configMap:
+            name: patched-ca-bundle
         - name: translate-claim0
           persistentVolumeClaim:
             claimName: translate-claim0

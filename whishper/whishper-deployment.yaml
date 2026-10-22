@@ -61,6 +61,15 @@ spec:
                   name: env
             - name: WHISPER_MODELS_DIR
               value: /app/models
+            # Trust store without the compromised eMudhra intermediates, see
+            # ca-bundle/. Node needs --use-openssl-ca to stop using its
+            # built-in roots; requests would otherwise use certifi.
+            - name: NODE_OPTIONS
+              value: --use-openssl-ca
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/ca-certificates.crt
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/ssl/certs/ca-certificates.crt
           image: pluja/whishper:latest
           name: whishper
           ports:
@@ -71,8 +80,14 @@ spec:
               name: whishper-claim0
             - mountPath: /var/log/whishper
               name: whishper-claim1
+            - mountPath: /etc/ssl/certs
+              name: patched-ca-bundle
+              readOnly: true
       restartPolicy: Always
       volumes:
+        - name: patched-ca-bundle
+          configMap:
+            name: patched-ca-bundle
         - name: whishper-claim0
           persistentVolumeClaim:
             claimName: whishper-claim0

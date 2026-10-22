@@ -71,9 +71,7 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 7. microk8s 1.32 → 1.33
 
-- [ ] First look into the k8s-dqlite write latency: lease updates regularly
-  take over 10s, so controllers (CNPG, snapshot-controller, Longhorn CSI
-  sidecars) keep losing leader election and restarting
+- [ ] First fix the k8s-dqlite write stalls, see below
 - [ ] Fresh Velero backup and `sudo microk8s dbctl backup`
 - [ ] `sudo snap refresh microk8s --channel=1.33/stable`
 - [ ] `sudo microk8s addons repo update core`
@@ -89,3 +87,43 @@ snapshots after every step. Fresh Velero backup before starting.
 
 Out of scope here but due: the immich PostgreSQL 14 cluster reaches end of
 life on 2026-11-12.
+
+## k8s-dqlite write stalls (found 2026-10-22)
+
+Lease updates regularly take more than 10s (169 of ~162k since the API
+server started), so controllers using leader election keep losing it and
+restarting: snapshot-controller over 1000 times, the CNPG operator,
+Longhorn's CSI sidecars.
+
+Cause: the SQLite file behind dqlite is ~709 MB (173k pages of 4 KB) but
+164k pages are free. The live data is ~35 MB: 3,700 kine rows for 3,006
+keys, so compaction works. SQLite never returns free pages without VACUUM,
+and dqlite writes the whole file into a snapshot (~150 MB compressed)
+every 1,024 commits, i.e. every few minutes. Each snapshot takes about 6s
+of writing on the Apacer AS350 (DRAM-less SATA SSD, which also holds every
+Longhorn volume). Commits queue behind it. Outside snapshots fsync takes
+about 1.2 ms.
+
+Constraints:
+- microk8s 1.32 and 1.33 ship k8s-dqlite v1.3.5 (dqlite 1.17 LTS). VACUUM
+  needs dqlite 1.18.2+ (microk8s 1.36). `dbctl restore` writes into the
+  running DB, so it doesn't shrink anything.
+- microk8s 1.34+ ships k8s-dqlite 1.8.x with a reworked write path; that is
+  where Canonical fixed this class of problem (canonical/microk8s#5153).
+
+Plan (needs sudo; the API is down for the length of a dqlite restart,
+workloads keep running):
+- [ ] `sudo microk8s dbctl backup -o /root/dqlite-pre-tuning`
+- [ ] Write `/var/snap/microk8s/current/var/kubernetes/backend/tuning.yaml`
+  with `snapshot: {threshold: 8192, trailing: 16384}`: a snapshot every
+  ~25 minutes instead of every ~3. Never set trailing alone (threshold
+  then becomes 0). Costs ~0.5 GB more raft log on disk.
+- [ ] `sudo snap restart microk8s.daemon-k8s-dqlite`, then check snapshot
+  spacing in the backend dir and that lease updates stay under 10s
+- [ ] Optional: Longhorn backupstore poll interval 300s -> 1800s
+  (backupvolume updates are ~8% of all writes)
+- Later: microk8s 1.34+ for the new write path (needs Longhorn past 1.11.2).
+
+`--cgroups-per-qos=false`, the likely trigger of the 1.32->1.33 kubelite
+panic (#5057), is not set in `args/kubelet`.
+

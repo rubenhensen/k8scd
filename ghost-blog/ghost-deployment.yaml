@@ -37,6 +37,9 @@ spec:
       - name: tmp
         emptyDir:
           sizeLimit: 64Mi
+      - name: patched-ca-bundle
+        configMap:
+          name: patched-ca-bundle
 
       initContainers:
       - name: permissions-fix
@@ -136,6 +139,13 @@ spec:
               key: MYSQL_DATABASE
         - name: url
           value: https://blog.rubenhensen.nl
+        # Node trusts its built-in roots, which still include the ones above
+        # the compromised eMudhra intermediates. Use patched-ca-bundle through
+        # OpenSSL instead until Node ships a fix.
+        - name: NODE_OPTIONS
+          value: --use-openssl-ca
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/ca-certificates.crt
         envFrom:
         - secretRef:
             name: ghost-mail-config
@@ -153,6 +163,9 @@ spec:
         - name: tmp
           mountPath: /tmp
           readOnly: false
+        - name: patched-ca-bundle
+          mountPath: /etc/ssl/certs
+          readOnly: true
         securityContext:
           allowPrivilegeEscalation: false
           runAsNonRoot: true

@@ -17,7 +17,7 @@ spec:
     - chart: longhorn
       repoURL: https://charts.longhorn.io/
       # One minor at a time up to 1.11.2, see docs/upgrade-k8s-1.33.md
-      targetRevision: 1.9.2
+      targetRevision: 1.10.2
       helm:
         values: |
           persistence:

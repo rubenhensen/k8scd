@@ -20,7 +20,7 @@ One minor per step, engine images upgraded after each one. Check volumes,
 the NFS backup target, the recurring backup job and the Velero `bak`
 snapshots after every step. Fresh Velero backup before starting.
 
-- [ ] 1.8.2: `backup-target` settings move to a `default` BackupTarget
+- [x] 1.8.2: `backup-target` settings move to a `default` BackupTarget
   ([notes](https://longhorn.io/docs/archives/1.8.2/important-notes/))
 - [ ] 1.9.2
 - [ ] Migrate every Longhorn CRD to `v1beta2` only in `storedVersions`.

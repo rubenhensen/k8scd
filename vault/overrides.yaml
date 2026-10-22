@@ -5,8 +5,12 @@ injector:
    enabled: true
    # The chart's default anti-affinity forbids two injector pods on one
    # node, so on this single node a rolling update can never start the new
-   # pod while the old one runs.
+   # pod while the old one runs. Recreate removes the old pod first, which
+   # also gets past pods that still carry the old anti-affinity.
    affinity: ""
+   strategy:
+      type: Recreate
+      rollingUpdate: null
 server:
    # Pinned to the running version: the chart would otherwise pull its own
    # default on the next pod restart, and with Shamir unsealing a Vault

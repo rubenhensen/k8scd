@@ -23,6 +23,10 @@ spec:
             defaultClassReplicaCount: 1
           preUpgradeChecker:
             jobEnabled: false
+          defaultSettings:
+            # Move volumes to the new engine image after each Longhorn
+            # upgrade, one at a time. At 0 they stayed behind on 1.7.1/1.7.2.
+            concurrentAutomaticEngineUpgradePerNodeLimit: 1
         parameters:
           - name: csi.kubeletRootDir
             value: "/var/snap/microk8s/common/var/lib/kubelet"

@@ -1,6 +1,8 @@
-# Namespaces that get the patched-ca-bundle ConfigMap. argocd, authentik and
-# actual-budget still have their own copy in their folders.
+# Namespaces that get the patched-ca-bundle ConfigMap.
 namespaces:
+  - actual-budget
+  - argocd
+  - authentik
   - bolletjestrui
   - cert-manager
   - gatus

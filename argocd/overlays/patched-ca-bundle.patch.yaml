@@ -1,7 +1,8 @@
-# Mount patched-ca-bundle over /etc/ssl/certs so git, helm and the Go
-# binaries stop trusting the compromised eMudhra intermediates. The whole
-# directory is replaced because OpenSSL and Go also read the per-root files
-# next to ca-certificates.crt. Drop this once Argo CD ships a fixed image.
+# Mount patched-ca-bundle (from ca-bundle/) over /etc/ssl/certs so git, helm
+# and the Go binaries stop trusting the compromised eMudhra intermediates.
+# The whole directory is replaced because OpenSSL and Go also read the
+# per-root files next to ca-certificates.crt. Drop this once Argo CD ships a
+# fixed image.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

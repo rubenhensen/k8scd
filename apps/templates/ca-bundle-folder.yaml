@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ca-bundle
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rubenhensen/k8scd.git
+    targetRevision: HEAD
+    path: ca-bundle
+  destination:
+    server: https://kubernetes.default.svc
+    # Every ConfigMap sets its own namespace.
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

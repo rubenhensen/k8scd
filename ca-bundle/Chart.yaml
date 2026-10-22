@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ca-bundle
+description: Puts the patched-ca-bundle ConfigMap in every namespace listed in values.yaml
+type: application
+version: 0.1.0

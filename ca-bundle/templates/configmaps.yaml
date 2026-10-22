@@ -1,0 +1,20 @@
+{{- /*
+Temporary CA bundle: ca-certificates.crt is /etc/ssl/certs/ca-certificates.crt
+from Alpine ca-certificates-bundle 20261020-r0, which drops the roots above
+the compromised eMudhra intermediates (https://emudhra.we-have-a-problem.com).
+Workloads mount it over /etc/ssl/certs until their images ship a fixed
+bundle. Server-side apply keeps the bundle out of the last-applied annotation.
+*/}}
+{{- range .Values.namespaces }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patched-ca-bundle
+  namespace: {{ . }}
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+data:
+  ca-certificates.crt: |
+{{ $.Files.Get "ca-certificates.crt" | indent 4 }}
+{{- end }}

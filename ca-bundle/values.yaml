@@ -6,9 +6,7 @@ namespaces:
   - bolletjestrui
   - cert-manager
   - gatus
-  - ghost-blog
   - gitea
   - immich
   - ntfy
   - serpbear
-  - whisper

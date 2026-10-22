@@ -39,10 +39,6 @@ records:
     expire: 300
     type: A
     content: "46.224.26.65"
-  - name: "blog"
-    expire: 300
-    type: A
-    content: "46.224.26.65"
   - name: "serpbear"
     expire: 300
     type: A

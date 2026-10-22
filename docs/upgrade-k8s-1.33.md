@@ -53,11 +53,12 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 5. Argo CD 2.14.2 → 3.4.12
 
-- [ ] Read every upgrade note from
-  [2.14→3.0](https://argo-cd.readthedocs.io/en/stable/operator-manual/upgrading/2.14-3.0/)
-  onward. 3.0 switches to annotation tracking and excludes Endpoints and
-  EndpointSlices by default (affects `home-assistant/service.yaml`); 3.3
-  needs `kubectl apply --server-side --force-conflicts`
+- [x] v3.0.23 → v3.1.16 → v3.2.12 → v3.3.18 → v3.4.12. Label tracking is
+  pinned in `argocd-cm`; our own `resource.exclusions` replaces the 3.0
+  defaults, so the home-assistant EndpointSlice stays managed.
+  `argocd-folder` syncs with server-side apply (needed from 3.3)
+- [ ] Later: switch to annotation tracking (remove the pin, then sync every
+  app once)
 
 ## 6. Calico 3.25.1 → 3.29.3
 

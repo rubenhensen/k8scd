@@ -91,6 +91,20 @@ spec:
                     image:
                       repository: ghcr.io/immich-app/immich-server
                       pullPolicy: IfNotPresent
+                    # Node trusts its built-in roots, which still include the
+                    # ones above the compromised eMudhra intermediates. Use
+                    # patched-ca-bundle through OpenSSL until Node ships a fix.
+                    env:
+                      NODE_OPTIONS: --use-openssl-ca
+                      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+            persistence:
+              patched-ca-bundle:
+                enabled: true
+                type: configMap
+                name: patched-ca-bundle
+                globalMounts:
+                  - path: /etc/ssl/certs
+                    readOnly: true
             ingress:
               main:
                 enabled: true
@@ -135,7 +149,18 @@ spec:
                       TRANSFORMERS_CACHE: /cache
                       HF_XET_CACHE: /cache/huggingface-xet
                       MPLCONFIGDIR: /cache/matplotlib-config
+                      # Trust store without the compromised eMudhra
+                      # intermediates; requests would otherwise use certifi.
+                      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+                      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
             persistence:
+              patched-ca-bundle:
+                enabled: true
+                type: configMap
+                name: patched-ca-bundle
+                globalMounts:
+                  - path: /etc/ssl/certs
+                    readOnly: true
               cache:
                 enabled: true
                 size: 10Gi

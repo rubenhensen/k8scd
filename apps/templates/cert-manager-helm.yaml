@@ -18,6 +18,17 @@ spec:
       parameters:
         - name: crds.enabled
           value: 'true'
+      # The controller talks ACME to Let's Encrypt. Give it a trust store
+      # without the compromised eMudhra intermediates, see ca-bundle/.
+      values: |
+        volumes:
+          - name: patched-ca-bundle
+            configMap:
+              name: patched-ca-bundle
+        volumeMounts:
+          - name: patched-ca-bundle
+            mountPath: /etc/ssl/certs
+            readOnly: true
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

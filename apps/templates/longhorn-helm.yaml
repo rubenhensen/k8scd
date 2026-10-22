@@ -16,13 +16,19 @@ spec:
   sources:
     - chart: longhorn
       repoURL: https://charts.longhorn.io/
-      targetRevision: 1.7.3 # Replace with the Longhorn version you'd like to install or upgrade to
+      # One minor at a time up to 1.11.2, see docs/upgrade-k8s-1.33.md
+      targetRevision: 1.8.2
       helm:
         values: |
           persistence:
             defaultClassReplicaCount: 1
           preUpgradeChecker:
             jobEnabled: false
+          # Since 1.8 the backup target is a BackupTarget resource instead of
+          # the backup-target setting.
+          defaultBackupStore:
+            backupTarget: nfs://192.168.1.99:/volume1/microk8s-nfs
+            pollInterval: 300
           defaultSettings:
             # Move volumes to the new engine image after each Longhorn
             # upgrade, one at a time. At 0 they stayed behind on 1.7.1/1.7.2.

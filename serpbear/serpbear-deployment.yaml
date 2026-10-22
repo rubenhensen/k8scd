@@ -44,6 +44,13 @@ spec:
               value: https://serpbear.rubenhensen.nl
             - name: TZ
               value: Europe/Amsterdam
+            # Node trusts its built-in roots, which still include the ones
+            # above the compromised eMudhra intermediates. Use
+            # patched-ca-bundle through OpenSSL instead until Node ships a fix.
+            - name: NODE_OPTIONS
+              value: --use-openssl-ca
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/ca-certificates.crt
           image: towfiqi/serpbear:3.1.0
           name: serpbear
           ports:
@@ -52,8 +59,14 @@ spec:
           volumeMounts:
             - mountPath: /app/data
               name: data
+            - mountPath: /etc/ssl/certs
+              name: patched-ca-bundle
+              readOnly: true
       restartPolicy: Always
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: data
+        - name: patched-ca-bundle
+          configMap:
+            name: patched-ca-bundle

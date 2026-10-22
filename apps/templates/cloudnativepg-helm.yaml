@@ -13,7 +13,12 @@ spec:
     targetRevision: 0.23.2
     helm:
       values: |
-        # Default values are fine
+        config:
+          data:
+            # Swap the instance manager inside running pods on operator
+            # upgrades instead of restarting them. Both clusters have a
+            # single instance, so a restart means downtime.
+            ENABLE_INSTANCE_MANAGER_INPLACE_UPDATES: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system

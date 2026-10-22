@@ -4,6 +4,9 @@ metadata:
   name: authentik-postgres
 spec:
   instances: 1
+  # Pinned so a new operator default (PostgreSQL 18 since CNPG 1.26.3) can't
+  # start an in-place major upgrade. CNPG filled this in at creation.
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.4
   primaryUpdateStrategy: unsupervised
   bootstrap:
     initdb:

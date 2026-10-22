@@ -33,10 +33,12 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 3. Smaller components
 
-- [ ] CloudNativePG 1.25.1 → 1.26 → 1.27 → 1.28.4 (each step restarts the
-  single-instance databases)
+- [x] CloudNativePG 1.25.1 → 1.26 → 1.27 → 1.28 → 1.29 → 1.30.1 (1.27-1.29 are
+  EOL already). In-place instance manager updates are on; the databases
+  restarted once, on the first hop
 - [x] Velero 1.15.2 → 1.16.2 (chart 10.1.3), plugin-for-aws v1.12.2
-- [ ] Vault chart 0.28.1 → ≥0.30.1 (vault-k8s 1.7.0)
+- [x] Vault chart 0.28.1 → 0.34.1 (vault-k8s 1.7.6), server pinned to 1.17.2.
+  Upgrading the Vault server itself needs the unseal keys
 - [x] cert-manager 1.15.5 → 1.16.5 → 1.17.4 → 1.18.6 → 1.19.6 → 1.20.4
   (1.18 changes the `rotationPolicy` default to Always)
 

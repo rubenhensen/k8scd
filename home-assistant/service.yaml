@@ -1,10 +1,28 @@
+# Home Assistant runs outside the cluster on 192.168.1.202. ingress-nginx
+# 1.13 resolves an ExternalName as a DNS name and fails on a bare IP, so
+# point a selector-less Service at it with a hand-written EndpointSlice.
 apiVersion: v1
 kind: Service
 metadata:
   name: home-assistant-external
 spec:
-  type: ExternalName
-  externalName: 192.168.1.202
   ports:
-    - port: 8123
+    - name: http
+      port: 8123
       protocol: TCP
+      targetPort: 8123
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: home-assistant-external-1
+  labels:
+    kubernetes.io/service-name: home-assistant-external
+addressType: IPv4
+ports:
+  - name: http
+    port: 8123
+    protocol: TCP
+endpoints:
+  - addresses:
+      - 192.168.1.202

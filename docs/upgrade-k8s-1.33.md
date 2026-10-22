@@ -71,7 +71,7 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 7. microk8s 1.32 → 1.33
 
-- [ ] First fix the k8s-dqlite write stalls, see below
+- [x] First fix the k8s-dqlite write stalls, see below
 - [ ] Fresh Velero backup and `sudo microk8s dbctl backup`
 - [ ] `sudo snap refresh microk8s --channel=1.33/stable`
 - [ ] `sudo microk8s addons repo update core`
@@ -114,14 +114,16 @@ Constraints:
 Plan (needs sudo; the API is down for the length of a dqlite restart,
 workloads keep running). `~/dqlite-tuning.sh` and `~/tuning.yaml` on opti1
 do the first three steps: `ssh -t ruben@192.168.1.204 ./dqlite-tuning.sh`
-- [ ] `sudo microk8s dbctl backup -o /root/dqlite-pre-tuning-<date>`
-- [ ] Install `backend/tuning.yaml` with
+- [x] `sudo microk8s dbctl backup -o /root/dqlite-pre-tuning-<date>`
+- [x] Install `backend/tuning.yaml` with
   `snapshot: {threshold: 8192, trailing: 16384}`: a snapshot every ~25
   minutes instead of every ~3. Never set trailing alone (threshold then
   becomes 0). Leaving out the kine intervals keeps their defaults. Costs
   ~0.5 GB more raft log on disk.
-- [ ] `sudo snap restart microk8s.daemon-k8s-dqlite`, then check snapshot
-  spacing in the backend dir and that lease updates stay under 10s
+- [x] `sudo snap restart microk8s.daemon-k8s-dqlite`, then check snapshot
+  spacing in the backend dir and that lease updates stay under 10s.
+  Measured over the first 40 minutes: snapshots 24.7 minutes apart
+  (were ~3), 0 of 9,445 lease updates over 4s, no controller restarts
 - [ ] Optional: Longhorn backupstore poll interval 300s -> 1800s
   (backupvolume updates are ~8% of all writes)
 - Later: microk8s 1.34+ for the new write path and 1.36 for VACUUM, see

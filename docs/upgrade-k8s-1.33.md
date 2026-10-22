@@ -21,11 +21,11 @@ the NFS backup target, the recurring backup job and the Velero `bak`
 snapshots after every step. Fresh Velero backup before starting.
 
 - [ ] 1.8.2: `backup-target` settings move to a `default` BackupTarget
-  ([notes](https://longhorn.io/docs/1.8.2/important-notes/))
+  ([notes](https://longhorn.io/docs/archives/1.8.2/important-notes/))
 - [ ] 1.9.2
 - [ ] Migrate every Longhorn CRD to `v1beta2` only in `storedVersions`.
   Mandatory before 1.10; skipping it leaves only a forced downgrade
-  ([notes](https://longhorn.io/docs/1.10.2/important-notes/))
+  ([notes](https://longhorn.io/docs/archives/1.10.2/important-notes/))
 - [ ] 1.10.2: v1beta1 API removed, settings move to a v1/v2 JSON format
 - [ ] 1.11.2. Not 1.11.3 or 1.12.x: those need k8s 1.34
 

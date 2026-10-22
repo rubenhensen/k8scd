@@ -73,11 +73,6 @@ endpoints:
     conditions:
       - "[STATUS] == 401"
       - "[CERTIFICATE_EXPIRATION] > 168h"
-  - name: lingo
-    group: rubenhensen.nl
-    url: https://lingo.rubenhensen.nl
-    interval: 60s
-    conditions: *http-ok
   - name: blog
     group: rubenhensen.nl
     url: https://blog.rubenhensen.nl

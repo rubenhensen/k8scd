@@ -16,7 +16,6 @@ let
     "argocd.rubenhensen.nl"
     "ha.rubenhensen.nl"
     "longhorn.rubenhensen.nl"
-    "lingo.rubenhensen.nl"
     "blog.rubenhensen.nl"
     "serpbear.rubenhensen.nl"
     "git.rubenhensen.nl"

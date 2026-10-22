@@ -42,11 +42,14 @@ snapshots after every step. Fresh Velero backup before starting.
 - [x] cert-manager 1.15.5 → 1.16.5 → 1.17.4 → 1.18.6 → 1.19.6 → 1.20.4
   (1.18 changes the `rotationPolicy` default to Always)
 
-## 4. External Secrets 0.10.7 → ≥0.17
+## 4. External Secrets 0.10.7 → 2.13.0
 
-- [ ] Move every ExternalSecret and SecretStore to `external-secrets.io/v1`
-- [ ] Upgrade one minor at a time; 0.16 needs v1alpha1 gone from
-  `storedVersions`, 0.17 stops serving v1beta1, 0.19 needs server-side apply
+- [x] Every ExternalSecret and the ClusterSecretStore on `external-secrets.io/v1`
+- [x] One minor at a time, 28 hops. The ESO app syncs with server-side apply.
+  At 0.16.2 the old conversion webhook blocked the new CRDs; setting
+  `spec.conversion` to `None` by hand on the three CRDs fixed it
+- [ ] Later: once every object is stored as v1, drop v1beta1 from the CRDs'
+  `status.storedVersions` (needed before ESO removes v1beta1 entirely)
 
 ## 5. Argo CD 2.14.2 → 3.4.12
 

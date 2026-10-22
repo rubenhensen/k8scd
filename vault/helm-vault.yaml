@@ -16,7 +16,7 @@ spec:
   sources:
     - chart: vault
       repoURL: https://helm.releases.hashicorp.com
-      targetRevision: 0.28.1
+      targetRevision: 0.34.1
       helm:
         valueFiles:
           - $values/vault/overrides.yaml

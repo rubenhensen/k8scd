@@ -27,7 +27,8 @@ snapshots after every step. Fresh Velero backup before starting.
   Already the case after 1.8.2/1.9.2; recheck right before 1.10.
   Mandatory before 1.10; skipping it leaves only a forced downgrade
   ([notes](https://longhorn.io/docs/archives/1.10.2/important-notes/))
-- [ ] 1.10.2: v1beta1 API removed, settings move to a v1/v2 JSON format
+- [x] 1.10.2: v1beta1 API removed, settings move to a v1/v2 JSON format.
+  Engine images are now `docker.io/longhornio/...`
 - [ ] 1.11.2. Not 1.11.3 or 1.12.x: those need k8s 1.34
 
 ## 3. Smaller components

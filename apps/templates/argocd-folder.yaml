@@ -14,5 +14,8 @@ spec:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+    # From Argo CD 3.3 the ApplicationSet CRD is too big for client-side
+    # apply's last-applied annotation.
+    - ServerSideApply=true
     automated:
       selfHeal: true

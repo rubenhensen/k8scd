@@ -7,6 +7,10 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   url: https://argocd.rubenhensen.nl
+  # Argo CD 3.0 defaults to annotation tracking. Stay on labels through the
+  # upgrade so no app loses track of its resources; switching is a
+  # separate step that needs every app synced once.
+  application.resourceTrackingMethod: label
   oidc.config: |
     name: Authentik
     issuer: https://authentik.rubenhensen.nl/application/o/argocd/

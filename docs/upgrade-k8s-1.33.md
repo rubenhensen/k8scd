@@ -37,7 +37,7 @@ snapshots after every step. Fresh Velero backup before starting.
   single-instance databases)
 - [ ] Velero 1.15.2 → 1.16.x (chart 10.x), plugin-for-aws v1.12
 - [ ] Vault chart 0.28.1 → ≥0.30.1 (vault-k8s 1.7.0)
-- [ ] cert-manager 1.15.5 → 1.16.5 → 1.17.4 → 1.18.6 → 1.19.6 → 1.20.4
+- [x] cert-manager 1.15.5 → 1.16.5 → 1.17.4 → 1.18.6 → 1.19.6 → 1.20.4
   (1.18 changes the `rotationPolicy` default to Always)
 
 ## 4. External Secrets 0.10.7 → ≥0.17

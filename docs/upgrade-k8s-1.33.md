@@ -10,9 +10,9 @@ step; versions move.
 
 ## 1. Preparation
 
-- [ ] Every Longhorn volume on engine image v1.7.3, old engine images deleted
-- [ ] Longhorn system backup
-- [ ] Renovate held at Longhorn 1.11.x (1.11.3 and 1.13 need k8s 1.34)
+- [x] Every Longhorn volume on engine image v1.7.3, old engine images deleted
+- [x] Longhorn system backup (`pre-upgrade-v1-7-3-20261022`)
+- [x] Renovate held at Longhorn 1.11.x (1.11.3 and 1.13 need k8s 1.34)
 
 ## 2. Longhorn 1.7.3 → 1.11.2
 

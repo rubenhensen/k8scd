@@ -48,6 +48,11 @@ spec:
               readOnly: true
             - name: data
               mountPath: /data
+            # Trust store without the compromised eMudhra intermediates,
+            # see ca-bundle/. Drop once the image ships a fixed bundle.
+            - name: patched-ca-bundle
+              mountPath: /etc/ssl/certs
+              readOnly: true
       volumes:
         - name: config
           configMap:
@@ -55,3 +60,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: gatus-data
+        - name: patched-ca-bundle
+          configMap:
+            name: patched-ca-bundle

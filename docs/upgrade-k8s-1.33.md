@@ -22,8 +22,9 @@ snapshots after every step. Fresh Velero backup before starting.
 
 - [x] 1.8.2: `backup-target` settings move to a `default` BackupTarget
   ([notes](https://longhorn.io/docs/archives/1.8.2/important-notes/))
-- [ ] 1.9.2
-- [ ] Migrate every Longhorn CRD to `v1beta2` only in `storedVersions`.
+- [x] 1.9.2
+- [x] Migrate every Longhorn CRD to `v1beta2` only in `storedVersions`.
+  Already the case after 1.8.2/1.9.2; recheck right before 1.10.
   Mandatory before 1.10; skipping it leaves only a forced downgrade
   ([notes](https://longhorn.io/docs/archives/1.10.2/important-notes/))
 - [ ] 1.10.2: v1beta1 API removed, settings move to a v1/v2 JSON format

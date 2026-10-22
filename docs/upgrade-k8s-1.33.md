@@ -62,13 +62,18 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 6. Calico 3.25.1 → 3.29.3
 
-- [ ] Apply the manifest microk8s 1.33 ships
-  (`/snap/microk8s/current/upgrade-scripts/000-switch-to-calico/resources/calico.yaml`
-  after the refresh, or the 1.33 branch of canonical/microk8s before it).
-  A snap refresh does not upgrade Calico.
+- [x] Applied microk8s 1.33's manifest (canonical/microk8s branch 1.33,
+  `upgrade-scripts/000-switch-to-calico/resources/calico.yaml`) with
+  `kubectl apply --server-side --force-conflicts`. Same calico-node settings
+  as before. The manifest is also in
+  `/var/snap/microk8s/current/args/cni-network/cni.yaml`; the 3.25.1 one is
+  saved as `~/cni-3.25.1-backup.yaml` on opti1
 
 ## 7. microk8s 1.32 → 1.33
 
+- [ ] First look into the k8s-dqlite write latency: lease updates regularly
+  take over 10s, so controllers (CNPG, snapshot-controller, Longhorn CSI
+  sidecars) keep losing leader election and restarting
 - [ ] Fresh Velero backup and `sudo microk8s dbctl backup`
 - [ ] `sudo snap refresh microk8s --channel=1.33/stable`
 - [ ] `sudo microk8s addons repo update core`

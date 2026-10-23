@@ -20,15 +20,21 @@ spec:
   sources:
     - chart: longhorn
       repoURL: https://charts.longhorn.io/
-      # Stay on 1.11.2 while on Kubernetes 1.33: 1.11.3 and newer need 1.34,
-      # see docs/upgrade-k8s-1.33.md
-      targetRevision: 1.11.2
+      # One minor at a time; each upgrade moves every volume to the new
+      # engine image before the next.
+      targetRevision: 1.12.1
       helm:
         values: |
           persistence:
             defaultClassReplicaCount: 1
           preUpgradeChecker:
             jobEnabled: false
+          # From 1.12 Longhorn adds NetworkPolicies between its components,
+          # and Calico enforces them. The instance-manager one only admits
+          # Longhorn pods, while the iSCSI initiator connects from the host,
+          # so keep them off until that is tested on its own.
+          networkPolicies:
+            restrictInternalTraffic: false
           # Since 1.8 the backup target is a BackupTarget resource instead of
           # the backup-target setting.
           defaultBackupStore:

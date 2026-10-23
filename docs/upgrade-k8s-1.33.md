@@ -178,8 +178,8 @@ do the first three steps: `ssh -t ruben@192.168.1.204 ./dqlite-tuning.sh`
   spacing in the backend dir and that lease updates stay under 10s.
   Measured over the first 40 minutes: snapshots 24.7 minutes apart
   (were ~3), 0 of 9,445 lease updates over 4s, no controller restarts
-- [ ] Optional: Longhorn backupstore poll interval 300s -> 1800s
-  (backupvolume updates are ~8% of all writes)
+- [x] Optional: Longhorn backupstore poll interval 300s -> 1800s
+  (backupvolume updates are ~8% of all writes). Done 2026-10-24
 - Later: microk8s 1.34+ for the new write path and VACUUM, see
   "On to 1.36" below.
 
@@ -239,9 +239,13 @@ Findings from 2026-10-23:
   on 1.34); Renovate hold lifted. A system backup before each step
   (`pre-upgrade-v1-11-2-20261023`, `pre-upgrade-v1-12-1-20261023`); all
   19 volumes moved to the new engine image within ten minutes per step,
-  and the unused engine images were deleted. Kept off: 1.12's internal
-  NetworkPolicies (Calico enforces them, and the instance-manager policy
-  only admits Longhorn pods while iSCSI comes from the host) and 1.13's
+  and the unused engine images were deleted. Kept off during the
+  upgrades: 1.12's internal NetworkPolicies (Calico enforces them, and the
+  1.12 instance-manager policy only admits Longhorn pods while iSCSI comes
+  from the host). Turned on afterwards on 1.13.0, which opens 3260 to any
+  source: a pod outside Longhorn can no longer reach the longhorn-manager
+  API (it could before), the UI still can, and a new volume attached over
+  iSCSI, took writes and backed up to the NAS. Also kept off: 1.13's
   cluster-wide Secret read for the CSI controller (no StorageClass uses
   provisioner secrets). The global manager runs one replica. Checked on
   1.13.0: a manual backup to the NAS, provisioning a new PVC, and the UI

@@ -280,8 +280,15 @@ snapd refreshed microk8s within its channel four times a day.
   Done 2026-10-23: v1.36.2, snap revision 9092, containerd 2.2.3, snap
   held. All workloads, apps, certificates, volumes and both status pages
   green; LISTs 92-166 ms, no slow lease updates
-- [ ] Once 1.36/stable passes v1.36.5 (CVE-2026-2270):
-  `sudo snap refresh microk8s`
+- [x] CVE-2026-2270: moved to 1.36/edge (v1.36.5, snap revision 9574) on
+  2026-10-23 with `~/microk8s-1.36.5.sh`, still held. The edge build has
+  the same containerd 2.2.3, runc 1.4.2 and k8s-dqlite 1.8.1 as the
+  stable v1.36.2; only build and test fixes landed on the branch since.
+  Everything green afterwards; one Velero maintenance job was cut off by
+  the restart and runs again at the next interval
+- [ ] Back to 1.36/stable once it is at v1.36.5 or later
+  (`sudo snap refresh microk8s --channel=1.36/stable`); before that, the
+  switch would install the older v1.36.2
 
 ### Shrink the database
 

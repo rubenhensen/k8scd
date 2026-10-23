@@ -220,7 +220,11 @@ Findings from 2026-10-23:
 ### Components for 1.35 and 1.36
 - [ ] Longhorn 1.11.2 → 1.12 → 1.13 (one minor at a time, now allowed on
   1.34); lift the Renovate hold
-- [ ] Argo CD 3.4 → 3.5 (3.4 is tested up to 1.35)
+- [x] Argo CD 3.4 → 3.5.6 (3.4 is tested up to 1.35, 3.5 on 1.32-1.36).
+  3.5 renders with Helm 4.2.1 instead of 3.19; all thirteen Helm apps
+  rendered the same with both beforehand (`alpine/helm` images, live app
+  inputs), and after the upgrade all 35 apps stayed Synced/Healthy without
+  a sync
 - [ ] Velero 1.16 → 1.17 → 1.18 (1.17 drops restic, we use kopia)
 - [ ] Recheck CNPG, External Secrets, the Vault chart and Envoy Gateway
   against 1.36

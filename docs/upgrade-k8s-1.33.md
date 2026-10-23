@@ -92,6 +92,17 @@ snapshots after every step. Fresh Velero backup before starting.
   RoleBinding; Argo CD pruned them
 - [ ] Envoy Gateway v1.9 instead of ingress-nginx, Longhorn behind authentik
   OIDC
+  - [x] Envoy Gateway v1.9.2 next to nginx. Gateway `homelab` in
+    `envoy-gateway-system`, Envoy on host ports 10080/10443 (`gateway/`)
+  - [ ] One app (gatus, s2.rubenhensen.nl) on an HTTPRoute, reusing its
+    existing certificate through a ReferenceGrant; test with
+    `curl --resolve <host>:10443:192.168.1.204`
+  - [ ] Longhorn behind authentik OIDC with a SecurityPolicy
+  - [ ] The other apps. Envoy cuts requests off after 15s by default, so
+    uploads and streams need `timeouts.request: 0s`
+  - [ ] Switch over: `microk8s disable ingress`, Envoy on 80/443, cert-manager
+    `enableGatewayAPI` and an HTTP-01 solver on the Gateway
+  - [ ] Remove the Ingress objects and nginx annotations
 
 Out of scope here but due: the immich PostgreSQL 14 cluster reaches end of
 life on 2026-11-12.

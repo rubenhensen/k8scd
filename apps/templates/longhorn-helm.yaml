@@ -29,12 +29,10 @@ spec:
             defaultClassReplicaCount: 1
           preUpgradeChecker:
             jobEnabled: false
-          # From 1.12 Longhorn adds NetworkPolicies between its components,
-          # and Calico enforces them. The instance-manager one only admits
-          # Longhorn pods, while the iSCSI initiator connects from the host,
-          # so keep them off until that is tested on its own.
-          networkPolicies:
-            restrictInternalTraffic: false
+          # restrictInternalTraffic is on by default since 1.12: only Longhorn
+          # components may reach the longhorn-manager API (otherwise any pod
+          # could manage volumes unauthenticated). Since 1.13 iSCSI (3260)
+          # stays open to the host-side initiator.
           # From 1.13 the CSI controller may read every Secret in the cluster,
           # for provisioner-secret StorageClass parameters. Neither
           # StorageClass here uses those.

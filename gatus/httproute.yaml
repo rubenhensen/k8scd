@@ -1,0 +1,30 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gatus
+spec:
+  parentRefs:
+  - name: homelab
+    namespace: envoy-gateway-system
+    sectionName: https-s2
+  hostnames:
+  - s2.rubenhensen.nl
+  rules:
+  - backendRefs:
+    - name: gatus
+      port: 8080
+---
+# Lets the Gateway serve the certificate cert-manager keeps in this namespace.
+apiVersion: gateway.networking.k8s.io/v1
+kind: ReferenceGrant
+metadata:
+  name: gateway-tls
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    namespace: envoy-gateway-system
+  to:
+  - group: ""
+    kind: Secret
+    name: letsencrypt-prod

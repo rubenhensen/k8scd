@@ -14,3 +14,19 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
+  # One HTTPS listener per hostname, each limited to its app's namespace.
+  # The certificates stay in the app namespaces (ReferenceGrant there).
+  - name: https-s2
+    protocol: HTTPS
+    port: 443
+    hostname: s2.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: gatus
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: gatus

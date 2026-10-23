@@ -9,6 +9,7 @@ resources:
   - gatus-deployment.yaml
   - gatus-service.yaml
   - ingress.yaml
+  - httproute.yaml
 
 configMapGenerator:
   - name: gatus-config

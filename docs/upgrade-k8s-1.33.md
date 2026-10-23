@@ -230,8 +230,31 @@ Findings from 2026-10-23:
 - [ ] `sudo snap refresh microk8s --channel=1.36/stable`, addons repo, Calico
 
 ### Shrink the database
-- [ ] On dqlite 1.18.2+ (so from microk8s 1.34): offline backup, then a
-  supervised VACUUM (the maintainers advise against running it
-  unattended). Expect the file to go from ~709 MB to ~35 MB and snapshots
-  to shrink with it
+
+dqlite accepts VACUUM since v1.18.2 (canonical/dqlite#734). Its maintainer:
+"it potentially create a very big transaction which has effects both on the
+RAFT protocol *and* on resource usage. I would recommend not to run it
+unsupervised." The dqlite shell that ships with microk8s can't send it: it
+wraps every statement in a transaction, and SQLite refuses to VACUUM inside
+one. `tools/dqlite-vacuum` sends it through the go-dqlite driver as a plain
+statement, as user `ruben` (in the `microk8s` group, which can read
+`cluster.crt`, `cluster.key` and `info.yaml`); without `-vacuum` it only
+prints page statistics.
+
+Rehearsed on 2026-10-23 on opti1 with the k8s-dqlite and dqlite binaries
+of microk8s 1.34, on a throwaway node in `/dev/shm` (not in Docker on the
+Mac: the amd64 emulation lacks `io_setup`, which raft needs): 657 MB with
+616 MB free went to 41 MB with none free in 0.6s; a writer next to it saw
+no failures and no write over 1s; after a restart, and after a restart from
+the first snapshot (40 MB), `integrity_check` was ok and all rows were
+there.
+
+Live database before: 709 MB, 666 MB free, ~4,400 kine rows; snapshots of
+~150 MB every ~23 minutes; k8s-dqlite RSS 1,346 MB.
+
+- [ ] `ssh -t ruben@192.168.1.204 ./dqlite-vacuum.sh`: dbctl backup, an
+  offline copy of the backend (API down ~1 min), VACUUM, integrity check.
+  How to go back is at the top of the script
+- [ ] Afterwards: the next snapshot's size (expect ~8 MB instead of
+  ~150 MB), lease update times, controller restarts, k8s-dqlite memory
 

@@ -239,8 +239,9 @@ Findings from 2026-10-23:
   repository was kopia already. 1.17 moved `--keep-latest-maintenance-jobs`
   into the `velero-repo-maintenance` ConfigMap, which the chart renders.
   A gatus test backup completed on both versions
-- [ ] Recheck CNPG, External Secrets, the Vault chart and Envoy Gateway
-  against 1.36
+- [x] Recheck CNPG, External Secrets, the Vault chart and Envoy Gateway
+  against 1.36. Done 2026-10-23: CNPG 1.30 supports 1.34-1.36, ESO 2.13 up to
+  1.36, Envoy Gateway 1.9 1.33-1.36, the Vault chart >= 1.20
 
 ### microk8s 1.35 and 1.36
 

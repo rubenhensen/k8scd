@@ -218,8 +218,17 @@ Findings from 2026-10-23:
   during the refresh and restarted once, as expected
 
 ### Components for 1.35 and 1.36
-- [ ] Longhorn 1.11.2 → 1.12 → 1.13 (one minor at a time, now allowed on
-  1.34); lift the Renovate hold
+- [x] Longhorn 1.11.2 → 1.12.1 → 1.13.0 (one minor at a time, now allowed
+  on 1.34); Renovate hold lifted. A system backup before each step
+  (`pre-upgrade-v1-11-2-20261023`, `pre-upgrade-v1-12-1-20261023`); all
+  19 volumes moved to the new engine image within ten minutes per step,
+  and the unused engine images were deleted. Kept off: 1.12's internal
+  NetworkPolicies (Calico enforces them, and the instance-manager policy
+  only admits Longhorn pods while iSCSI comes from the host) and 1.13's
+  cluster-wide Secret read for the CSI controller (no StorageClass uses
+  provisioner secrets). The global manager runs one replica. Checked on
+  1.13.0: a manual backup to the NAS, provisioning a new PVC, and the UI
+  behind authentik
 - [x] Argo CD 3.4 → 3.5.6 (3.4 is tested up to 1.35, 3.5 on 1.32-1.36).
   3.5 renders with Helm 4.2.1 instead of 3.19; all thirteen Helm apps
   rendered the same with both beforehand (`alpine/helm` images, live app

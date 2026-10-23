@@ -6,7 +6,7 @@ namespace: argocd
 
 # additional resources like the route, certificate and secrets.
 resources:
-- https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v3.4.12/manifests/install.yaml
+- https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v3.5.6/manifests/install.yaml
 - certificate.yaml
 - httproute.yaml
 - oidc-secret.yaml

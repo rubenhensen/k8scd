@@ -90,7 +90,7 @@ snapshots after every step. Fresh Velero backup before starting.
 
 - [x] cert-manager 1.21.2. The chart dropped the unused tokenrequest Role and
   RoleBinding; Argo CD pruned them
-- [ ] Envoy Gateway v1.9 instead of ingress-nginx, Longhorn behind authentik
+- [x] Envoy Gateway v1.9 instead of ingress-nginx, Longhorn behind authentik
   OIDC
   - [x] Envoy Gateway v1.9.2 next to nginx. Gateway `homelab` in
     `envoy-gateway-system`, Envoy on host ports 10080/10443 (`gateway/`)
@@ -114,9 +114,13 @@ snapshots after every step. Fresh Velero backup before starting.
   - [x] Switch over: `microk8s disable ingress`, Envoy on 80/443, and a
     `gatewayHTTPRoute` HTTP-01 solver on the ClusterIssuer. About a minute
     without HTTP(S) on 2026-10-23; node001's tunnel needed no change
-  - [ ] Replace the Ingress objects with Certificate resources (the
+  - [x] Replace the Ingress objects with Certificate resources (the
     ingress-shim Certificates go with their Ingress, and gateway-shim
-    can't write to the app namespaces) and drop the nginx annotations
+    can't write to the app namespaces) and drop the nginx annotations.
+    Same names and specs, so nothing was reissued except immich, which
+    dropped mbg.hensen.io; that reissue went through the Gateway's HTTP-01
+    solver. The Ingresses were pruned with `PrunePropagationPolicy=orphan`
+    so the Certificates stayed. Gatus now expects a 302 from Longhorn
 
 Out of scope here but due: the immich PostgreSQL 14 cluster reaches end of
 life on 2026-11-12.

@@ -8,6 +8,7 @@ namespace: argocd
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v3.4.12/manifests/install.yaml
 - ingress.yaml
+- httproute.yaml
 - oidc-secret.yaml
 
 patches:
@@ -19,4 +20,5 @@ patches:
     path: overlays/argocd-notifications-controller-patch.yaml
   - path: overlays/argocd-cm.patch.yaml
   - path: overlays/argocd-rbac-cm.patch.yaml
+  - path: overlays/argocd-cmd-params-cm.patch.yaml
   - path: overlays/patched-ca-bundle.patch.yaml

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # TLS ends at the ingress, so argocd-server serves plain HTTP. Needed for
+  # the Gateway API, which has no simple way to trust its self-signed cert.
+  server.insecure: "true"

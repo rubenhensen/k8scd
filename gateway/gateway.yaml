@@ -198,3 +198,17 @@ spec:
         selector:
           matchLabels:
             kubernetes.io/metadata.name: vault
+  - name: https-argocd
+    protocol: HTTPS
+    port: 443
+    hostname: argocd.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: argocd
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: argocd

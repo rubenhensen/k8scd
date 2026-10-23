@@ -1,9 +1,7 @@
 # How Envoy Gateway runs the proxy: a DaemonSet that takes the node's ports
-# directly, the way the microk8s ingress-nginx addon does. Gateway listeners
-# below 1024 run on port + 10000 inside the container (80 becomes 10080).
-#
-# While ingress-nginx still owns 80 and 443, the host ports are 10080 and
-# 10443 so both can be tested side by side.
+# 80 and 443 directly, the way the microk8s ingress-nginx addon did. Gateway
+# listeners below 1024 run on port + 10000 inside the container (80 becomes
+# 10080).
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
@@ -27,6 +25,6 @@ spec:
                   - name: envoy
                     ports:
                     - containerPort: 10080
-                      hostPort: 10080
+                      hostPort: 80
                     - containerPort: 10443
-                      hostPort: 10443
+                      hostPort: 443

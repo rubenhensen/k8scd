@@ -88,7 +88,8 @@ snapshots after every step. Fresh Velero backup before starting.
 
 ## 8. After 1.33
 
-- [ ] cert-manager 1.21.2
+- [x] cert-manager 1.21.2. The chart dropped the unused tokenrequest Role and
+  RoleBinding; Argo CD pruned them
 - [ ] Envoy Gateway v1.9 instead of ingress-nginx, Longhorn behind authentik
   OIDC
 

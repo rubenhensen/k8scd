@@ -69,9 +69,11 @@ endpoints:
     group: rubenhensen.nl
     url: https://longhorn.rubenhensen.nl
     interval: 60s
-    # Behind basic auth, so 401 means it's up
+    # Envoy sends visitors to authentik first, so a redirect means it's up
+    client:
+      ignore-redirect: true
     conditions:
-      - "[STATUS] == 401"
+      - "[STATUS] == 302"
       - "[CERTIFICATE_EXPIRATION] > 168h"
   - name: serpbear
     group: rubenhensen.nl

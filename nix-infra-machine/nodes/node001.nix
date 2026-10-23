@@ -51,11 +51,14 @@ let
 
   # Per-host tweaks on top of the default check.
   gatusOverrides = {
-    # Behind basic auth, so 401 means it's up
-    "longhorn.rubenhensen.nl".conditions = [
-      "[STATUS] == 401"
-      "[CERTIFICATE_EXPIRATION] > 168h"
-    ];
+    # Envoy sends visitors to authentik first, so a redirect means it's up
+    "longhorn.rubenhensen.nl" = {
+      client.ignore-redirect = true;
+      conditions = [
+        "[STATUS] == 302"
+        "[CERTIFICATE_EXPIRATION] > 168h"
+      ];
+    };
     # mod_auth_openidc answers 401 instead of redirecting to the login
     # page unless the client asks for HTML
     "rss.rubenhensen.nl".headers.Accept = "text/html";

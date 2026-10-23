@@ -237,9 +237,13 @@ bitnamilegacy rewrite, so containerd logged "failed to decode hosts.toml"
 on every docker.io pull and fell back to defaults; fixed on opti1, the
 original is in `~/hosts.toml.docker.io.bak`.
 
-- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.35.sh`: dbctl backup, `snap
+- [x] `ssh -t ruben@192.168.1.204 ./microk8s-1.35.sh`: dbctl backup, `snap
   refresh` to 1.35/stable, addons repo (no schema migration, so `snap
-  revert` is the way back)
+  revert` is the way back). Done 2026-10-23: v1.35.6, snap revision 9072,
+  containerd 2.1.6. containerd was down for 26s and logged no config
+  warnings and no hosts.toml errors; all workloads, apps, certificates,
+  volumes and both status pages green; LISTs 92-166 ms, no slow lease
+  updates
 - [ ] `sudo snap refresh microk8s --channel=1.36/stable`, addons repo, Calico
 
 ### Shrink the database

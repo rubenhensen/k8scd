@@ -5,6 +5,10 @@ metadata:
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
+  # Argo CD 3.x adds these for apps with PreDelete hooks (the Longhorn
+  # chart has one). Listed here so the parent app doesn't see a diff.
+  - pre-delete-finalizer.argocd.argoproj.io
+  - pre-delete-finalizer.argocd.argoproj.io/cleanup
 spec:
   syncPolicy:
     syncOptions:

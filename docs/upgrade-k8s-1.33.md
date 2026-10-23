@@ -72,12 +72,19 @@ snapshots after every step. Fresh Velero backup before starting.
 ## 7. microk8s 1.32 → 1.33
 
 - [x] First fix the k8s-dqlite write stalls, see below
-- [ ] Fresh Velero backup and `sudo microk8s dbctl backup`
-- [ ] `sudo snap refresh microk8s --channel=1.33/stable`
-- [ ] `sudo microk8s addons repo update core`
-- [ ] If kubelite panics with "Missing actuated resource record"
+- [x] Fresh Velero backup (`pre-microk8s-1-33-202610230712`) and
+  `sudo microk8s dbctl backup` (`/root/dqlite-pre-1.33-*`)
+- [x] `sudo snap refresh microk8s --channel=1.33/stable`: v1.33.13, snap
+  revision 9067, done 2026-10-23
+- [x] `sudo microk8s addons repo update core`: branch 1.33, ingress-nginx
+  v1.13.8
+- [x] If kubelite panics with "Missing actuated resource record"
   ([#5057](https://github.com/canonical/microk8s/issues/5057)):
-  `sudo snap revert microk8s`
+  `sudo snap revert microk8s`. No panic. The message does show up in the log
+  without consequences, and kubelite has not restarted since the refresh.
+  The dqlite snapshot tuning survived the refresh.
+- [x] Argo CD 3.x puts pre-delete finalizers on helm-longhorn, so they are
+  now in git as well
 
 ## 8. After 1.33
 

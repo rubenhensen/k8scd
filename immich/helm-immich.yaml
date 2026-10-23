@@ -86,6 +86,9 @@ spec:
             enabled: true
             controllers:
               main:
+                # Stopped while the database moves to PostgreSQL 17 with
+                # VectorChord, see docs/upgrade-k8s-1.33.md
+                replicas: 0
                 containers:
                   main:
                     image:

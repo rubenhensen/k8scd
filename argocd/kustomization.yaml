@@ -4,10 +4,10 @@ kind: Kustomization
 namespace: argocd
 
 
-# additional resources like ingress rules, cluster and repository secrets.
+# additional resources like the route, certificate and secrets.
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/refs/tags/v3.4.12/manifests/install.yaml
-- ingress.yaml
+- certificate.yaml
 - httproute.yaml
 - oidc-secret.yaml
 

@@ -8,7 +8,7 @@ resources:
   - data-persistentvolumeclaim.yaml
   - gatus-deployment.yaml
   - gatus-service.yaml
-  - ingress.yaml
+  - certificate.yaml
   - httproute.yaml
 
 configMapGenerator:

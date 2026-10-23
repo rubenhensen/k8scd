@@ -8,5 +8,5 @@ resources:
   - data-persistentvolumeclaim.yaml
   - ntfy-deployment.yaml
   - ntfy-service.yaml
-  - ingress.yaml
+  - certificate.yaml
   - httproute.yaml

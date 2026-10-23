@@ -6,6 +6,6 @@ metadata:
     app.kubernetes.io/name: argocd-cmd-params-cm
     app.kubernetes.io/part-of: argocd
 data:
-  # TLS ends at the ingress, so argocd-server serves plain HTTP. Needed for
-  # the Gateway API, which has no simple way to trust its self-signed cert.
+  # TLS ends at the Gateway, so argocd-server serves plain HTTP. The Gateway
+  # API has no simple way to trust argocd-server's self-signed cert.
   server.insecure: "true"

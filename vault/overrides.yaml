@@ -41,14 +41,3 @@ server:
             }
             disable_mlock = true
             service_registration "kubernetes" {}
-   ingress:
-      enabled: true
-      annotations:
-        cert-manager.io/cluster-issuer: prod-cluster-issuer
-      ingressClassName: nginx
-      tls:
-          - secretName: letsencrypt-prod
-            hosts:
-              - vault.rubenhensen.nl
-      hosts:
-        - host: "vault.rubenhensen.nl"

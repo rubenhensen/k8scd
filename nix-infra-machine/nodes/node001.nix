@@ -7,7 +7,7 @@ let
   # Hosts tunneled to the home k8s cluster. Each entry gets:
   #   * an SNI map entry for TCP passthrough on :443
   #   * an HTTP vhost on :80 that reverse-proxies to the cluster
-  # The cluster's nginx-ingress terminates TLS with cert-manager.
+  # The cluster's Envoy Gateway terminates TLS with cert-manager certificates.
   tunneledHosts = [
     "rss.rubenhensen.nl"
     "authentik.rubenhensen.nl"
@@ -182,7 +182,7 @@ ${sniMapEntries}
     '';
 
     # Port 80: tunneled hosts reverse-proxy to the home cluster so its
-    # nginx-ingress handles HTTP→HTTPS redirects and cert-manager
+    # Envoy Gateway handles HTTP→HTTPS redirects and cert-manager
     # HTTP-01 ACME challenges. Mail-related hosts serve ACME challenges
     # locally for stalwart's cert and redirect everything else to HTTPS.
     virtualHosts = tunneledVhosts // {

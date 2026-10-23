@@ -56,23 +56,6 @@ spec:
           type: ClusterIP
           port: 5006
 
-        # Ingress configuration
-        ingress:
-          enabled: true
-          className: nginx
-          annotations:
-            cert-manager.io/cluster-issuer: prod-cluster-issuer
-            nginx.ingress.kubernetes.io/proxy-body-size: 50m
-          hosts:
-            - host: ynab.rubenhensen.nl
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - secretName: actual-budget-tls
-              hosts:
-                - ynab.rubenhensen.nl
-
         # Persistence configuration
         persistence:
           enabled: true

@@ -155,17 +155,6 @@ spec:
               - name: patched-ca-bundle
                 mountPath: /etc/ssl/certs
                 readOnly: true
-            ingress:
-              enabled: true
-              ingressClassName: nginx
-              annotations:
-                cert-manager.io/cluster-issuer: prod-cluster-issuer
-              hosts:
-                - authentik.rubenhensen.nl
-              tls:
-                - secretName: authentik-tls
-                  hosts:
-                    - authentik.rubenhensen.nl
           worker:
             volumes:
               - name: patched-ca-bundle

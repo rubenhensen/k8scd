@@ -26,9 +26,6 @@ data:
           redirect_uris:
             - matching_mode: strict
               url: https://longhorn.rubenhensen.nl/oauth2/callback
-            # Envoy's test port until the switch from ingress-nginx
-            - matching_mode: strict
-              url: https://longhorn.rubenhensen.nl:10443/oauth2/callback
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
           property_mappings:
             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]

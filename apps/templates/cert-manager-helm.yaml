@@ -22,7 +22,7 @@ spec:
       # without the compromised eMudhra intermediates, see ca-bundle/.
       values: |
         # Lets cert-manager solve HTTP-01 challenges with an HTTPRoute on
-        # the Gateway once ingress-nginx is gone.
+        # the Gateway, see cert-manager/prod-cluster-issuer.yaml.
         config:
           gatewayAPI:
             enabled: true

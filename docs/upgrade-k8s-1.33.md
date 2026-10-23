@@ -143,7 +143,7 @@ about 1.2 ms.
 
 Constraints:
 - microk8s 1.32 and 1.33 ship k8s-dqlite v1.3.5 (dqlite 1.17 LTS). VACUUM
-  needs dqlite 1.18.2+ (microk8s 1.36). `dbctl restore` writes into the
+  needs dqlite 1.18.2+ (microk8s 1.34 and up). `dbctl restore` writes into the
   running DB, so it doesn't shrink anything.
 - microk8s 1.34+ ships k8s-dqlite 1.8.x with a reworked write path; that is
   where Canonical fixed this class of problem (canonical/microk8s#5153).
@@ -163,7 +163,7 @@ do the first three steps: `ssh -t ruben@192.168.1.204 ./dqlite-tuning.sh`
   (were ~3), 0 of 9,445 lease updates over 4s, no controller restarts
 - [ ] Optional: Longhorn backupstore poll interval 300s -> 1800s
   (backupvolume updates are ~8% of all writes)
-- Later: microk8s 1.34+ for the new write path and 1.36 for VACUUM, see
+- Later: microk8s 1.34+ for the new write path and VACUUM, see
   "On to 1.36" below.
 
 `--cgroups-per-qos=false`, the likely trigger of the 1.32->1.33 kubelite
@@ -172,19 +172,43 @@ panic (#5057), is not set in `args/kubelet`.
 ## On to 1.36
 
 microk8s goes up one minor per refresh. 1.34 brings k8s-dqlite 1.8.x with
-the reworked write path, 1.36 brings dqlite 1.18.2, which can VACUUM the
-mostly empty database. Before every hop: fresh Velero backup, no
+the reworked write path and dqlite 1.18.2, which can VACUUM the mostly
+empty database. Before every hop: fresh Velero backup, no
 deprecated APIs in use (`apiserver_requested_deprecated_apis` metric
 empty), and the Calico manifest of the target version (canonical/microk8s
 branch `<version>`, `upgrade-scripts/000-switch-to-calico/resources/calico.yaml`).
 
+Findings from 2026-10-23:
+- microk8s 1.34, 1.35 and 1.36 all ship k8s-dqlite v1.8.1, which is built
+  against dqlite v1.18.2 (1.33: v1.3.5 with dqlite v1.17.1). So VACUUM is
+  possible from 1.34 on; 1.35 and 1.36 are for staying in support
+  (Kubernetes 1.34 reaches end of life on 2026-10-27).
+- Calico is v3.29.3 in all four branches, so no CNI change.
+- containerd stays 1.7.29 on 1.34 but jumps to 2.1 on 1.35 and 2.2 on 1.36.
+  Check `args/containerd-template.toml` before 1.35: it still has the old
+  `pause:3.7` sandbox image.
+- `backend/tuning.yaml` still works in k8s-dqlite 1.8.1 (defaults there:
+  threshold 512, trailing 4096, dynamic strategy).
+- The 1.34 configure hook adds
+  `ListFromCacheSnapshot=false,SizeBasedListCostEstimate=false,DetectCacheInconsistency=false`
+  to the existing `--feature-gates=WatchList=false` line for kine
+  clusters. WatchList is still beta in 1.34, so it can stay off.
+- `certs/front-proxy-client.crt` expired on 2025-09-13 and microk8s never
+  renews it (canonical/microk8s#5576). Nothing uses the aggregation layer
+  here yet, but it gets renewed with the refresh.
+
 ### microk8s 1.34
-- [ ] Read canonical/microk8s#5568 (LIST stalls with k8s-dqlite on 1.34)
-- [ ] Offline backup first: k8s-dqlite 1.8 migrates the schema on first
-  start, so 1.33 can't read the database afterwards.
-  `microk8s stop; sudo tar -cf /root/backend-1.33.tar /var/snap/microk8s/current/var/kubernetes/backend; microk8s start`
-- [ ] `sudo snap refresh microk8s --channel=1.34/stable`, then
-  `sudo microk8s addons repo update core` and Calico
+- [x] Read canonical/microk8s#5568: 1.34 locks ConsistentListFromCache on,
+  and k8s-dqlite's watch progress notifications lag under load, so LISTs
+  can wait up to 3s before falling back to storage. Latency, not
+  correctness; worst on busy HA clusters. Still open
+- [ ] Fresh Velero backup (`pre-microk8s-1-34-202610232134`)
+- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.34.sh`: dbctl backup, an
+  offline copy of the backend (k8s-dqlite 1.8 migrates the schema on first
+  start, so 1.33 can't read it afterwards), `snap refresh` to 1.34/stable,
+  the addons repo, and the front-proxy certificate
+- [ ] Afterwards: LIST latency (`apiserver_watch_cache_read_wait_seconds`),
+  lease update times and controller restarts
 
 ### Components for 1.35 and 1.36
 - [ ] Longhorn 1.11.2 → 1.12 → 1.13 (one minor at a time, now allowed on
@@ -199,7 +223,8 @@ branch `<version>`, `upgrade-scripts/000-switch-to-calico/resources/calico.yaml`
 - [ ] `sudo snap refresh microk8s --channel=1.36/stable`, addons repo, Calico
 
 ### Shrink the database
-- [ ] On dqlite 1.18.2+: offline backup, then a supervised VACUUM (the
-  maintainers advise against running it unattended). Expect the file to
-  go from ~709 MB to ~35 MB and snapshots to shrink with it
+- [ ] On dqlite 1.18.2+ (so from microk8s 1.34): offline backup, then a
+  supervised VACUUM (the maintainers advise against running it
+  unattended). Expect the file to go from ~709 MB to ~35 MB and snapshots
+  to shrink with it
 

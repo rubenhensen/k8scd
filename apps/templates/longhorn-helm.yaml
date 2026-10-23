@@ -22,7 +22,7 @@ spec:
       repoURL: https://charts.longhorn.io/
       # One minor at a time; each upgrade moves every volume to the new
       # engine image before the next.
-      targetRevision: 1.12.1
+      targetRevision: 1.13.0
       helm:
         values: |
           persistence:
@@ -35,6 +35,14 @@ spec:
           # so keep them off until that is tested on its own.
           networkPolicies:
             restrictInternalTraffic: false
+          # From 1.13 the CSI controller may read every Secret in the cluster,
+          # for provisioner-secret StorageClass parameters. Neither
+          # StorageClass here uses those.
+          csi:
+            allowControllerSecretAccess: false
+          # New in 1.13, three replicas by default; this cluster has one node.
+          longhornGlobalManager:
+            replicas: 1
           # Since 1.8 the backup target is a BackupTarget resource instead of
           # the backup-target setting.
           defaultBackupStore:

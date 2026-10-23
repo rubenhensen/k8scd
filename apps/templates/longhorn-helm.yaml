@@ -47,7 +47,9 @@ spec:
           # the backup-target setting.
           defaultBackupStore:
             backupTarget: nfs://192.168.1.99:/volume1/microk8s-nfs
-            pollInterval: 300
+            # Every poll rewrites the backupvolume objects, about 8% of all
+            # datastore writes at 300s. Backups only run nightly.
+            pollInterval: 1800
           defaultSettings:
             # Move volumes to the new engine image after each Longhorn
             # upgrade, one at a time. At 0 they stayed behind on 1.7.1/1.7.2.

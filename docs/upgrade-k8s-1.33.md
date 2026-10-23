@@ -226,7 +226,20 @@ Findings from 2026-10-23:
   against 1.36
 
 ### microk8s 1.35 and 1.36
-- [ ] `sudo snap refresh microk8s --channel=1.35/stable`, addons repo, Calico
+
+Checked for 1.35 on 2026-10-23: default args and the configure hook are
+the same as 1.34's; the four feature gates set to false (WatchList and the
+three kine ones) stay beta through 1.36, so the API server still starts;
+the containerd template is the same apart from our older `pause:3.7`, which
+containerd 2.1 accepts. Every component supports 1.35 (Velero 1.16 only
+"expected"). `args/certs.d/docker.io/hosts.toml` had a stray `y` after the
+bitnamilegacy rewrite, so containerd logged "failed to decode hosts.toml"
+on every docker.io pull and fell back to defaults; fixed on opti1, the
+original is in `~/hosts.toml.docker.io.bak`.
+
+- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.35.sh`: dbctl backup, `snap
+  refresh` to 1.35/stable, addons repo (no schema migration, so `snap
+  revert` is the way back)
 - [ ] `sudo snap refresh microk8s --channel=1.36/stable`, addons repo, Calico
 
 ### Shrink the database
@@ -252,9 +265,15 @@ there.
 Live database before: 709 MB, 666 MB free, ~4,400 kine rows; snapshots of
 ~150 MB every ~23 minutes; k8s-dqlite RSS 1,346 MB.
 
-- [ ] `ssh -t ruben@192.168.1.204 ./dqlite-vacuum.sh`: dbctl backup, an
+- [x] `ssh -t ruben@192.168.1.204 ./dqlite-vacuum.sh`: dbctl backup, an
   offline copy of the backend (API down ~1 min), VACUUM, integrity check.
-  How to go back is at the top of the script
-- [ ] Afterwards: the next snapshot's size (expect ~8 MB instead of
-  ~150 MB), lease update times, controller restarts, k8s-dqlite memory
+  How to go back is at the top of the script. Done 2026-10-23 20:10 UTC:
+  709 MB with 666 MB free became 44 MB with none free; integrity_check ok.
+  Backups in `/root/backend-pre-vacuum-20261023-*.tar` and
+  `/root/dqlite-pre-vacuum-20261023-*.tar.gz`
+- [x] Afterwards: the first snapshot (20:21) is 8.3 MB instead of ~150 MB,
+  and k8s-dqlite's memory went from 1,346 MB to 403 MB. The seven
+  leader-elected controllers (snapshot-controller, Longhorn's CSI sidecars,
+  CNPG, Envoy Gateway) restarted once while dqlite was stopped for the
+  offline copy, not during the VACUUM
 

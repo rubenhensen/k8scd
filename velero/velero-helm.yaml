@@ -8,7 +8,7 @@ spec:
   source:
     chart: velero
     repoURL: https://vmware-tanzu.github.io/helm-charts
-    targetRevision: 11.4.0
+    targetRevision: 12.2.1
     helm:
       values: |
         # Velero builds its repository maintenance jobs from a Deployment
@@ -16,14 +16,13 @@ spec:
         # maintenance run failed and the kopia repos on the NAS were never
         # cleaned up.
         fullnameOverride: velero
-        # The CRD upgrade hook pulls docker.io/bitnami/kubectl, which Bitnami
-        # has removed, so every sync hangs on it. Not needed anyway: Argo CD
-        # applies the chart's crds/ directory on every sync, which is how the
-        # 1.16 CRDs got in.
+        # No CRD upgrade hook: Argo CD applies the chart's crds/ directory on
+        # every sync. (Before chart 12 the hook also pulled
+        # docker.io/bitnami/kubectl, which Bitnami removed, and hung.)
         upgradeCRDs: false
         initContainers:
           - name: velero-plugin-for-aws
-            image: velero/velero-plugin-for-aws:v1.13.2
+            image: velero/velero-plugin-for-aws:v1.14.4
             volumeMounts:
               - mountPath: /target
                 name: plugins

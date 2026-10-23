@@ -30,3 +30,171 @@ spec:
         selector:
           matchLabels:
             kubernetes.io/metadata.name: gatus
+  - name: https-ynab
+    protocol: HTTPS
+    port: 443
+    hostname: ynab.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: actual-budget-tls
+        namespace: actual-budget
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: actual-budget
+  - name: https-authentik
+    protocol: HTTPS
+    port: 443
+    hostname: authentik.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: authentik-tls
+        namespace: authentik
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: authentik
+  - name: https-vic
+    protocol: HTTPS
+    port: 443
+    hostname: vic.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: bolletjestrui
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: bolletjestrui
+  - name: https-rss
+    protocol: HTTPS
+    port: 443
+    hostname: rss.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: freshrss
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: freshrss
+  - name: https-git
+    protocol: HTTPS
+    port: 443
+    hostname: git.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: gitea
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: gitea
+  - name: https-ha
+    protocol: HTTPS
+    port: 443
+    hostname: ha.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: home-assistant
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: home-assistant
+  - name: https-foto
+    protocol: HTTPS
+    port: 443
+    hostname: foto.scoutingmbg.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: immich
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: immich
+  - name: https-scoutingmbg
+    protocol: HTTPS
+    port: 443
+    hostname: scoutingmbg.nl
+    tls:
+      certificateRefs:
+      - name: scoutingmbg-nl-tls
+        namespace: mbgwp
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: mbgwp
+  - name: https-www-scoutingmbg
+    protocol: HTTPS
+    port: 443
+    hostname: www.scoutingmbg.nl
+    tls:
+      certificateRefs:
+      - name: scoutingmbg-nl-tls
+        namespace: mbgwp
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: mbgwp
+  - name: https-ntfy2
+    protocol: HTTPS
+    port: 443
+    hostname: ntfy2.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: ntfy
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: ntfy
+  - name: https-serpbear
+    protocol: HTTPS
+    port: 443
+    hostname: serpbear.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: serpbear
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: serpbear
+  - name: https-vault
+    protocol: HTTPS
+    port: 443
+    hostname: vault.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: vault
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: vault

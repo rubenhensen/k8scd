@@ -9,3 +9,4 @@ resources:
   - ntfy-deployment.yaml
   - ntfy-service.yaml
   - ingress.yaml
+  - httproute.yaml

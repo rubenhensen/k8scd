@@ -261,7 +261,22 @@ original is in `~/hosts.toml.docker.io.bak`.
   warnings and no hosts.toml errors; all workloads, apps, certificates,
   volumes and both status pages green; LISTs 92-166 ms, no slow lease
   updates
-- [ ] `sudo snap refresh microk8s --channel=1.36/stable`, addons repo, Calico
+Checked for 1.36 on 2026-10-23: default args, containerd template and
+configure hook unchanged from 1.35; containerd 2.2 only drops registry
+`mirrors`/`configs`/`auths` (in 2.3), and the template uses `config_path`;
+every component supports 1.36; only the core/v1 Endpoints API is still in
+use as a deprecated API.
+
+The microk8s stable channels lag upstream: 1.35/stable is v1.35.6 and
+1.36/stable v1.36.2 (both from early July), while upstream is at v1.35.9
+and v1.36.5. Only 1.36/edge has CVE-2026-2270 fixed (StatefulSet
+controller, cross-namespace pod creation; fixed in 1.35.9/1.36.5). Chosen:
+1.36/stable with the snap held, so updates only happen on purpose
+(`sudo snap refresh microk8s` once stable passes v1.36.5). Before the hold,
+snapd refreshed microk8s within its channel four times a day.
+
+- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.36.sh`: dbctl backup, `snap
+  refresh` to 1.36/stable, addons repo, `snap refresh --hold microk8s`
 
 ### Shrink the database
 

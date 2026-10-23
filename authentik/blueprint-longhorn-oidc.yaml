@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-longhorn
+data:
+  longhorn-oidc.yaml: |
+    version: 1
+    metadata:
+      name: Longhorn OIDC
+    entries:
+      # Envoy Gateway does the login for Longhorn, which has no users of its
+      # own (see longhorn/httproute.yaml).
+      - model: authentik_providers_oauth2.oauth2provider
+        id: longhorn-provider
+        state: present
+        identifiers:
+          name: Longhorn
+        attrs:
+          name: Longhorn
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          authentication_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          client_type: confidential
+          client_id: longhorn
+          client_secret: !Env [LONGHORN_OIDC_CLIENT_SECRET, ""]
+          redirect_uris:
+            - matching_mode: strict
+              url: https://longhorn.rubenhensen.nl/oauth2/callback
+            # Envoy's test port until the switch from ingress-nginx
+            - matching_mode: strict
+              url: https://longhorn.rubenhensen.nl:10443/oauth2/callback
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+      - model: authentik_core.application
+        id: longhorn-app
+        state: present
+        identifiers:
+          slug: longhorn
+        attrs:
+          name: Longhorn
+          provider: !KeyOf longhorn-provider
+          meta_launch_url: https://longhorn.rubenhensen.nl
+      # Longhorn can delete volumes, so only admins get in.
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf longhorn-app
+        attrs:
+          group: !Find [authentik_core.group, [name, "authentik Admins"]]

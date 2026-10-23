@@ -86,6 +86,11 @@ spec:
                   secretKeyRef:
                     name: actualbudget-oidc-client-secret
                     key: client_secret
+              - name: LONGHORN_OIDC_CLIENT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: longhorn-oidc-client-secret
+                    key: client_secret
               # Point OpenSSL and requests (which uses certifi otherwise) at
               # patched-ca-bundle, mounted below until the image drops the
               # compromised eMudhra intermediates.
@@ -119,6 +124,9 @@ spec:
               - name: blueprint-session
                 configMap:
                   name: authentik-blueprint-session
+              - name: blueprint-longhorn
+                configMap:
+                  name: authentik-blueprint-longhorn
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -141,6 +149,9 @@ spec:
               - name: blueprint-session
                 mountPath: /blueprints/custom/session-duration.yaml
                 subPath: session-duration.yaml
+              - name: blueprint-longhorn
+                mountPath: /blueprints/custom/longhorn-oidc.yaml
+                subPath: longhorn-oidc.yaml
               - name: patched-ca-bundle
                 mountPath: /etc/ssl/certs
                 readOnly: true
@@ -181,6 +192,9 @@ spec:
               - name: blueprint-session
                 configMap:
                   name: authentik-blueprint-session
+              - name: blueprint-longhorn
+                configMap:
+                  name: authentik-blueprint-longhorn
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -203,6 +217,9 @@ spec:
               - name: blueprint-session
                 mountPath: /blueprints/custom/session-duration.yaml
                 subPath: session-duration.yaml
+              - name: blueprint-longhorn
+                mountPath: /blueprints/custom/longhorn-oidc.yaml
+                subPath: longhorn-oidc.yaml
               - name: patched-ca-bundle
                 mountPath: /etc/ssl/certs
                 readOnly: true

@@ -212,3 +212,17 @@ spec:
         selector:
           matchLabels:
             kubernetes.io/metadata.name: argocd
+  - name: https-longhorn
+    protocol: HTTPS
+    port: 443
+    hostname: longhorn.rubenhensen.nl
+    tls:
+      certificateRefs:
+      - name: letsencrypt-prod
+        namespace: longhorn-system
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: longhorn-system

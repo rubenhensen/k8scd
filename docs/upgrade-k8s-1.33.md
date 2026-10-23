@@ -67,8 +67,15 @@ snapshots after every step. Fresh Velero backup before starting.
   pinned in `argocd-cm`; our own `resource.exclusions` replaces the 3.0
   defaults, so the home-assistant EndpointSlice stays managed.
   `argocd-folder` syncs with server-side apply (needed from 3.3)
-- [ ] Later: switch to annotation tracking (remove the pin, then sync every
-  app once)
+- [x] Switch to annotation tracking. Done 2026-10-24: the pin removed
+  from `argocd-cm`, then every app synced once without prune. A sync
+  started by patching `.operation` doesn't inherit the app's syncOptions,
+  so the four server-side-apply apps fell back to client-side apply and
+  failed on their big CRDs (annotation over 256 KB); passing the app's
+  syncOptions in the operation fixed it. Six Certificates still carried
+  the `app.kubernetes.io/instance` label that cert-manager's ingress-shim
+  had copied over, owned by ingress-shim, which kept argocd-folder
+  OutOfSync; removed
 
 ## 6. Calico 3.25.1 → 3.29.3
 

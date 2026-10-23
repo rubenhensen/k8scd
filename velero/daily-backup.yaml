@@ -11,3 +11,6 @@ spec:
     defaultVolumesToFsBackup: true
     snapshotVolumes: true
     snapshotMoveData: true
+    resourcePolicy:
+      kind: configmap
+      name: skip-emptydir-policy

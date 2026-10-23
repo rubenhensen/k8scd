@@ -1,0 +1,16 @@
+# Volume policy for the backup schedules. emptyDir volumes hold nothing
+# worth keeping, and backing them up fails when the pod is gone before its
+# volume is read, as happens with Velero's own repository maintenance jobs.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skip-emptydir-policy
+data:
+  policy.yaml: |
+    version: v1
+    volumePolicies:
+    - conditions:
+        volumeTypes:
+        - emptyDir
+      action:
+        type: skip

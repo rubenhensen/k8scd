@@ -202,13 +202,20 @@ Findings from 2026-10-23:
   and k8s-dqlite's watch progress notifications lag under load, so LISTs
   can wait up to 3s before falling back to storage. Latency, not
   correctness; worst on busy HA clusters. Still open
-- [ ] Fresh Velero backup (`pre-microk8s-1-34-202610232134`)
-- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.34.sh`: dbctl backup, an
+- [x] Velero backup: the full `pre-microk8s-1-33-202610230712` from that
+  morning; nothing that isn't in git changed since
+- [x] `ssh -t ruben@192.168.1.204 ./microk8s-1.34.sh`: dbctl backup, an
   offline copy of the backend (k8s-dqlite 1.8 migrates the schema on first
   start, so 1.33 can't read it afterwards), `snap refresh` to 1.34/stable,
-  the addons repo, and the front-proxy certificate
-- [ ] Afterwards: LIST latency (`apiserver_watch_cache_read_wait_seconds`),
-  lease update times and controller restarts
+  the addons repo, and the front-proxy certificate. Done 2026-10-23:
+  v1.34.9, snap revision 9063. Backups in `/root/backend-1.33-20261023-1938.tar`
+  and `/root/dqlite-pre-1.34-20261023-1938.tar.gz`. The tuning.yaml
+  snapshot settings carried over; front-proxy-client.crt now runs to 2027
+- [x] Afterwards: LIST latency (`apiserver_watch_cache_read_wait_seconds`),
+  lease update times and controller restarts. LISTs as fast as on 1.33
+  (92-234 ms), no watch-cache wait over 0.1s and no storage fallbacks, so
+  #5568 doesn't show on this single node. The CNPG operator lost its lease
+  during the refresh and restarted once, as expected
 
 ### Components for 1.35 and 1.36
 - [ ] Longhorn 1.11.2 → 1.12 → 1.13 (one minor at a time, now allowed on

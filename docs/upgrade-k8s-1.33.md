@@ -97,9 +97,13 @@ snapshots after every step. Fresh Velero backup before starting.
   - [x] One app (gatus, s2.rubenhensen.nl) on an HTTPRoute, reusing its
     existing certificate through a ReferenceGrant; test with
     `curl --resolve <host>:10443:192.168.1.204`
-  - [ ] Longhorn behind authentik OIDC with a SecurityPolicy. Ready on the
-    local branch `longhorn-oidc`; needs `client_secret` in Vault at
-    `kv/longhorn-oidc` first, or authentik's pods won't start
+  - [x] Longhorn behind authentik OIDC with a SecurityPolicy, client secret
+    in Vault at `kv/longhorn-oidc`. Two snags: authentik only picks up a
+    new blueprint file at its hourly discovery (or
+    `blueprints_discovery.send()` in `ak shell`), and Envoy Gateway does
+    not retry a failed OIDC discovery until something changes, so the
+    controller needed a restart. While the policy is invalid Envoy answers
+    500, so Longhorn stays closed
   - [x] The other apps. Envoy cuts requests off after 15s by default, so the
     routes set `timeouts.request: 0s`. All hosts answer the same through
     Envoy as through nginx; WordPress only redirects on the test port
@@ -107,8 +111,9 @@ snapshots after every step. Fresh Velero backup before starting.
   - [x] Argo CD on `server.insecure`, so both nginx and Envoy talk plain
     HTTP to argocd-server
   - [x] cert-manager `config.gatewayAPI.enabled`
-  - [ ] Switch over: `microk8s disable ingress`, Envoy on 80/443, and a
-    `gatewayHTTPRoute` HTTP-01 solver on the ClusterIssuer
+  - [x] Switch over: `microk8s disable ingress`, Envoy on 80/443, and a
+    `gatewayHTTPRoute` HTTP-01 solver on the ClusterIssuer. About a minute
+    without HTTP(S) on 2026-10-23; node001's tunnel needed no change
   - [ ] Replace the Ingress objects with Certificate resources (the
     ingress-shim Certificates go with their Ingress, and gateway-shim
     can't write to the app namespaces) and drop the nginx annotations

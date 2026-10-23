@@ -225,7 +225,11 @@ Findings from 2026-10-23:
   rendered the same with both beforehand (`alpine/helm` images, live app
   inputs), and after the upgrade all 35 apps stayed Synced/Healthy without
   a sync
-- [ ] Velero 1.16 → 1.17 → 1.18 (1.17 drops restic, we use kopia)
+- [x] Velero 1.16 → 1.17.1 (chart 11.4.0, AWS plugin v1.13.2) → 1.18.2
+  (chart 12.2.1, AWS plugin v1.14.4). Every pod volume backup and
+  repository was kopia already. 1.17 moved `--keep-latest-maintenance-jobs`
+  into the `velero-repo-maintenance` ConfigMap, which the chart renders.
+  A gatus test backup completed on both versions
 - [ ] Recheck CNPG, External Secrets, the Vault chart and Envoy Gateway
   against 1.36
 

@@ -275,8 +275,13 @@ controller, cross-namespace pod creation; fixed in 1.35.9/1.36.5). Chosen:
 (`sudo snap refresh microk8s` once stable passes v1.36.5). Before the hold,
 snapd refreshed microk8s within its channel four times a day.
 
-- [ ] `ssh -t ruben@192.168.1.204 ./microk8s-1.36.sh`: dbctl backup, `snap
-  refresh` to 1.36/stable, addons repo, `snap refresh --hold microk8s`
+- [x] `ssh -t ruben@192.168.1.204 ./microk8s-1.36.sh`: dbctl backup, `snap
+  refresh` to 1.36/stable, addons repo, `snap refresh --hold microk8s`.
+  Done 2026-10-23: v1.36.2, snap revision 9092, containerd 2.2.3, snap
+  held. All workloads, apps, certificates, volumes and both status pages
+  green; LISTs 92-166 ms, no slow lease updates
+- [ ] Once 1.36/stable passes v1.36.5 (CVE-2026-2270):
+  `sudo snap refresh microk8s`
 
 ### Shrink the database
 

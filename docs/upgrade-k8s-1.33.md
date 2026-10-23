@@ -48,8 +48,18 @@ snapshots after every step. Fresh Velero backup before starting.
 - [x] One minor at a time, 28 hops. The ESO app syncs with server-side apply.
   At 0.16.2 the old conversion webhook blocked the new CRDs; setting
   `spec.conversion` to `None` by hand on the three CRDs fixed it
-- [ ] Later: once every object is stored as v1, drop v1beta1 from the CRDs'
-  `status.storedVersions` (needed before ESO removes v1beta1 entirely)
+- [x] Once every object is stored as v1, drop v1beta1 from the CRDs'
+  `status.storedVersions` (needed before ESO removes v1beta1 entirely).
+  Done 2026-10-23: the 20 ExternalSecrets and the ClusterSecretStore
+  rewritten (checked in kine that the latest revision of each is v1), then
+  `storedVersions: ["v1"]` on externalsecrets, clusterexternalsecrets,
+  secretstores and clustersecretstores. Two old v1beta1 managedFields
+  entries on vault-backend removed. Pitfall: `kubectl get -o json | kubectl
+  replace -f -` rewrites an existing `last-applied-configuration` with the
+  whole object (resourceVersion, uid, finalizers), after which Argo CD's
+  apply failed on vault-folder ("resourceVersion must be specified") and
+  would have stripped ESO's finalizer. Removing the annotation let Argo CD
+  write a clean one
 
 ## 5. Argo CD 2.14.2 → 3.4.12
 

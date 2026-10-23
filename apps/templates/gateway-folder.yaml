@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: gateway-folder
   namespace: argocd
+  annotations:
+    # Let the API server fill in Gateway API defaults before diffing, or
+    # every defaulted field shows up as a difference.
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:

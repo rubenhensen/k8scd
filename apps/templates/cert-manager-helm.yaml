@@ -21,6 +21,11 @@ spec:
       # The controller talks ACME to Let's Encrypt. Give it a trust store
       # without the compromised eMudhra intermediates, see ca-bundle/.
       values: |
+        # Lets cert-manager solve HTTP-01 challenges with an HTTPRoute on
+        # the Gateway once ingress-nginx is gone.
+        config:
+          gatewayAPI:
+            enabled: true
         volumes:
           - name: patched-ca-bundle
             configMap:

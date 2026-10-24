@@ -108,8 +108,15 @@ C. Switch
 
 ## Open points
 
-- `foto.scoutingmbg.nl` is a CNAME to `mbg.hensen.io`; hensen.io is about
-  to expire. Keep it until the group's DNS points foto at scoutingmbg.nl.
+- DNS (2026-10-24): the group's DNS host (ns1/ns2.webhosted.nl) changed
+  foto.scoutingmbg.nl from a CNAME to `mbg.hensen.io` (the home IP) to a
+  CNAME to `rubenhensen.nl`, which is node001 on Hetzner. Only ns2 has it
+  (serial 2026102471); ns1 is stuck on serial 2026060640 from June and
+  still answers `mbg.hensen.io`. node001 now tunnels foto.scoutingmbg.nl to
+  the home cluster like its other hosts, so both answers work. Keep
+  hensen.io until ns1 has caught up; ask the DNS host to fix ns1, and
+  decide whether foto should stay behind node001 or point straight home
+  (CNAME `scoutingmbg.nl`)
 - Public shared links become public for real once sol-auth is gone.
 - Photos leiding back up from their phones stay private until they add
   them to a shared album.

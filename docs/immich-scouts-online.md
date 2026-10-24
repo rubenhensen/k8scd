@@ -96,9 +96,10 @@ C. Switch
   run hid no invitations: immich stores a notification's `data` as a JSON
   string inside the jsonb column; fixed, 1008 hidden, the 6 for albums of
   the last week kept
-- [ ] Remove sol-auth after a day without problems (`immich/sol-auth*`,
-  `immich/httpd.conf-cm.yml`; the immich folder app doesn't prune, so the
-  Deployment, Service and ConfigMap go by hand)
+- [x] Removed sol-auth 2026-10-24 (`immich/sol-auth*`,
+  `immich/httpd.conf-cm.yml`). The immich folder app doesn't prune, so its
+  Deployment, Service and ConfigMap went through a sync limited to those
+  three with prune on
 - [ ] `foto@` keeps its 155 likes and comments; delete it later if they
   don't need to stay
 - [x] Nobody uses `fotoupload@` anymore: its 9 (browser) sessions ended

@@ -138,6 +138,13 @@ snapshots after every step. Fresh Velero backup before starting.
     dropped mbg.hensen.io; that reissue went through the Gateway's HTTP-01
     solver. The Ingresses were pruned with `PrunePropagationPolicy=orphan`
     so the Certificates stayed. Gatus now expects a 302 from Longhorn
+  - [x] Retries (`gateway/retry-policy.yaml`, 2026-10-24). When a backend
+    closes a kept-alive connection just as Envoy sends a request over it,
+    Envoy answers 503 (flag UC) and, unlike nginx, does not retry. Behind
+    sol-auth's Apache, which recycled its processes after 30 connections,
+    that cost immich chunks during page loads ("error loading dynamically
+    imported module"). A BackendTrafficPolicy on the Gateway retries twice
+    on connect failures and resets
 
 ## 9. immich: PostgreSQL 14 with pgvecto.rs → 17 with VectorChord
 

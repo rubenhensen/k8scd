@@ -81,12 +81,24 @@ B. Scouts Online source
 - [ ] Test with a jeugdlid (quota 0, so no uploads)
 
 C. Switch
-- [ ] Vault `kv/immich-share`: `api_key` of `fotoupload@` (album.read,
+- [x] Vault `kv/immich-share`: `api_key` of `fotoupload@` (album.read,
   albumUser.create, albumUser.update, partner.read, partner.create);
-  share-sync dry run (`DRY_RUN=1`)
-- [ ] HTTPRoute straight to helm-immich-server, auto launch on, password
-  login off, login page message gone, `foto@` disabled, share-sync on
-- [ ] Remove sol-auth (`immich/sol-auth*`, `immich/httpd.conf-cm.yml`)
+  share-sync dry run (`DRY_RUN=1`): 504 albums, no errors
+- [x] Switched 2026-10-24 12:00 UTC: HTTPRoute straight to
+  helm-immich-server (tested beforehand with a temporary route behind a
+  secret header: page, API and a websocket upgrade), auto launch on,
+  password login off, login page message gone, immich restarted to read
+  the config file, the 25 sessions of `foto@` ended (those of
+  `fotoupload@`, phones backing up to the group account, kept),
+  share-sync on, gatus on s1 and s2 checking `/api/server/ping`. The first
+  run hid no invitations: immich stores a notification's `data` as a JSON
+  string inside the jsonb column; fixed, 1008 hidden, the 6 for albums of
+  the last week kept
+- [ ] Remove sol-auth after a day without problems (`immich/sol-auth*`,
+  `immich/httpd.conf-cm.yml`; the immich folder app doesn't prune, so the
+  Deployment, Service and ConfigMap go by hand)
+- [ ] `foto@` keeps its 155 likes and comments; delete it later if they
+  don't need to stay
 
 ## Open points
 

@@ -101,8 +101,8 @@ C. Switch
   Deployment, Service and ConfigMap go by hand)
 - [ ] `foto@` keeps its 155 likes and comments; delete it later if they
   don't need to stay
-- [ ] Nobody uses `fotoupload@` anymore: end its 9 (browser) sessions.
-  Its API key stays for share-sync
+- [x] Nobody uses `fotoupload@` anymore: its 9 (browser) sessions ended
+  2026-10-24. Its API key stays for share-sync
 
 ## Open points
 

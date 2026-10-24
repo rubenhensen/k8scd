@@ -263,7 +263,7 @@ whatever time of day the hourly schedule had drifted to.
 - [ ] `~/iosample.sh` on opti1 logs sda's counters and io pressure every 2s
   for 26h (from 2026-10-24 12:35 UTC) into `~/iosample.log`, to put
   numbers on the disk latency during tonight's backups
-- [ ] Structural fix: a second SSD. The OptiPlex 5060 (Micro, going by the
+- [ ] Structural fix: a second SSD, see docs/longhorn-second-ssd.md. The OptiPlex 5060 (Micro, going by the
   i5-8600T) has an M.2 slot that takes NVMe, and no NVMe device is
   present; the Apacer AS350 is a DRAM-less 2.5" SATA SSD. An NVMe SSD with
   DRAM for Longhorn's data (replicas move over live by evicting the old

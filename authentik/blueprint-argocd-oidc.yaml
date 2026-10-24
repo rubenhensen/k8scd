@@ -38,3 +38,12 @@ data:
           name: ArgoCD
           provider: !KeyOf argocd-provider
           meta_launch_url: https://argocd.rubenhensen.nl
+      # Only admins: Scouts Online members get accounts in this authentik
+      # too (for immich) and must not reach personal apps.
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf argocd-app
+        attrs:
+          group: !Find [authentik_core.group, [name, "authentik Admins"]]

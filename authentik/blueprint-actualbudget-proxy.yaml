@@ -38,3 +38,12 @@ data:
           name: Actual Budget
           provider: !KeyOf actualbudget-provider
           meta_launch_url: https://ynab.rubenhensen.nl
+      # Only admins: Scouts Online members get accounts in this authentik
+      # too (for immich) and must not reach personal apps.
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf actualbudget-app
+        attrs:
+          group: !Find [authentik_core.group, [name, "authentik Admins"]]

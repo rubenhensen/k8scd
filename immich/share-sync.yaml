@@ -1,0 +1,209 @@
+# Shares the Scouting MBG photos with every immich user. immich has no user
+# groups (on its roadmap as "Soon"), so this does it per user:
+# - every album the group account owns or edits gets every user, as editor
+#   when they may upload (quota other than 0, which authentik sets from
+#   Scouts Online) and as viewer otherwise;
+# - the group account's library is shared as a partner and shown in
+#   everyone's timeline, so search covers it (immich only searches your own
+#   and your timeline partners' photos);
+# - the invitation notifications for albums older than a week are hidden,
+#   or a new member would get one per album;
+# - sessions of OAuth users older than SESSION_MAX_AGE_DAYS are ended, so
+#   someone who left the group loses access at the next login at Scouts
+#   Online.
+# Albums and partners go through the API; the timeline flag (which only
+# the receiving user can set through the API), the notifications and the
+# sessions go straight to the database.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: share-sync
+  namespace: immich
+data:
+  sync.py: |
+    import json
+    import os
+    import subprocess
+    import urllib.request
+
+    API = os.environ["IMMICH_URL"].rstrip("/") + "/api"
+    KEY = os.environ["IMMICH_API_KEY"]
+    GROUP_EMAIL = os.environ["GROUP_EMAIL"]
+    SKIP_EMAILS = set(os.environ.get("SKIP_EMAILS", "").split())
+    SESSION_MAX_AGE_DAYS = int(os.environ.get("SESSION_MAX_AGE_DAYS", "30"))
+    DRY_RUN = os.environ.get("DRY_RUN") == "1"
+
+
+    def api(method, path, body=None):
+        req = urllib.request.Request(
+            API + path,
+            method=method,
+            data=None if body is None else json.dumps(body).encode(),
+            headers={"x-api-key": KEY, "Accept": "application/json", "Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = resp.read()
+        return json.loads(data) if data else None
+
+
+    def sql(query, **params):
+        """Runs query through psql; :'name' in it is params[name], quoted."""
+        args = ["psql", "-X", "-q", "-At", "-F", "\t", "-v", "ON_ERROR_STOP=1"]
+        for name, value in params.items():
+            args += ["-v", f"{name}={value}"]
+        out = subprocess.run(args, input=query, capture_output=True, text=True, check=True).stdout
+        return [line.split("\t") for line in out.splitlines() if line]
+
+
+    def change(what, call):
+        print(("would " if DRY_RUN else "") + what, flush=True)
+        if not DRY_RUN:
+            call()
+
+
+    users = sql('SELECT id, email, name, coalesce("quotaSizeInBytes"::text, \'\') FROM "user" WHERE "deletedAt" IS NULL')
+    group = next(u for u in users if u[1] == GROUP_EMAIL)
+    group_id, group_name = group[0], group[2]
+    members = {u[0]: u[1] for u in users if u[0] != group_id and u[1] not in SKIP_EMAILS}
+    # A quota of 0 bytes is how immich (and authentik's immich_quota claim)
+    # says: no uploads.
+    wanted = {u[0]: "viewer" if u[3] == "0" else "editor" for u in users if u[0] in members}
+
+    for album in api("GET", "/albums"):
+        roles = {au["user"]["id"]: au["role"] for au in album["albumUsers"]}
+        if roles.get(group_id) not in ("owner", "editor"):
+            continue
+        add = [{"userId": uid, "role": role} for uid, role in wanted.items() if uid not in roles]
+        if add:
+            change(
+                f"add {len(add)} users to {album['albumName']}",
+                lambda: api("PUT", f"/albums/{album['id']}/users", {"albumUsers": add}),
+            )
+        for uid, role in wanted.items():
+            if roles.get(uid) in ("viewer", "editor") and roles[uid] != role:
+                change(
+                    f"make {members[uid]} {role} of {album['albumName']}",
+                    lambda: api("PUT", f"/albums/{album['id']}/user/{uid}", {"role": role}),
+                )
+
+    partners = {p["id"] for p in api("GET", "/partners?direction=shared-by")}
+    for uid, email in members.items():
+        if uid not in partners:
+            change(f"share the library with {email}", lambda: api("POST", "/partners", {"sharedWithId": uid}))
+
+    if DRY_RUN:
+        raise SystemExit(0)
+
+    sql(
+        'UPDATE partner SET "inTimeline" = true WHERE "sharedById" = :\'group\' AND NOT "inTimeline"',
+        group=group_id,
+    )
+    sql(
+        """
+        UPDATE notification SET "deletedAt" = now()
+        WHERE type = 'AlbumInvite' AND "deletedAt" IS NULL AND "readAt" IS NULL
+          AND description LIKE :'sender' || ' shared an album%'
+          AND (data->>'albumId')::uuid IN (SELECT id FROM album WHERE "createdAt" < now() - interval '7 days')
+        """,
+        sender=group_name,
+    )
+    sql(
+        """
+        DELETE FROM session
+        WHERE "createdAt" < now() - make_interval(days => :days)
+          AND "userId" IN (SELECT id FROM "user" WHERE "oauthId" IS NOT NULL)
+        """,
+        days=SESSION_MAX_AGE_DAYS,
+    )
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: immich-share
+  namespace: immich
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  refreshInterval: 15m
+  target:
+    name: immich-share
+    creationPolicy: Owner
+  data:
+    # API key of the group account, with album.read, albumUser.create,
+    # albumUser.update, partner.read and partner.create
+    - secretKey: api_key
+      remoteRef:
+        key: kv/immich-share
+        property: api_key
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: share-sync
+  namespace: immich
+spec:
+  # Off until immich logs in through Scouts Online
+  suspend: true
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 26
+          containers:
+            - name: sync
+              # The database's own image: it has python3 and psql.
+              image: ghcr.io/tensorchord/cloudnative-vectorchord:17.11-1.1.1
+              command: ["python3", "/script/sync.py"]
+              env:
+                - name: IMMICH_URL
+                  value: http://helm-immich-server:2283
+                - name: IMMICH_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-share
+                      key: api_key
+                - name: GROUP_EMAIL
+                  value: fotoupload@scoutingmbg.nl
+                # The shared viewing account from before Scouts Online
+                - name: SKIP_EMAILS
+                  value: foto@scoutingmbg.nl
+                - name: PGHOST
+                  value: immich-postgres-17-rw
+                - name: PGSSLMODE
+                  value: require
+                - name: PGDATABASE
+                  value: immich
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-postgres-17-app
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-postgres-17-app
+                      key: password
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              volumeMounts:
+                - name: script
+                  mountPath: /script
+          volumes:
+            - name: script
+              configMap:
+                name: share-sync

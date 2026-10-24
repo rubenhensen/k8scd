@@ -123,7 +123,7 @@ endpoints:
     conditions: *http-ok
   - name: foto.scoutingmbg.nl
     group: Scouting MBG
-    url: https://foto.scoutingmbg.nl/_app
+    url: https://foto.scoutingmbg.nl/api/server/ping
     interval: 60s
     conditions: *http-ok
 

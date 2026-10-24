@@ -90,7 +90,7 @@ let
         conditions = [ "[CONNECTED] == true" "[CERTIFICATE_EXPIRATION] > 168h" ];
       }
       (gatusHttp "Scouting MBG" "scoutingmbg.nl" "https://scoutingmbg.nl" // gatusAlert)
-      (gatusHttp "Scouting MBG" "foto.scoutingmbg.nl" "https://foto.scoutingmbg.nl/_app" // gatusAlert)
+      (gatusHttp "Scouting MBG" "foto.scoutingmbg.nl" "https://foto.scoutingmbg.nl/api/server/ping" // gatusAlert)
       ({
         name = "s2 (homelab)";
         group = "watchers";

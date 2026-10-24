@@ -9,10 +9,12 @@ spec:
     sectionName: https-foto
   hostnames:
   - foto.scoutingmbg.nl
+  # Straight to immich, which logs people in with Scouts Online through
+  # authentik (docs/immich-scouts-online.md).
   rules:
   - backendRefs:
-    - name: sol-auth-svc
-      port: 8002
+    - name: helm-immich-server
+      port: 2283
     # No limit on the whole request, as with nginx. Envoy's default of 15s
     # cuts off uploads and long-lived connections.
     timeouts:

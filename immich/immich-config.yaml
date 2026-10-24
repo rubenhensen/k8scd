@@ -20,7 +20,6 @@ spec:
         immich-config.yaml: |
           server:
             externalDomain: https://foto.scoutingmbg.nl
-            loginPageMessage: "Hallo, login met email: foto@scoutingmbg.nl, wachtwoord: mbg"
           storageTemplate:
             enabled: true
             template: "{{`{{y}}/{{#if album}}{{album}}{{else}}Other/{{MM}}{{/if}}/{{filename}}`}}"
@@ -34,9 +33,12 @@ spec:
             scope: openid email profile immich
             buttonText: Inloggen met Scouts Online
             autoRegister: true
-            autoLaunch: false
+            # /auth/login?autoLaunch=0 still shows the login page
+            autoLaunch: true
+          # Admins log in through authentik too. To get back in without it,
+          # enable this again (immich-admin can't change a config file).
           passwordLogin:
-            enabled: true
+            enabled: false
   data:
     - secretKey: client_secret
       remoteRef:

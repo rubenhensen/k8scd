@@ -143,8 +143,6 @@ metadata:
   name: share-sync
   namespace: immich
 spec:
-  # Off until immich logs in through Scouts Online
-  suspend: true
   schedule: "*/10 * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1

@@ -42,6 +42,22 @@ spec:
               config:
                 region: minio
           features: EnableCSI
+          # Kopia maintenance ran every hour for each of the 15 repositories,
+          # and once a day as a full run of several minutes that writes its
+          # cache to the node's only SSD, which stalls dqlite and makes
+          # controllers lose their leases (docs/upgrade-k8s-1.33.md). Daily
+          # and throttled instead. Existing BackupRepositories keep their own
+          # maintenanceFrequency; they were patched to 24h by hand.
+          defaultRepoMaintainFrequency: 24h
+          repositoryMaintenanceJob:
+            repositoryConfigData:
+              global:
+                keepLatestMaintenanceJobs: 3
+                podResources:
+                  cpuRequest: 100m
+                  cpuLimit: 500m
+                  memoryRequest: 256Mi
+                  memoryLimit: 2Gi
         credentials:
           # Use existing secret created by External Secrets Operator
           # existingSecret: velero-minio-credentials

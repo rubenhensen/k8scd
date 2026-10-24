@@ -1,0 +1,50 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgres-17
+  namespace: immich
+spec:
+  instances: 1
+
+  # CNPG image with VectorChord and pgvector, which immich 2.x and 3.x use
+  # for its vector indexes (pgvecto.rs is gone in immich 3.0).
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.11-1.1.1
+
+  postgresql:
+    shared_preload_libraries:
+      - "vchord.so"
+
+  # Filled once from the PostgreSQL 14 cluster (immich-postgres) after its
+  # embedding columns were turned into real[] and pgvecto.rs was dropped,
+  # see docs/upgrade-k8s-1.33.md.
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      import:
+        type: microservice
+        databases:
+          - immich
+        source:
+          externalCluster: immich-postgres
+        postImportApplicationSQL:
+          - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+          - ALTER TABLE public.smart_search ALTER COLUMN embedding SET DATA TYPE vector(512);
+          - ALTER TABLE public.face_search ALTER COLUMN embedding SET DATA TYPE vector(512);
+          # immich manages its own extensions and migrations
+          - ALTER USER immich WITH SUPERUSER;
+
+  externalClusters:
+    - name: immich-postgres
+      connectionParameters:
+        host: immich-postgres-rw
+        user: immich
+        dbname: immich
+        sslmode: require
+      password:
+        name: immich-postgres-app
+        key: password
+
+  storage:
+    size: 20Gi
+    storageClass: longhorn

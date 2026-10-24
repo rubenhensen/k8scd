@@ -46,8 +46,10 @@ view, and everything is shared with everyone automatically.
   editor or viewer by quota; the group account's library as a partner of
   everyone, shown in the timeline; album invitations for albums older than
   a week hidden; sessions of OAuth users older than 30 days ended. Albums
-  that leiding create themselves are included once they share them with
-  the group account as editor.
+  that kaderleden create get the group account as editor first (in the
+  database, since the API only lets an album's owner or editors share
+  it), so they go to everyone too; names starting with "Privé"/"Prive"
+  are skipped. Photos outside albums stay with their uploader.
 
 ## Steps
 
@@ -99,6 +101,8 @@ C. Switch
   Deployment, Service and ConfigMap go by hand)
 - [ ] `foto@` keeps its 155 likes and comments; delete it later if they
   don't need to stay
+- [ ] Nobody uses `fotoupload@` anymore: end its 9 (browser) sessions.
+  Its API key stays for share-sync
 
 ## Open points
 

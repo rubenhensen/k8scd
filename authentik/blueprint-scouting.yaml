@@ -94,6 +94,16 @@ data:
           target: !KeyOf immich-app
         attrs:
           group: !KeyOf mbg-leden
+      # auth.scoutingmbg.nl: straight to Scouts Online, then on to the
+      # photos. Other domains keep the default brand.
+      - model: authentik_brands.brand
+        state: present
+        identifiers:
+          domain: auth.scoutingmbg.nl
+        attrs:
+          branding_title: Scouting MBG
+          flow_authentication: !Find [authentik_flows.flow, [slug, scouts-online-login]]
+          default_application: !KeyOf immich-app
       - model: authentik_policies.policybinding
         state: present
         identifiers:
@@ -220,7 +230,8 @@ data:
           policy: !KeyOf sso-only
       # SOL only lets in members of the organisations picked in its
       # connection, and only sends roles within them. The callback URL is
-      # https://authentik.rubenhensen.nl/source/oauth/callback/scouts-online/
+      # https://auth.scoutingmbg.nl/source/oauth/callback/scouts-online/ (and
+      # authentik.rubenhensen.nl, from before auth.scoutingmbg.nl existed)
       - model: authentik_sources_oauth.oauthsource
         id: source
         state: present

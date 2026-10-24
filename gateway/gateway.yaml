@@ -58,6 +58,20 @@ spec:
         selector:
           matchLabels:
             kubernetes.io/metadata.name: authentik
+  - name: https-auth-scoutingmbg
+    protocol: HTTPS
+    port: 443
+    hostname: auth.scoutingmbg.nl
+    tls:
+      certificateRefs:
+      - name: auth-scoutingmbg-tls
+        namespace: authentik
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            kubernetes.io/metadata.name: authentik
   - name: https-vic
     protocol: HTTPS
     port: 443

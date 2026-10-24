@@ -7,8 +7,12 @@ spec:
   - name: homelab
     namespace: envoy-gateway-system
     sectionName: https-authentik
+  - name: homelab
+    namespace: envoy-gateway-system
+    sectionName: https-auth-scoutingmbg
   hostnames:
   - authentik.rubenhensen.nl
+  - auth.scoutingmbg.nl
   rules:
   - backendRefs:
     - name: authentik-server
@@ -32,3 +36,6 @@ spec:
   - group: ""
     kind: Secret
     name: authentik-tls
+  - group: ""
+    kind: Secret
+    name: auth-scoutingmbg-tls

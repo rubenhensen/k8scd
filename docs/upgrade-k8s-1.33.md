@@ -166,7 +166,24 @@ pgvecto.rs. Done 2026-10-24, about an hour of immich downtime:
   (`immich/postgresql-cluster.yaml`), the snapshot/backup and the dump.
   Rolling back means reverting the old volume to the snapshot, since its
   embeddings are now `real[]` without pgvecto.rs
-- [ ] immich 3.x, separately (pgvecto.rs no longer matters for it)
+- [x] immich 3.x: v2.7.5 → v3.3.5 with chart 0.10.3 → 0.13.4 on
+  2026-10-24, about three minutes of downtime (two of them pulling the
+  image). Charts after 0.12.0 are only in the OCI registry
+  (`ghcr.io/immich-app/immich-charts`), and since 0.13.0 the values
+  schema rejects size, accessMode and storageClass on emptyDir volumes.
+  None of the env variables v3 removed were set; the ML image needs
+  x86-64-v2, and the i5-8600T is v3. The migrations took 16s, both vector
+  indexes stayed, and `immich-admin schema-check` reports no drift (the
+  geodata_places_pkey warning at startup came from the geodata import
+  running at the same time). Safety net, since immich can't be
+  downgraded: Longhorn snapshot `immich-pg17-pre-v3` and
+  `~/immich-pg17-pre-v3.dump` (440 MB) on opti1
+- [ ] Optional: `MACHINE_LEARNING_MODEL_REVISION=v2` on the ML container
+  (v3.3.0), for faster ML with less memory; numerically the same models,
+  so no jobs to rerun. The model cache is an emptyDir, so the one-off
+  preparation repeats on every restart
+- [ ] After a few days without problems: delete the `immich-pg17-pre-v3`
+  snapshot and dump together with the PG14 leftovers above
 
 ## k8s-dqlite write stalls (found 2026-10-22)
 

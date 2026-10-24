@@ -1,0 +1,25 @@
+# Retry a request when the backend drops a kept-alive connection just as
+# Envoy sends a request over it. Envoy answers that with a 503 (flag UC) and
+# does not retry by default; ingress-nginx did. It happens most behind the
+# Apache of sol-auth (immich), which recycles its processes after 30
+# connections, and broke immich's page loads.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: retry-on-reset
+  namespace: envoy-gateway-system
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: homelab
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+      - connect-failure
+      - reset
+    perRetry:
+      backOff:
+        baseInterval: 25ms
+        maxInterval: 250ms

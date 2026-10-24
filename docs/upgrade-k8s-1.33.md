@@ -139,8 +139,34 @@ snapshots after every step. Fresh Velero backup before starting.
     solver. The Ingresses were pruned with `PrunePropagationPolicy=orphan`
     so the Certificates stayed. Gatus now expects a 302 from Longhorn
 
-Out of scope here but due: the immich PostgreSQL 14 cluster reaches end of
-life on 2026-11-12.
+## 9. immich: PostgreSQL 14 with pgvecto.rs → 17 with VectorChord
+
+PostgreSQL 14 reaches end of life on 2026-11-12, and immich 3.0 drops
+pgvecto.rs. Done 2026-10-24, about an hour of immich downtime:
+
+- [x] Safety net: Longhorn snapshot and NAS backup `immich-pg14-pre-vchord`
+  of the old volume, plus `pg_dump -Fc` (447 MB) in
+  `~/immich-pg14-pre-vchord.dump` on opti1
+- [x] immich server to 0 replicas (through git)
+- [x] On the old cluster, immich's manual migration in one transaction:
+  drop `clip_index` and `face_index`, `embedding` columns to `real[]`,
+  `DROP EXTENSION vectors`, `DROP SCHEMA vectors`, reset the database's
+  `search_path` (it included `vectors`)
+- [x] New cluster `immich-postgres-17` (`immich/postgresql-cluster-17.yaml`):
+  `cloudnative-vectorchord:17.11-1.1.1` (pgvector 0.8.6, VectorChord
+  1.1.1), filled by a CNPG microservice import, then `vchord` created and
+  the columns back to `vector(512)`. An in-place `pg_upgrade` wasn't
+  possible: the pgvecto.rs image is Debian bullseye, the VectorChord ones
+  bookworm. Tables, indexes and row counts matched the old database
+- [x] immich pointed at `immich-postgres-17-rw` and its own app secret.
+  v2.4.1 refused to start (it only accepts VectorChord <0.6); v2.5.0 and up
+  accept <2, so immich went to v2.7.5, the last 2.x. It rebuilt both
+  indexes as `vchordrq` in about 1.5 minutes
+- [ ] After a few days without problems: delete the old cluster
+  (`immich/postgresql-cluster.yaml`), the snapshot/backup and the dump.
+  Rolling back means reverting the old volume to the snapshot, since its
+  embeddings are now `real[]` without pgvecto.rs
+- [ ] immich 3.x, separately (pgvecto.rs no longer matters for it)
 
 ## k8s-dqlite write stalls (found 2026-10-22)
 

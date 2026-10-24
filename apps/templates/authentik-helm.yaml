@@ -127,6 +127,21 @@ spec:
               - name: blueprint-longhorn
                 configMap:
                   name: authentik-blueprint-longhorn
+              # Directory mounts, not subPath, so changes reach the pods
+              # without a restart. The secrets are optional: a blueprint
+              # that needs a missing one fails until it shows up.
+              - name: blueprint-scouting
+                configMap:
+                  name: authentik-blueprint-scouting
+              - name: scouting-secrets
+                projected:
+                  sources:
+                    - secret:
+                        name: immich-oidc-client-secret
+                        optional: true
+                        items:
+                          - key: client_secret
+                            path: immich-oidc-client-secret
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -152,6 +167,11 @@ spec:
               - name: blueprint-longhorn
                 mountPath: /blueprints/custom/longhorn-oidc.yaml
                 subPath: longhorn-oidc.yaml
+              - name: blueprint-scouting
+                mountPath: /blueprints/custom/scouting
+              - name: scouting-secrets
+                mountPath: /secrets/scouting
+                readOnly: true
               - name: patched-ca-bundle
                 mountPath: /etc/ssl/certs
                 readOnly: true
@@ -184,6 +204,21 @@ spec:
               - name: blueprint-longhorn
                 configMap:
                   name: authentik-blueprint-longhorn
+              # Directory mounts, not subPath, so changes reach the pods
+              # without a restart. The secrets are optional: a blueprint
+              # that needs a missing one fails until it shows up.
+              - name: blueprint-scouting
+                configMap:
+                  name: authentik-blueprint-scouting
+              - name: scouting-secrets
+                projected:
+                  sources:
+                    - secret:
+                        name: immich-oidc-client-secret
+                        optional: true
+                        items:
+                          - key: client_secret
+                            path: immich-oidc-client-secret
             volumeMounts:
               - name: blueprint-vault
                 mountPath: /blueprints/custom/vault-oidc.yaml
@@ -209,6 +244,11 @@ spec:
               - name: blueprint-longhorn
                 mountPath: /blueprints/custom/longhorn-oidc.yaml
                 subPath: longhorn-oidc.yaml
+              - name: blueprint-scouting
+                mountPath: /blueprints/custom/scouting
+              - name: scouting-secrets
+                mountPath: /secrets/scouting
+                readOnly: true
               - name: patched-ca-bundle
                 mountPath: /etc/ssl/certs
                 readOnly: true

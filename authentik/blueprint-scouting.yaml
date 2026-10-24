@@ -1,0 +1,95 @@
+# Login for the Scouting MBG photos (immich on foto.scoutingmbg.nl).
+# Mounted as a directory, unlike the other blueprints, so authentik picks up
+# changes without a restart; secrets come from files in /secrets/scouting
+# for the same reason (see apps/templates/authentik-helm.yaml).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprint-scouting
+data:
+  immich-oidc.yaml: |
+    version: 1
+    metadata:
+      name: immich OIDC
+    entries:
+      # Filled by the Scouts Online source on every login: every member, and
+      # the members with an active Kaderlid role.
+      - model: authentik_core.group
+        id: mbg-leden
+        state: present
+        identifiers:
+          name: MBG leden
+      - model: authentik_core.group
+        id: mbg-kader
+        state: present
+        identifiers:
+          name: MBG kader
+      # immich syncs both claims on every login. A quota of 0 makes immich
+      # refuse uploads, -1 means unlimited.
+      - model: authentik_providers_oauth2.scopemapping
+        id: immich-scope
+        state: present
+        identifiers:
+          name: "immich: role and quota"
+        attrs:
+          name: "immich: role and quota"
+          scope_name: immich
+          description: Upload rights in the Scouting MBG photos
+          expression: |
+            admin = ak_is_group_member(request.user, name="authentik Admins")
+            uploader = admin or ak_is_group_member(request.user, name="MBG kader")
+            return {
+                "immich_role": "admin" if admin else "user",
+                "immich_quota": -1 if uploader else 0,
+            }
+      - model: authentik_providers_oauth2.oauth2provider
+        id: immich-provider
+        state: present
+        identifiers:
+          name: immich
+        attrs:
+          name: immich
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          authentication_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          client_type: confidential
+          client_id: immich
+          client_secret: !File /secrets/scouting/immich-oidc-client-secret
+          redirect_uris:
+            - matching_mode: strict
+              url: https://foto.scoutingmbg.nl/auth/login
+            # "Link to OAuth" in immich's account settings
+            - matching_mode: strict
+              url: https://foto.scoutingmbg.nl/user-settings
+            - matching_mode: strict
+              url: app.immich:///oauth-callback
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+            - !KeyOf immich-scope
+      - model: authentik_core.application
+        id: immich-app
+        state: present
+        identifiers:
+          slug: immich
+        attrs:
+          name: Scouting MBG foto's
+          provider: !KeyOf immich-provider
+          meta_launch_url: https://foto.scoutingmbg.nl
+          policy_engine_mode: any
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf immich-app
+        attrs:
+          group: !KeyOf mbg-leden
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 1
+          target: !KeyOf immich-app
+        attrs:
+          group: !Find [authentik_core.group, [name, "authentik Admins"]]

@@ -52,9 +52,12 @@ view, and everything is shared with everyone automatically.
 ## Steps
 
 A. immich OAuth through authentik, next to the password login
-- [ ] Vault `kv/immich-oidc`: `client_secret` (random, e.g. `openssl rand -hex 32`)
-- [ ] Push the authentik and immich changes (authentik restarts once for the
-  new mounts, immich once for the config file)
+- [x] Vault `kv/immich-oidc`: `client_secret` (random, e.g. `openssl rand -hex 32`)
+- [x] Push the authentik and immich changes. Done 2026-10-24: both rolled
+  over without downtime. authentik only found the new blueprint after
+  `blueprints_discovery.send()` in `ak shell`; the claims came out as
+  admin/-1 for authentik Admins, user/-1 for MBG kader, user/0 for MBG
+  leden, and other users get no access
 - [ ] Test with an authentik admin account: "Link to OAuth" in immich's
   account settings for the existing admin
 

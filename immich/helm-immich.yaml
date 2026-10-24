@@ -29,13 +29,13 @@ spec:
                     REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
                     IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
                     # External PostgreSQL (CloudNativePG)
-                    DB_HOSTNAME: "immich-postgres-rw"
+                    DB_HOSTNAME: "immich-postgres-17-rw"
                     DB_USERNAME: "immich"
                     DB_DATABASE_NAME: "immich"
                     DB_PASSWORD:
                       valueFrom:
                         secretKeyRef:
-                          name: immich-postgres-app
+                          name: immich-postgres-17-app
                           key: password
             
           immich:
@@ -86,9 +86,6 @@ spec:
             enabled: true
             controllers:
               main:
-                # Stopped while the database moves to PostgreSQL 17 with
-                # VectorChord, see docs/upgrade-k8s-1.33.md
-                replicas: 0
                 containers:
                   main:
                     image:

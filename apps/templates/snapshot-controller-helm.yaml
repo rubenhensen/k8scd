@@ -9,6 +9,23 @@ spec:
     repoURL: https://github.com/kubernetes-csi/external-snapshotter.git
     targetRevision: v8.2.1
     path: deploy/kubernetes/snapshot-controller
+    kustomize:
+      patches:
+        # Ride out dqlite stalls of up to ~40s instead of restarting when a
+        # lease renewal takes over 10s (docs/upgrade-k8s-1.33.md).
+        - target:
+            kind: Deployment
+            name: snapshot-controller
+          patch: |-
+            - op: add
+              path: /spec/template/spec/containers/0/args/-
+              value: --leader-election-lease-duration=60s
+            - op: add
+              path: /spec/template/spec/containers/0/args/-
+              value: --leader-election-renew-deadline=40s
+            - op: add
+              path: /spec/template/spec/containers/0/args/-
+              value: --leader-election-retry-period=5s
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system

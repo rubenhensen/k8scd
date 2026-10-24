@@ -13,6 +13,19 @@ spec:
     chart: gateway-helm
     # v1.9 supports Kubernetes 1.33 to 1.36
     targetRevision: v1.9.2
+    helm:
+      values: |
+        config:
+          envoyGateway:
+            provider:
+              kubernetes:
+                # Ride out dqlite stalls of up to ~40s instead of restarting
+                # when a lease renewal takes over 10s
+                # (docs/upgrade-k8s-1.33.md).
+                leaderElection:
+                  leaseDuration: 60s
+                  renewDeadline: 40s
+                  retryPeriod: 5s
   destination:
     server: https://kubernetes.default.svc
     namespace: envoy-gateway-system

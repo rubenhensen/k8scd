@@ -19,6 +19,11 @@ spec:
             # upgrades instead of restarting them. Both clusters have a
             # single instance, so a restart means downtime.
             ENABLE_INSTANCE_MANAGER_INPLACE_UPDATES: "true"
+        # Ride out dqlite stalls of up to ~40s instead of restarting when a
+        # lease renewal takes over 10s (docs/upgrade-k8s-1.33.md).
+        additionalArgs:
+          - --leader-lease-duration=60
+          - --leader-renew-deadline=40
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system

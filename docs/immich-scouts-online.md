@@ -58,19 +58,27 @@ A. immich OAuth through authentik, next to the password login
   `blueprints_discovery.send()` in `ak shell`; the claims came out as
   admin/-1 for authentik Admins, user/-1 for MBG kader, user/0 for MBG
   leden, and other users get no access
-- [ ] Test with an authentik admin account: "Link to OAuth" in immich's
-  account settings for the existing admin
+- [x] Test with an authentik admin account. The login created a new immich
+  admin (`ik@rubenhensen.nl`, the authentik email) instead of linking the
+  old one (`ruben.hensen@protonmail.com`): linking an existing account
+  takes a password login first, then "Link to OAuth" in its settings
 
 B. Scouts Online source
-- [ ] SOL connection, by someone with the Webmaster role: redirect URI
+- [x] SOL connection, by someone with the Webmaster role: redirect URI
   `https://authentik.rubenhensen.nl/source/oauth/callback/scouts-online/`,
   post logout `https://foto.scoutingmbg.nl/`, scopes E-mail, Persoonlijk,
   Lidmaatschap, Rollen en lidmaatschappen; only the group, without
   sub-organisations; confidential client with PKCE required
-- [ ] Vault `kv/scouts-online`: `client_id`, `client_secret`
-- [ ] Source, enrollment and authentication flows, and a login flow that
+- [x] Vault `kv/scouts-online`: `client_id`, `client_secret`
+- [x] Source, enrollment and authentication flows, and a login flow that
   goes straight to Scouts Online (an identification stage with no fields
-  and one source redirects on its own); test with a kaderlid and a jeugdlid
+  and one source redirects on its own). Done 2026-10-24; the user mapping
+  was tested beforehand with made-up userinfo (active and ended Kaderlid
+  roles, a shared family email, no roles). A kaderlid's login made an
+  external authentik user `sol-<member id>` in MBG leden and MBG kader, and
+  an immich user with unlimited quota. Use a private window to test: an
+  existing authentik session skips the login flow
+- [ ] Test with a jeugdlid (quota 0, so no uploads)
 
 C. Switch
 - [ ] Vault `kv/immich-share`: `api_key` of `fotoupload@` (album.read,

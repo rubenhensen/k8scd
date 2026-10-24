@@ -19,8 +19,9 @@ let
     "serpbear.rubenhensen.nl"
     "git.rubenhensen.nl"
     "vic.rubenhensen.nl"
-    # The group's DNS points foto at rubenhensen.nl, i.e. here
+    # The group's DNS points these at rubenhensen.nl, i.e. here
     "foto.scoutingmbg.nl"
+    "auth.scoutingmbg.nl"
   ];
 
   sniMapEntries =

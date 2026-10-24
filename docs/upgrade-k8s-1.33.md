@@ -229,6 +229,46 @@ do the first three steps: `ssh -t ruben@192.168.1.204 ./dqlite-tuning.sh`
 `--cgroups-per-qos=false`, the likely trigger of the 1.32->1.33 kubelite
 panic (#5057), is not set in `args/kubelet`.
 
+### Still stalling after the VACUUM (2026-10-24)
+
+The smaller database fixed the snapshot stalls, but controllers kept
+losing their leases a few times a day: since the API server started,
+256 of ~278k lease updates took over 5s and 44 over 10s. dqlite's log
+shows short complete stops (at 10:00:42 even its own health query hit
+its deadline). Every lease loss that day lined up with minutes of heavy
+writes to the one SSD, which holds root, dqlite, every Longhorn replica,
+image layers and emptyDirs:
+
+| Lease losses | Writing at the time |
+|---|---|
+| 00:02 | Longhorn backups of every volume (from 00:00) |
+| 01:09 | Velero backup (kopia reading and caching 133 GB of photos) |
+| 09:22 | full kopia maintenance of mbgwp (6 min) and argocd (11 min) |
+| 10:00:43 | full kopia maintenance of vault (9 min) |
+| 10:31, 10:38 | immich upgrade: image pulls, pg_dump, migrations |
+
+Velero ran maintenance every hour for each of the 15 kopia repositories
+(15 pods an hour), without resource limits and with the kopia cache in
+an emptyDir; about once a day a run is a full maintenance of minutes, at
+whatever time of day the hourly schedule had drifted to.
+
+- [x] Velero: `defaultRepoMaintainFrequency: 24h`, the 15 existing
+  BackupRepositories patched to 24h by hand, and maintenance jobs capped
+  at 500m CPU (2Gi memory)
+- [x] Leases of 60s/40s/5s instead of 15s/10s/2s (duration, renew deadline,
+  retry period) for the snapshot-controller (kustomize patch in its Argo
+  CD app), the CNPG operator (`additionalArgs`) and Envoy Gateway
+  (`provider.kubernetes.leaderElection`). Longhorn's CSI sidecars and
+  global manager have no setting for it
+- [ ] `~/iosample.sh` on opti1 logs sda's counters and io pressure every 2s
+  for 26h (from 2026-10-24 12:35 UTC) into `~/iosample.log`, to put
+  numbers on the disk latency during tonight's backups
+- [ ] Structural fix: a second SSD. The OptiPlex 5060 (Micro, going by the
+  i5-8600T) has an M.2 slot that takes NVMe, and no NVMe device is
+  present; the Apacer AS350 is a DRAM-less 2.5" SATA SSD. An NVMe SSD with
+  DRAM for Longhorn's data (replicas move over live by evicting the old
+  disk) would leave the SATA SSD to dqlite and the system
+
 ## On to 1.36
 
 microk8s goes up one minor per refresh. 1.34 brings k8s-dqlite 1.8.x with

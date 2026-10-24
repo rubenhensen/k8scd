@@ -100,8 +100,9 @@ C. Switch
   `immich/httpd.conf-cm.yml`). The immich folder app doesn't prune, so its
   Deployment, Service and ConfigMap went through a sync limited to those
   three with prune on
-- [x] `foto@`'s activity (155 likes, no comments) deleted 2026-10-24; the
-  account itself can go too
+- [x] `foto@`'s activity (155 likes, no comments) deleted 2026-10-24, and
+  the account marked deleted the way immich's admin delete does (status
+  `deleted`, `deletedAt`); immich removes it for good after 7 days
 - [x] Nobody uses `fotoupload@` anymore: its 9 (browser) sessions ended
   2026-10-24. Its API key stays for share-sync
 

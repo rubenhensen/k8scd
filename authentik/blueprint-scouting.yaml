@@ -12,6 +12,12 @@ data:
     metadata:
       name: immich OIDC
     entries:
+      # The source and the login flow below come from scouts-online.yaml.
+      - model: authentik_blueprints.metaapplyblueprint
+        attrs:
+          identifiers:
+            path: custom/scouting/scouts-online.yaml
+          required: true
       # Filled by the Scouts Online source on every login: every member, and
       # the members with an active Kaderlid role.
       - model: authentik_core.group
@@ -50,7 +56,9 @@ data:
         attrs:
           name: immich
           authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
-          authentication_flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+          # Straight on to Scouts Online. Admins with a password log in at
+          # authentik first.
+          authentication_flow: !Find [authentik_flows.flow, [slug, scouts-online-login]]
           invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
           client_type: confidential
           client_id: immich
@@ -93,3 +101,178 @@ data:
           target: !KeyOf immich-app
         attrs:
           group: !Find [authentik_core.group, [name, "authentik Admins"]]
+  scouts-online.yaml: |
+    version: 1
+    metadata:
+      name: Scouts Online
+    entries:
+      - model: authentik_sources_oauth.oauthsourcepropertymapping
+        id: user-mapping
+        state: present
+        identifiers:
+          name: "Scouts Online: user"
+        attrs:
+          name: "Scouts Online: user"
+          expression: |
+            # info is the userinfo of Scouts Online (https://login.scouting.nl/docs/api).
+            # It only holds the roles within the organisations of this connection,
+            # which is just the group.
+            from datetime import date
+
+            today = date.today().isoformat()
+            roles = {role.get("id"): role for role in (info.get("roles") or {}).values()}
+            kader = False
+            for assignment in info.get("role_assignments") or []:
+                start = (assignment.get("start_date") or "")[:10]
+                end = (assignment.get("end_date") or "")[:10]
+                if (start and start > today) or (end and end < today):
+                    continue
+                role = roles.get(assignment.get("role_id")) or {}
+                if "Kaderlid" in (role.get("member_type") or []):
+                    kader = True
+
+            member_id = info.get("member_id")
+            email = info.get("email") or ""
+            # Family members can share an email address; immich needs one per account.
+            if email and info.get("multiple_accounts"):
+                local, _, domain = email.partition("@")
+                email = f"{local}+{member_id}@{domain}"
+
+            return {
+                "username": f"sol-{member_id}",
+                "email": email,
+                "name": info.get("name") or "",
+                "groups": ["MBG leden", "MBG kader"] if kader else ["MBG leden"],
+                "attributes": {"sol_member_id": member_id},
+            }
+      # The source's flows can only be reached through the source.
+      - model: authentik_policies_expression.expressionpolicy
+        id: sso-only
+        state: present
+        identifiers:
+          name: scouts-online-sso-only
+        attrs:
+          expression: return ak_is_sso_flow
+      # New members become external users: they can use the apps they are
+      # let into, not authentik's own interface.
+      - model: authentik_stages_user_write.userwritestage
+        id: user-write
+        state: present
+        identifiers:
+          name: scouts-online-user-write
+        attrs:
+          user_creation_mode: always_create
+          user_type: external
+      - model: authentik_stages_user_login.userloginstage
+        id: user-login
+        state: present
+        identifiers:
+          name: scouts-online-user-login
+      - model: authentik_flows.flow
+        id: enrollment-flow
+        state: present
+        identifiers:
+          slug: scouts-online-enrollment
+        attrs:
+          name: Scouts Online enrollment
+          title: Scouting MBG
+          designation: enrollment
+          authentication: none
+      - model: authentik_flows.flowstagebinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf enrollment-flow
+          stage: !KeyOf user-write
+      - model: authentik_flows.flowstagebinding
+        state: present
+        identifiers:
+          order: 1
+          target: !KeyOf enrollment-flow
+          stage: !KeyOf user-login
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf enrollment-flow
+          policy: !KeyOf sso-only
+      - model: authentik_flows.flow
+        id: authentication-flow
+        state: present
+        identifiers:
+          slug: scouts-online-authentication
+        attrs:
+          name: Scouts Online authentication
+          title: Scouting MBG
+          designation: authentication
+          authentication: none
+      - model: authentik_flows.flowstagebinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf authentication-flow
+          stage: !KeyOf user-login
+      - model: authentik_policies.policybinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf authentication-flow
+          policy: !KeyOf sso-only
+      # SOL only lets in members of the organisations picked in its
+      # connection, and only sends roles within them. The callback URL is
+      # https://authentik.rubenhensen.nl/source/oauth/callback/scouts-online/
+      - model: authentik_sources_oauth.oauthsource
+        id: source
+        state: present
+        identifiers:
+          slug: scouts-online
+        attrs:
+          name: Scouts Online
+          slug: scouts-online
+          enabled: true
+          provider_type: openidconnect
+          consumer_key: !File /secrets/scouting/scouts-online-client-id
+          consumer_secret: !File /secrets/scouting/scouts-online-client-secret
+          authorization_url: https://login.scouting.nl/authorize
+          access_token_url: https://login.scouting.nl/token
+          profile_url: https://login.scouting.nl/oidc/userinfo
+          oidc_well_known_url: https://login.scouting.nl/.well-known/openid-configuration
+          oidc_jwks_url: https://login.scouting.nl/.well-known/openid-jwks.json
+          additional_scopes: membership roles
+          pkce: S256
+          authorization_code_auth_method: basic_auth
+          user_matching_mode: identifier
+          # Links to the groups that immich-oidc.yaml creates
+          group_matching_mode: name_link
+          user_path_template: goauthentik.io/sources/scouts-online
+          enrollment_flow: !KeyOf enrollment-flow
+          authentication_flow: !KeyOf authentication-flow
+          user_property_mappings:
+            - !KeyOf user-mapping
+      # Where immich sends people who aren't logged in. An identification
+      # stage without fields and with one source goes straight to it.
+      - model: authentik_stages_identification.identificationstage
+        id: identification
+        state: present
+        identifiers:
+          name: scouts-online-identification
+        attrs:
+          user_fields: []
+          sources:
+            - !KeyOf source
+          show_source_labels: true
+      - model: authentik_flows.flow
+        id: login-flow
+        state: present
+        identifiers:
+          slug: scouts-online-login
+        attrs:
+          name: Scouts Online login
+          title: Scouting MBG
+          designation: authentication
+      - model: authentik_flows.flowstagebinding
+        state: present
+        identifiers:
+          order: 0
+          target: !KeyOf login-flow
+          stage: !KeyOf identification

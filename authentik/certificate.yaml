@@ -14,3 +14,20 @@ spec:
   usages:
   - digital signature
   - key encipherment
+---
+# The login of the Scouting MBG photos (immich), see blueprint-scouting.yaml.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: auth-scoutingmbg-tls
+spec:
+  secretName: auth-scoutingmbg-tls
+  dnsNames:
+  - auth.scoutingmbg.nl
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: prod-cluster-issuer
+  usages:
+  - digital signature
+  - key encipherment

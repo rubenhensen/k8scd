@@ -103,7 +103,8 @@ data:
         UPDATE notification SET "deletedAt" = now()
         WHERE type = 'AlbumInvite' AND "deletedAt" IS NULL AND "readAt" IS NULL
           AND description LIKE :'sender' || ' shared an album%'
-          AND (data->>'albumId')::uuid IN (SELECT id FROM album WHERE "createdAt" < now() - interval '7 days')
+          -- immich stores data as a JSON string inside the jsonb
+          AND ((data #>> '{}')::jsonb ->> 'albumId')::uuid IN (SELECT id FROM album WHERE "createdAt" < now() - interval '7 days')
         """,
         sender=group_name,
     )

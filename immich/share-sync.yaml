@@ -1,5 +1,7 @@
 # Shares the Scouting MBG photos with every immich user. immich has no user
 # groups (on its roadmap as "Soon"), so this does it per user:
+# - albums that uploaders (kaderleden) create get the group account as
+#   editor, unless their name starts with "Privé" or "Prive";
 # - every album the group account owns or edits gets every user, as editor
 #   when they may upload (quota other than 0, which authentik sets from
 #   Scouts Online) and as viewer otherwise;
@@ -11,8 +13,9 @@
 # - sessions of OAuth users older than SESSION_MAX_AGE_DAYS are ended, so
 #   someone who left the group loses access at the next login at Scouts
 #   Online.
-# Albums and partners go through the API; the timeline flag (which only
-# the receiving user can set through the API), the notifications and the
+# Albums and partners go through the API. Joining other people's albums
+# (the API only lets an album's owner or editors share it), the timeline
+# flag (which only the receiving user can set), the notifications and the
 # sessions go straight to the database.
 apiVersion: v1
 kind: ConfigMap
@@ -68,6 +71,34 @@ data:
     # A quota of 0 bytes is how immich (and authentik's immich_quota claim)
     # says: no uploads.
     wanted = {u[0]: "viewer" if u[3] == "0" else "editor" for u in users if u[0] in members}
+
+    # Albums of uploaders that the group account isn't in yet
+    UNJOINED = """
+        FROM album_user au
+        JOIN "user" u ON u.id = au."userId"
+        JOIN album a ON a.id = au."albumId"
+        WHERE au.role = 'owner' AND u.id != :'group'
+          AND u."deletedAt" IS NULL AND a."deletedAt" IS NULL
+          AND (u."quotaSizeInBytes" IS NULL OR u."quotaSizeInBytes" > 0)
+          AND a."albumName" !~* '^\\s*priv[eé]'
+          AND NOT EXISTS (SELECT 1 FROM album_user g WHERE g."albumId" = a.id AND g."userId" = :'group')
+    """
+    if DRY_RUN:
+        for (name,) in sql("SELECT a.\"albumName\"" + UNJOINED, group=group_id):
+            print(f"would join {name}", flush=True)
+    else:
+        for (name,) in sql(
+            f"""
+            WITH joined AS (
+                INSERT INTO album_user ("albumId", "userId", role)
+                SELECT a.id, :'group', 'editor' {UNJOINED}
+                RETURNING "albumId"
+            )
+            SELECT a."albumName" FROM joined JOIN album a ON a.id = joined."albumId"
+            """,
+            group=group_id,
+        ):
+            print(f"join {name}", flush=True)
 
     for album in api("GET", "/albums"):
         roles = {au["user"]["id"]: au["role"] for au in album["albumUsers"]}
@@ -181,6 +212,9 @@ spec:
                   value: immich-postgres-17-rw
                 - name: PGSSLMODE
                   value: require
+                # album names are UTF-8 (and so is the Privé check)
+                - name: PGCLIENTENCODING
+                  value: UTF8
                 - name: PGDATABASE
                   value: immich
                 - name: PGUSER

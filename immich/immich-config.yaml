@@ -1,0 +1,44 @@
+# immich's settings, rendered with the OAuth client secret from Vault. With
+# a config file the settings are read-only in the admin UI. `{{`...`}}` keeps
+# immich's own template syntax away from ESO's.
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: immich-config
+  namespace: immich
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  refreshInterval: 15m
+  target:
+    name: immich-config
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        immich-config.yaml: |
+          server:
+            externalDomain: https://foto.scoutingmbg.nl
+            loginPageMessage: "Hallo, login met email: foto@scoutingmbg.nl, wachtwoord: mbg"
+          storageTemplate:
+            enabled: true
+            template: "{{`{{y}}/{{#if album}}{{album}}{{else}}Other/{{MM}}{{/if}}/{{filename}}`}}"
+          # authentik passes on the Scouts Online login and sets the
+          # immich_role and immich_quota claims (authentik/blueprint-scouting.yaml).
+          oauth:
+            enabled: true
+            issuerUrl: https://authentik.rubenhensen.nl/application/o/immich/
+            clientId: immich
+            clientSecret: "{{ .client_secret }}"
+            scope: openid email profile immich
+            buttonText: Inloggen met Scouts Online
+            autoRegister: true
+            autoLaunch: false
+          passwordLogin:
+            enabled: true
+  data:
+    - secretKey: client_secret
+      remoteRef:
+        key: kv/immich-oidc
+        property: client_secret

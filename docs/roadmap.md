@@ -13,7 +13,8 @@ volume has one replica. authentik 2026.8.5, Vault 2.2.1. Backups go to the
 NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to MinIO at
 01:00 (daily kept 30 days, weekly 90 days). Gatus on s1 (node001, Hetzner)
 and s2 (home) watch each other and alert through ntfy; s2 also gets an
-hourly report on the backups and Vault's seal from inside the cluster.
+hourly report from inside the cluster on the backups, Vault's seal, the
+Argo CD apps and the CNPG clusters.
 Every app namespace has NetworkPolicies, and CI renders and validates all
 apps on every PR. node001 runs mail and tunnels the public hosts home.
 
@@ -33,8 +34,9 @@ docs/longhorn-second-ssd.md:
 - [ ] The upgrade's dqlite and backend copies in `/root/` on opti1
   (`backend-*.tar`, `dqlite-pre-*`)
 - [ ] Log in to immich as a jeugdlid (quota 0)
-- [ ] Back to 1.36/stable once it is at v1.36.5 or later. The snap is held,
-  so microk8s gets no updates at all until someone refreshes it
+- [ ] Back to 1.36/stable once it is at v1.36.5 or later (still v1.36.2 on
+  2026-10-25). The snap is held, so microk8s gets no updates at all until
+  someone refreshes it
 - [ ] Second SSD, docs/longhorn-second-ssd.md
 - [ ] Optional: `MACHINE_LEARNING_MODEL_REVISION=v2` for immich ML
 
@@ -265,8 +267,14 @@ Counted 2026-10-25 over the 73 running containers:
   external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
   default) still have none; `default` can reach the LAN and everything
   without a policy
-- [ ] Requests and memory limits, the big ones first (immich, authentik,
-  Argo CD's repo-server)
+- [ ] Requests: PR #33 (2026-10-25, CI green, not merged) sets them for
+  everything that had none except the Vault server, from `kubectl top`
+  every 5 minutes overnight (highest memory plus 10%, CPU at p95, 10m
+  floor); about 1.2 CPU and 7 GiB together. Merging restarts most pods,
+  including both CNPG instances (half a minute without a database for
+  authentik and immich)
+- [ ] Memory limits, once there are daytime numbers: the night ones miss
+  immich's machine learning at work (it idles at 234Mi)
 - [x] Probes for gitea (`/api/healthz`), freshrss (TCP, since
   mod_auth_openidc answers 401 to non-browsers) and serpbear (`/login`)
   (2026-10-25). Liveness only after 5 failures 30s apart, to ride out the

@@ -38,14 +38,15 @@ between them live.
 
 ## Before: shrink what has to move
 
-- [ ] Delete stale snapshots. 188 snapshots hold 334 GiB, 214 GiB of it in
+- [x] Delete stale snapshots. 188 snapshots hold 334 GiB, 214 GiB of it in
   snapshots from before October 2026, nearly all on immich-claim
   (pvc-75d269dd): a 72.5 GiB one from 2024-12-20, 71.3 GiB from
   2025-03-02, daily ones from 2025-03-13 to 03-20 (a recurring job that no
   longer exists), 56.6 GiB from 2026-01-20. The Longhorn backups on the NAS
   don't depend on them. Deleting a snapshot merges it into the next one,
   which writes a lot, so do this in a quiet hour, one volume at a time.
-  Happened on 2026-10-24 (who started it isn't in the logs): immich-claim's
+  Happened on 2026-10-24, from a Claude Code session at Ruben's request
+  (the 45 snapshots from before October 2026, small volumes first): immich-claim's
   old snapshots were removed at 14:43 UTC and Longhorn merged them one
   after another, about 45 minutes each, until 23:15. For those 8.5 hours
   sda ran 250-440 writes/s and 200-400 reads/s at 6-20 ms per write on

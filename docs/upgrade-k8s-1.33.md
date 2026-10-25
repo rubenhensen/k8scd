@@ -282,6 +282,13 @@ whatever time of day the hourly schedule had drifted to.
     migrations): 19-33 ms per write, single 2s windows near 2 s per write,
     pressure 78%. The CSI sidecars and Longhorn's global manager lost
     their leases at 01:31
+  Per minute against dqlite's own errors (2026-10-24 12:35 to 2026-10-25
+  11:30, leaving out the CNPG range cancels): all 67 minutes with errors
+  had sda ~100% busy, single 2s windows at 200 ms to 2.2 s per write and
+  "full" pressure at 45-78%, against a median minute peak of 24 ms. The
+  worst minute after the merges was the rollout of eight merged PRs at
+  2026-10-25 11:25-11:27 (77 errors in one minute). The snapshot-controller,
+  CNPG and Envoy Gateway held their 60s leases through all of it
   Ubuntu's sysstat already keeps per-device history every 10 minutes
   without a script: `sar -d -f /var/log/sysstat/sa24` showed sda at
   ~26 MB/s read and ~27 MB/s written, 9 ms await, during the merging

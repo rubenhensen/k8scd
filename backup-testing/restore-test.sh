@@ -33,8 +33,6 @@
 set -euo pipefail
 
 PROD_KUBECONFIG=${PROD_KUBECONFIG:-$HOME/.kube/homelab-config}
-MINIO=${MINIO:-http://192.168.1.99:9000}
-BUCKET=velero-backups
 PORT=${PORT:-16443}
 K3S=rancher/k3s:v1.34.9-k3s1
 RCLONE=rclone/rclone:1.75.1
@@ -73,6 +71,18 @@ wait_for() {
   done
 }
 
+# Endpoint, region and bucket as Velero itself uses them. MinIO answers a
+# request signed for the wrong region (rclone defaults to us-east-1) with a
+# bare 400 on HEAD.
+if [[ -n ${FROM_VOLUME:-} ]]; then
+  BUCKET=${BUCKET:-velero-backups}
+else
+  bsl=$(pk -n velero get backupstoragelocations default -o json)
+  MINIO=${MINIO:-$(jq -r '.spec.config.s3Url' <<<"$bsl")}
+  REGION=${REGION:-$(jq -r '.spec.config.region // "us-east-1"' <<<"$bsl")}
+  BUCKET=${BUCKET:-$(jq -r '.spec.objectStorage.bucket' <<<"$bsl")}
+fi
+
 backup=${1:-}
 shift || true
 namespaces=("$@")
@@ -94,7 +104,7 @@ echo "== copy from the NAS (read-only)"
 (umask 077; pk -n velero get secret cloud-credentials -o jsonpath='{.data.cloud}' | base64 -d |
   awk -F' *= *' '/aws_access_key_id/ {print "RCLONE_CONFIG_NAS_ACCESS_KEY_ID="$2}
                  /aws_secret_access_key/ {print "RCLONE_CONFIG_NAS_SECRET_ACCESS_KEY="$2}' > "$WORK/nas.env"
-  printf 'RCLONE_CONFIG_NAS_TYPE=s3\nRCLONE_CONFIG_NAS_PROVIDER=Minio\nRCLONE_CONFIG_NAS_ENDPOINT=%s\n' "$MINIO" >> "$WORK/nas.env")
+  printf 'RCLONE_CONFIG_NAS_TYPE=s3\nRCLONE_CONFIG_NAS_PROVIDER=Minio\nRCLONE_CONFIG_NAS_ENDPOINT=%s\nRCLONE_CONFIG_NAS_REGION=%s\n' "$MINIO" "$REGION" >> "$WORK/nas.env")
 copy() { docker run --rm --env-file "$WORK/nas.env" -v "$VOL:/data" "$RCLONE" copy --stats-one-line "nas:$BUCKET/$1" "/data/$BUCKET/$1"; }
 copy "backups/$backup"
 for ns in "${namespaces[@]}"; do copy "kopia/$ns"; done

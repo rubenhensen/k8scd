@@ -123,15 +123,13 @@ D. auth.scoutingmbg.nl (2026-10-25)
 
 ## Open points
 
-- DNS (2026-10-24): the group's DNS host (ns1/ns2.webhosted.nl) changed
-  foto.scoutingmbg.nl from a CNAME to `mbg.hensen.io` (the home IP) to a
-  CNAME to `rubenhensen.nl`, which is node001 on Hetzner. Only ns2 has it
-  (serial 2026102471); ns1 is stuck on serial 2026060640 from June and
-  still answers `mbg.hensen.io`. node001 now tunnels foto.scoutingmbg.nl to
-  the home cluster like its other hosts, so both answers work. Keep
-  hensen.io until ns1 has caught up; ask the DNS host to fix ns1, and
-  decide whether foto should stay behind node001 or point straight home
-  (CNAME `scoutingmbg.nl`)
+- DNS (2026-10-24/25): the group's DNS host (ns1/ns2.webhosted.nl) pointed
+  scoutingmbg.nl, www, foto and auth at node001 (rubenhensen.nl); those are
+  all the records it moved, and node001 tunnels all four home. ns1 lagged
+  behind ns2 (a zone serial from June) until 2026-10-24 16:50 UTC. Nothing
+  uses mbg.hensen.io anymore, so hensen.io can expire. The SPF record's
+  `a` now means node001, which is fine: the WordPress site sends no mail
+  and the group's mail goes through Google (`mx`)
 - Public shared links become public for real once sol-auth is gone.
 - Photos leiding back up from their phones stay private until they add
   them to a shared album.

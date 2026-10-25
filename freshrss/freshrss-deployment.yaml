@@ -79,6 +79,10 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 176Mi
           # TCP, because mod_auth_openidc answers 401 to anything that isn't a
           # browser.
           readinessProbe:

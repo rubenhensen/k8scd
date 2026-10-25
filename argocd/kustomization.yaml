@@ -22,3 +22,4 @@ patches:
   - path: overlays/argocd-rbac-cm.patch.yaml
   - path: overlays/argocd-cmd-params-cm.patch.yaml
   - path: overlays/patched-ca-bundle.patch.yaml
+  - path: overlays/resources.patch.yaml

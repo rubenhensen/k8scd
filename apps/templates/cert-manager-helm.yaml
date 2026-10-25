@@ -34,6 +34,20 @@ spec:
           - name: patched-ca-bundle
             mountPath: /etc/ssl/certs
             readOnly: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
+        cainjector:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 80Mi
+        webhook:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

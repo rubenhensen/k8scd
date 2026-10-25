@@ -99,6 +99,10 @@ spec:
               - name: REQUESTS_CA_BUNDLE
                 value: /etc/ssl/certs/ca-certificates.crt
           server:
+            resources:
+              requests:
+                cpu: 70m
+                memory: 560Mi
             volumes:
               - name: patched-ca-bundle
                 configMap:
@@ -184,6 +188,10 @@ spec:
                 mountPath: /etc/ssl/certs
                 readOnly: true
           worker:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 336Mi
             volumes:
               - name: patched-ca-bundle
                 configMap:

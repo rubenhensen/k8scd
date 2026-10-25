@@ -77,7 +77,18 @@ friend.
   the NAS
 - [ ] Decide which copy of the immich library goes off-site (see 5)
 - [ ] A restore test that runs on a schedule. `backup-testing/` predates
-  Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth
+  Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth.
+  Planned on 2026-10-25, not run: a second Velero on the real bucket is
+  risky even with a ReadOnly location, because kopia could then run
+  maintenance on the same repositories from two clusters. Instead: copy
+  one backup (`backups/<name>/`) and the kopia repositories of a few small
+  namespaces (`kopia/{gatus,ntfy,freshrss}/`) read-only from the NAS with
+  rclone into a local folder, serve that with `rclone serve s3`, and
+  restore into a throwaway k3s in Docker (Velero 1.18.2, node agent on,
+  storage class longhorn mapped to local-path, without httproutes,
+  certificates, referencegrants and networkpolicies). It needs the MinIO
+  key outside the cluster, which wants your go-ahead; better still, a
+  MinIO user with read-only access to `velero-backups`
 
 ### 3. authentik 2026.2.1 → 2026.8.5
 
@@ -186,8 +197,13 @@ until 2026-10-21 without anyone noticing.
   arrives for 3 hours. The token comes from an ESO Password generator.
   Tested with made-up data for each failure (a Failed or old backup, a
   degraded or unbacked-up volume, a sealed pod)
+- [x] metrics-server (2026-10-25, `apps/templates/metrics-server-helm.yaml`):
+  `kubectl top` works; it keeps its data in memory, so it adds no disk
+  writes. The first look: immich v3 checks file checksums every night from
+  03:00 UTC for up to an hour (IntegrityService), reading ~100 MB/s from
+  sda; it doesn't overlap the backups at 00:00 and 01:00
 - [ ] After the second SSD (a time series database writes all the time
-  and would add to today's stalls): metrics-server, then Prometheus or
+  and would add to today's stalls): Prometheus or
   VictoriaMetrics with Grafana, alerting to ntfy. Loki later
 - [ ] Alerts worth having: disk latency and fill, lease losses and
   controller restarts, backups that don't complete, Longhorn volumes that

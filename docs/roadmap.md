@@ -290,6 +290,15 @@ PR before Argo CD applies it.
 - [x] Renovate listed external-snapshotter twice (#15 and #24): its
   `argocd` manager and a custom `github-tags` regex both matched. The
   regex is gone; Renovate should close #15 by itself
+- [x] Renovate only looked at six folders for images and only at
+  apps/templates for Applications, so it never offered updates for the
+  vault, immich, velero, mariadb-operator and actualbudget charts, or for
+  images in freshrss, mbgwp, dns, vault and immich, or for CNPG's
+  `imageName` (authentik still runs PostgreSQL 17.4). Both managers now
+  cover every app folder, a regex manager reads `imageName` in
+  `*/postgresql-cluster*.yaml`, and major PostgreSQL updates are off
+  (those need pg_upgrade or a dump). Expect a batch of new PRs
+  (2026-10-25; `renovate-config-validator` passes)
 - [ ] The open PRs, all validated on 2026-10-25 against main as it is now
   (rebases requested, so the checks show on the PRs once Renovate has
   pushed). Merging is yours; merging deploys:

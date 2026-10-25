@@ -1,6 +1,8 @@
 # Volume policy for the backup schedules. emptyDir volumes hold nothing
 # worth keeping, and backing them up fails when the pod is gone before its
 # volume is read, as happens with Velero's own repository maintenance jobs.
+# PVCs in Longhorn's no-backup group (caches, such as immich's ML models)
+# are skipped too.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,5 +14,10 @@ data:
     - conditions:
         volumeTypes:
         - emptyDir
+      action:
+        type: skip
+    - conditions:
+        pvcLabels:
+          recurring-job-group.longhorn.io/no-backup: enabled
       action:
         type: skip

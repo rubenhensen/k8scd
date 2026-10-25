@@ -291,8 +291,15 @@ Counted 2026-10-25 over the 73 running containers:
   page requests, 40 at a time): all 200, at most 13 Apache processes and
   572Mi, no restart; the price is waiting (4.3s median, up to ~22s at the
   peak) instead of a crash
-- [ ] A page cache plugin for WordPress: a page takes seconds to render,
-  which is what makes a burst queue up
+- [ ] Optional, no plugins wanted on WordPress: a small nginx cache in the
+  cluster between Envoy and WordPress that keeps anonymous GETs for a few
+  minutes and passes anything with a WordPress cookie through. A page
+  renders in 0.4-0.7s when the site is quiet and OPcache is on, so the
+  waiting in a burst is queueing; the cap alone already prevents the crash
+- [ ] Fewer plugins on the site (17 now; up to whoever runs it):
+  `litespeed-cache` only caches pages on a LiteSpeed server, so it does
+  little here, `wordpress-importer` is usually for a one-off import, and
+  `code-snippets` runs PHP from the dashboard
 - [ ] Rate limiting per visitor in Envoy needs the client's address, which
   node001 loses: it passes TLS through, so every request arrives from
   46.224.26.65. That needs the PROXY protocol from node001's nginx to Envoy

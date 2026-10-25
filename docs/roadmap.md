@@ -350,10 +350,11 @@ PR before Argo CD applies it.
   day: #23 ntfy v2.34.0, #27 go-dqlite v3.0.4, #33 (see 7) and #26 Gitea
   28.2.0 (migrations up to 357 ran clean, `/api/healthz` 200; no backup of
   its own beforehand, the nightly ones are the way back)
-- [ ] Still open: #17 external-secrets 2.13.0 → 2.14.0, no breaking
-  changes in the notes; every secret goes through it, so merge when
-  there's time to watch a force-sync. It only changes `targetRevision`, so
-  it still merges cleanly after #33 added values to the same file
+- [x] #17 external-secrets 2.14.0, merged 2026-10-25 11:50 UTC after a
+  manual rebase (#33 had added values on the next line, which git counts
+  as a conflict). All three pods on v2.14.0, the store Ready, and 24 of 25
+  ExternalSecrets refreshed on a force-sync; the 25th is the generated
+  `gatus/backup-check-token`, which never refreshes by design
 
 ### 9. One node
 

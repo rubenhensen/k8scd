@@ -209,9 +209,19 @@ Counted 2026-10-25 over the 73 running containers:
   healthy, a MariaDB backup and a share-sync run. The node's addresses
   (192.168.1.204 and Calico's 10.1.7.64) are written out, so a new node
   means new policies
-- [ ] The same for the other namespaces that face the internet (gitea,
-  freshrss, serpbear, ntfy, actual-budget, bolletjestrui, home-assistant,
-  gatus), and limit who can reach Vault
+- [x] The same for gitea, freshrss, serpbear, ntfy, actual-budget,
+  bolletjestrui and gatus (2026-10-25), plus gatus → ntfy in-cluster.
+  home-assistant has no pods (it points at 192.168.1.202). Vault now only
+  takes connections from ESO, Envoy (the UI) and the node (the injector's
+  webhook); its pods reach each other, DNS, the API server and the
+  internet. Checked: every host answers as before, gatus s2 16/16, the
+  OIDC logins of Vault and FreshRSS reach authentik, all 24
+  ExternalSecrets refresh, raft intact; Gitea no longer reaches the NAS
+  or Vault, and a pod in `default` no longer reaches Vault or Gitea
+- [ ] The infrastructure namespaces (cert-manager, cnpg-system,
+  external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
+  default) still have none; `default` can reach the LAN and everything
+  without a policy
 - [ ] Requests and memory limits, the big ones first (immich, authentik,
   Argo CD's repo-server)
 - [ ] Probes
@@ -240,6 +250,8 @@ step after that, if downtime starts to matter.
 - [ ] `backup-testing/test-velero-backup.sh.bak`
 - [ ] `mbgwp-pre-migration-backup` in mbgwp: a 10 GiB volume and a
   completed pod from 2026-02-22, not in git
+- [ ] Old kopia maintenance jobs in velero for repositories that no longer
+  exist (nextcloud, owntracks, sogo, sogo-mail, ttrss)
 
 ## wishlist.txt (2026-01-25)
 

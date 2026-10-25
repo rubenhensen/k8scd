@@ -269,8 +269,8 @@ Counted 2026-10-25 over the 73 running containers:
   without a policy
 - [ ] Requests: PR #33 (2026-10-25, CI green, not merged) sets them for
   everything that had none except the Vault server, from `kubectl top`
-  every 5 minutes overnight (highest memory plus 10%, CPU at p95, 10m
-  floor); about 1.2 CPU and 7 GiB together. Merging restarts most pods,
+  every 5 minutes from 03:13 to 08:40 UTC (highest memory plus 10%, CPU at
+  p95, 10m floor); about 1.2 CPU and 7 GiB together. Merging restarts most pods,
   including both CNPG instances (half a minute without a database for
   authentik and immich)
 - [ ] Memory limits, once there are daytime numbers: the night ones miss
@@ -322,7 +322,10 @@ PR before Argo CD applies it.
   cover every app folder, a regex manager reads `imageName` in
   `*/postgresql-cluster*.yaml`, and major PostgreSQL updates are off
   (those need pg_upgrade or a dump). Expect a batch of new PRs
-  (2026-10-25; `renovate-config-validator` passes)
+  (2026-10-25; `renovate-config-validator` passes). They only come once
+  fewer than 10 Renovate PRs are open (`config:recommended`'s
+  `prConcurrentLimit`); until then they wait under "Rate-Limited" on the
+  Dependency Dashboard (#2)
 - [ ] The open PRs, all validated on 2026-10-25 against main as it is now
   (rebases requested, so the checks show on the PRs once Renovate has
   pushed). Merging is yours; merging deploys:

@@ -256,7 +256,12 @@ Counted 2026-10-25 over the 73 running containers:
   without a policy
 - [ ] Requests and memory limits, the big ones first (immich, authentik,
   Argo CD's repo-server)
-- [ ] Probes
+- [x] Probes for gitea (`/api/healthz`), freshrss (TCP, since
+  mod_auth_openidc answers 401 to non-browsers) and serpbear (`/login`)
+  (2026-10-25). Liveness only after 5 failures 30s apart, to ride out the
+  SSD's stalls. Still without probes: authentik's LDAP outpost (deployed
+  by authentik), the ESO controller, dex and Argo CD's redis (upstream
+  manifests)
 - [ ] Non-root where the image allows it
 
 ### 8. Renovate and CI

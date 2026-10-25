@@ -44,7 +44,7 @@ AWS_PLUGIN=velero/velero-plugin-for-aws:v1.14.4
 NET=restore-test VOL=restore-test-s3
 
 cleanup() {
-  docker rm -f restore-k3s restore-s3 >/dev/null 2>&1 || true
+  docker rm -f -v restore-k3s restore-s3 >/dev/null 2>&1 || true
   docker volume rm "$VOL" >/dev/null 2>&1 || true
   docker network rm "$NET" >/dev/null 2>&1 || true
   [[ -n ${WORK:-} ]] && rm -rf "$WORK"

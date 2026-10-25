@@ -20,6 +20,8 @@ let
     "git.rubenhensen.nl"
     "vic.rubenhensen.nl"
     # The group's DNS points these at rubenhensen.nl, i.e. here
+    "scoutingmbg.nl"
+    "www.scoutingmbg.nl"
     "foto.scoutingmbg.nl"
     "auth.scoutingmbg.nl"
   ];

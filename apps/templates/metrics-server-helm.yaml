@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    chart: metrics-server
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    targetRevision: 3.14.0
+    helm:
+      values: |
+        # Resource usage for kubectl top and for sizing requests and limits.
+        # It keeps everything in memory, so it adds no writes to the SSD.
+        args:
+          # microk8s's kubelet serves a self-signed certificate; its own
+          # metrics-server addon passes the same flag.
+          - --kubelet-insecure-tls
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

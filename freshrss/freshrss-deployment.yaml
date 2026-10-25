@@ -81,8 +81,8 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: 30m
-              memory: 128Mi
+              cpu: 50m
+              memory: 176Mi
           # TCP, because mod_auth_openidc answers 401 to anything that isn't a
           # browser.
           readinessProbe:

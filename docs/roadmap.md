@@ -8,11 +8,14 @@ bottom.
 
 One node: opti1, an OptiPlex 5060 with an i5-8600T, 32 GB and one 1 TB
 SATA SSD that is 72% full. microk8s v1.36.5 from 1.36/edge, snap held.
-35 Argo CD apps, all Synced/Healthy; every Longhorn volume has one
-replica. Backups go to the NAS (192.168.1.99): Longhorn to NFS at 00:00
-(7 kept), Velero to MinIO at 01:00 (daily kept 30 days, weekly 90 days).
-Gatus on s1 (node001, Hetzner) and s2 (home) watch each other and alert
-through ntfy. node001 runs mail and tunnels the public hosts home.
+35 Argo CD apps (with metrics-server), all Synced/Healthy; every Longhorn
+volume has one replica. authentik 2026.8.5, Vault 2.2.1. Backups go to the
+NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to MinIO at
+01:00 (daily kept 30 days, weekly 90 days). Gatus on s1 (node001, Hetzner)
+and s2 (home) watch each other and alert through ntfy; s2 also gets an
+hourly report on the backups and Vault's seal from inside the cluster.
+Every app namespace has NetworkPolicies, and CI renders and validates all
+apps on every PR. node001 runs mail and tunnels the public hosts home.
 
 ## Follow-ups from this week
 

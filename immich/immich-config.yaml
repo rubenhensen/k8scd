@@ -27,7 +27,7 @@ spec:
           # immich_role and immich_quota claims (authentik/blueprint-scouting.yaml).
           oauth:
             enabled: true
-            issuerUrl: https://authentik.rubenhensen.nl/application/o/immich/
+            issuerUrl: https://auth.scoutingmbg.nl/application/o/immich/
             clientId: immich
             clientSecret: "{{ .client_secret }}"
             scope: openid email profile immich

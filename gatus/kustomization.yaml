@@ -10,6 +10,7 @@ resources:
   - gatus-service.yaml
   - certificate.yaml
   - httproute.yaml
+  - networkpolicy.yaml
 
 configMapGenerator:
   - name: gatus-config

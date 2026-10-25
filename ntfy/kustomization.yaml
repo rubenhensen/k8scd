@@ -10,3 +10,4 @@ resources:
   - ntfy-service.yaml
   - certificate.yaml
   - httproute.yaml
+  - networkpolicy.yaml

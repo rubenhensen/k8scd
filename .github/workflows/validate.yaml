@@ -29,7 +29,7 @@ jobs:
         env:
           # Helm 4.2, like Argo CD 3.5.
           # renovate: datasource=github-releases depName=helm/helm
-          HELM_VERSION: v4.2.1
+          HELM_VERSION: v4.3.1
           # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
           KUSTOMIZE_VERSION: v5.8.3
           # renovate: datasource=github-releases depName=yannh/kubeconform

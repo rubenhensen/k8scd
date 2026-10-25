@@ -31,8 +31,9 @@ view, and everything is shared with everyone automatically.
 
 ## Design
 
-- **authentik** (authentik.rubenhensen.nl for now; auth.scoutingmbg.nl
-  later, once the group's DNS has a record for it) brokers the login: a
+- **authentik** (on auth.scoutingmbg.nl, with a brand "Scouting MBG" that
+  logs in through Scouts Online and then sends people to the photos)
+  brokers the login: a
   Scouts Online source turns the roles into the groups `MBG leden` and
   `MBG kader` (active `Kaderlid` role) on every login, and the immich
   provider turns those into `immich_quota` and `immich_role`
@@ -105,6 +106,20 @@ C. Switch
   `deleted`, `deletedAt`); immich removes it for good after 7 days
 - [x] Nobody uses `fotoupload@` anymore: its 9 (browser) sessions ended
   2026-10-24. Its API key stays for share-sync
+
+D. auth.scoutingmbg.nl (2026-10-25)
+- [x] The group's DNS points scoutingmbg.nl, www, foto and auth at node001
+  (rubenhensen.nl). node001 passes all four through to the home cluster
+  (SNI on 443, a proxy on 80 for HTTP-01), like its other tunneled hosts,
+  and gatus on s1 checks them
+- [x] Certificate, Gateway listener `https-auth-scoutingmbg`, the authentik
+  route on both hostnames, the brand, and immich's issuer on
+  https://auth.scoutingmbg.nl/application/o/immich/
+- [x] SOL connection: redirect URI
+  `https://auth.scoutingmbg.nl/source/oauth/callback/scouts-online/`.
+  Editing the connection left the authentik.rubenhensen.nl URI unusable
+  (SOL answers `invalid_client` after the login when the redirect URI isn't
+  registered), so logins failed for a few minutes until immich moved over
 
 ## Open points
 

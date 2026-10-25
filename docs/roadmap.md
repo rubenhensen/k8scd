@@ -19,8 +19,9 @@ through ntfy. node001 runs mail and tunnels the public hosts home.
 From docs/upgrade-k8s-1.33.md, docs/immich-scouts-online.md and
 docs/longhorn-second-ssd.md:
 
-- [ ] Read `~/iosample.log` on opti1 once it stops (2026-10-25 14:35 UTC):
-  sda's latency during the nightly Longhorn and Velero backups
+- [x] Read `~/iosample.log` on opti1: the worst stretch was not the
+  backups but 8.5 hours of Longhorn merging immich-claim's deleted
+  snapshots (2026-10-24 14:30-23:15), see docs/upgrade-k8s-1.33.md
 - [ ] From 2026-10-27, if immich runs without problems: delete
   `immich/postgresql-cluster.yaml` (the PG14 cluster still runs, 20 GiB),
   the Longhorn snapshots and backups `immich-pg14-pre-vchord` and
@@ -38,12 +39,14 @@ docs/longhorn-second-ssd.md:
 
 ### 1. hensen.io expires
 
-foto.scoutingmbg.nl is a CNAME to mbg.hensen.io, so when hensen.io lapses
-the group loses its photos.
+foto.scoutingmbg.nl was a CNAME to mbg.hensen.io. Since 2026-10-24 it is a
+CNAME to rubenhensen.nl (node001, which tunnels it home), but only on the
+group's ns2: ns1 is stuck on an old serial and still answers
+mbg.hensen.io (docs/immich-scouts-online.md).
 
 - [x] Expiry date: 2027-01-09 (whois, 2026-10-25; registrar Key-Systems)
-- [ ] Before then: renew hensen.io for a year, or have the group's DNS
-  point foto at the cluster without hensen.io
+- [ ] Have the group's DNS host fix ns1; keep hensen.io until it answers
+  rubenhensen.nl too
 
 ### 2. Off-site backups
 

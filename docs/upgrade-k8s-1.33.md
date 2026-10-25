@@ -267,9 +267,24 @@ whatever time of day the hourly schedule had drifted to.
   CD app), the CNPG operator (`additionalArgs`) and Envoy Gateway
   (`provider.kubernetes.leaderElection`). Longhorn's CSI sidecars and
   global manager have no setting for it
-- [ ] `~/iosample.sh` on opti1 logs sda's counters and io pressure every 2s
+- [x] `~/iosample.sh` on opti1 logs sda's counters and io pressure every 2s
   for 26h (from 2026-10-24 12:35 UTC) into `~/iosample.log`, to put
-  numbers on the disk latency during tonight's backups
+  numbers on the disk latency during tonight's backups. Read on 2026-10-25
+  at 02:35 UTC, per 10 minutes:
+  - Quiet: ~50 writes/s, 0.5-2 ms per write on average, "full" IO
+    pressure under 15%
+  - 14:30-23:15: 250-440 writes/s and 200-400 reads/s, 6-20 ms per write,
+    pressure 45-75%. Longhorn merging immich-claim's deleted snapshots
+    (docs/longhorn-second-ssd.md)
+  - Longhorn backups 00:00-00:15: up to 1,220 reads/s, pressure 69%; the
+    Velero backup at 01:00 was incremental and short (pressure 29%)
+  - The authentik and Vault upgrades 01:20-01:40 (image pulls,
+    migrations): 19-33 ms per write, single 2s windows near 2 s per write,
+    pressure 78%. The CSI sidecars and Longhorn's global manager lost
+    their leases at 01:31
+  Ubuntu's sysstat already keeps per-device history every 10 minutes
+  without a script: `sar -d -f /var/log/sysstat/sa24` showed sda at
+  ~26 MB/s read and ~27 MB/s written, 9 ms await, during the merging
 - [ ] Structural fix: a second SSD, see docs/longhorn-second-ssd.md. The OptiPlex 5060 (Micro, going by the
   i5-8600T) has an M.2 slot that takes NVMe, and no NVMe device is
   present; the Apacer AS350 is a DRAM-less 2.5" SATA SSD. An NVMe SSD with

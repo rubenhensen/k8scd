@@ -45,6 +45,15 @@ between them live.
   longer exists), 56.6 GiB from 2026-01-20. The Longhorn backups on the NAS
   don't depend on them. Deleting a snapshot merges it into the next one,
   which writes a lot, so do this in a quiet hour, one volume at a time.
+  Happened on 2026-10-24 (who started it isn't in the logs): immich-claim's
+  old snapshots were removed at 14:43 UTC and Longhorn merged them one
+  after another, about 45 minutes each, until 23:15. For those 8.5 hours
+  sda ran 250-440 writes/s and 200-400 reads/s at 6-20 ms per write on
+  average, with "full" IO pressure at 45-75% (`~/iosample.log`); the
+  instance manager wrote 2.3 TB and read 2.8 TB in 30 hours. What is left
+  on immich-claim is one 233 GiB snapshot (`system-backup-0b7f8c6047294b36`,
+  from the Longhorn system backup of 2026-10-22) that everything merged
+  into; 148 snapshots hold 273 GiB across all volumes.
 - [ ] Trim immich-claim's filesystem (Longhorn UI, volume, "Trim Filesystem")
   so blocks of deleted files are released.
 - [ ] Fresh backups: let a nightly Longhorn and Velero backup run, plus a

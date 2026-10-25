@@ -196,9 +196,10 @@ until 2026-10-21 without anyone noticing.
 
 - [x] A stopgap for the worst blind spots (2026-10-25,
   `gatus/backup-check.yaml`): an hourly CronJob reads the API and pushes
-  four external endpoints to s2 (group "cluster"): the newest daily and
+  six external endpoints to s2 (group "cluster"): the newest daily and
   weekly Velero backup Completed and recent, every attached Longhorn
-  volume healthy with a backup younger than 26h, and no Vault pod sealed.
+  volume healthy with a backup younger than 26h, no Vault pod sealed,
+  every Argo CD app Synced and Healthy, every CNPG cluster healthy.
   Gatus alerts through ntfy after two failed reports, or when no report
   arrives for 3 hours. The token comes from an ESO Password generator.
   Tested with made-up data for each failure (a Failed or old backup, a

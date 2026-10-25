@@ -9,6 +9,10 @@ spec:
   # CNPG image with VectorChord and pgvector, which immich 2.x and 3.x use
   # for its vector indexes (pgvecto.rs is gone in immich 3.0).
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.11-1.1.1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 240Mi
 
   postgresql:
     shared_preload_libraries:

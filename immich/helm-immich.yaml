@@ -63,6 +63,10 @@ spec:
               main:
                 containers:
                   main:
+                    resources:
+                      requests:
+                        cpu: 10m
+                        memory: 64Mi
                     image:
                       repository: docker.io/valkey/valkey
                       tag: 9.1.2-alpine@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
@@ -85,6 +89,10 @@ spec:
                     image:
                       repository: ghcr.io/immich-app/immich-server
                       pullPolicy: IfNotPresent
+                    resources:
+                      requests:
+                        cpu: 100m
+                        memory: 1280Mi
                     # Node trusts its built-in roots, which still include the
                     # ones above the compromised eMudhra intermediates. Use
                     # patched-ca-bundle through OpenSSL until Node ships a fix.
@@ -109,6 +117,12 @@ spec:
                     image:
                       repository: ghcr.io/immich-app/immich-machine-learning
                       pullPolicy: IfNotPresent
+                    # Idle at night (234Mi); the models take over a GiB when
+                    # it works.
+                    resources:
+                      requests:
+                        cpu: 50m
+                        memory: 1Gi
                     env:
                       TRANSFORMERS_CACHE: /cache
                       HF_XET_CACHE: /cache/huggingface-xet

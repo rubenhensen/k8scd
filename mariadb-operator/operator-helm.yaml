@@ -16,14 +16,26 @@ spec:
     targetRevision: 25.10.4
     helm:
       values: |
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
         metrics:
           enabled: true
           serviceMonitor:
             enabled: false
         webhook:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
           serviceMonitor:
             enabled: false
         certController:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
           serviceMonitor:
             enabled: false
   syncPolicy:

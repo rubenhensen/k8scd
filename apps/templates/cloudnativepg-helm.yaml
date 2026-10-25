@@ -24,6 +24,10 @@ spec:
         additionalArgs:
           - --leader-lease-duration=60
           - --leader-renew-deadline=40
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system

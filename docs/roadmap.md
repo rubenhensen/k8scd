@@ -245,9 +245,52 @@ Counted 2026-10-25 over the 73 running containers:
 10 Renovate PRs are open, the oldest from February, and nothing checks a
 PR before Argo CD applies it.
 
-- [ ] A GitHub Actions workflow that renders the Helm apps and runs
-  kubeconform on every PR, with conftest for this repo's rules
-- [ ] Automerge patch versions of low-risk apps once that runs
+- [x] `.github/workflows/validate.yaml` runs `tools/ci/validate.py` on
+  every PR and push (2026-10-25): it renders all 36 apps the way Argo CD
+  does (the apps chart, every Application's chart with its values, value
+  files and parameters, kustomizations, plain folders, and
+  external-snapshotter cloned with its patches) and validates the result
+  with kubeconform (strict, CRD schemas from the datree catalog), plus a
+  duplicate-key check on every YAML file. Helm 4.2.1 like Argo CD 3.5,
+  versions pinned and checksummed, kept current by Renovate through the
+  `# renovate:` comments. Tested by planting a typo in a Deployment, a
+  chart version that doesn't exist and a value the immich chart's schema
+  rejects; all three fail the run. Locally:
+  `docker run --rm -v $PWD:/repo:ro <image with helm, kustomize, kubeconform, PyYAML> python /repo/tools/ci/validate.py`
+  - It found `syncPolicy.automated` twice in
+    `apps/templates/snapshot-controller-helm.yaml` (once with `prune: true`,
+    added 2025-03-03); Argo CD kept the last one, without prune. Now listed
+    once, as it ran. Prune was probably meant; turn it on deliberately if so
+- [ ] conftest for this repo's own rules
+- [ ] Automerge patch versions of low-risk apps now that CI runs
+- [x] Renovate listed external-snapshotter twice (#15 and #24): its
+  `argocd` manager and a custom `github-tags` regex both matched. The
+  regex is gone; Renovate should close #15 by itself
+- [ ] The open PRs, all validated on 2026-10-25 against main as it is now
+  (rebases requested, so the checks show on the PRs once Renovate has
+  pushed). Merging is yours; merging deploys:
+  - #28 cert-manager v1.21.3: security release, "All users should
+    upgrade" (drops the compromised eMudhra root, fixes an ARI renewal
+    loop and a private key copy path). Merge first
+  - #24 external-snapshotter v8.2.1 → v8.7.0: 8.6 moved VolumeGroupSnapshot
+    to v1 and 8.7 turns its feature gate on; the cluster already serves the
+    v1 CRDs. Merge; close #15
+  - #25 WordPress chart 0.15.0 → 0.16.7: the image is pinned
+    (7.1.3-php8.3-apache), so the render only changes labels and
+    checksums (a pod restart). Merge; #19 (0.15.1) is superseded
+  - #26 Gitea 1.27.3 → 28.2.0 (Gitea renumbered after 1.27): security
+    fixes; the breaking changes are to egress host lists
+    (`ALLOWED_DOMAINS` and friends), none of which are set here. Database
+    migrations can't be undone, so merge after a fresh backup
+  - #23 ntfy v2.28.0 → v2.34.0: six releases in 17 days; 2.31.0 had a
+    database load bug that ntfy.sh rolled back (fixed in 2.31.1). No
+    breaking migrations. Fine, or wait a few days for 2.34 to settle
+  - #17 external-secrets 2.13.0 → 2.14.0: no breaking changes in the
+    notes; every secret goes through it, so merge when there's time to
+    watch a force-sync
+  - #27 go-dqlite v3.0.4 for `tools/dqlite-vacuum`: builds; harmless
+  - #29 yaml.v3 for the same tool: builds, but the code imports yaml.v2,
+    so it only adds an unused requirement. Close
 
 ### 9. One node
 

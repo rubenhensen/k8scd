@@ -22,6 +22,7 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import time
 
 import yaml
 
@@ -38,7 +39,15 @@ failures = []
 
 
 def run(cmd, **kw):
-    return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw).stdout
+    # Registries rate-limit now and then (ghcr.io answers 429); try again.
+    for attempt in range(3):
+        try:
+            return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw).stdout
+        except subprocess.CalledProcessError as e:
+            transient = any(s in (e.stderr or "") for s in ("429", "toomanyrequests", "timeout", "connection reset"))
+            if not transient or attempt == 2:
+                raise
+            time.sleep(10 * (attempt + 1))
 
 
 class UniqueKeyLoader(yaml.SafeLoader):

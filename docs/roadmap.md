@@ -280,16 +280,22 @@ Counted 2026-10-25 over the 73 running containers:
   kube-system
 - [ ] Memory limits, once there are daytime numbers: the night ones miss
   immich's machine learning at work (it idles at 234Mi)
-- [ ] WordPress (scoutingmbg.nl) was OOMKilled at 08:27:59 UTC on
+- [x] WordPress (scoutingmbg.nl) was OOMKilled at 08:27:59 UTC on
   2026-10-25, its third restart: a crawler asked for 88 pages and assets
   within a few seconds (normally ~6 a minute), Apache started a PHP worker
-  for each, and the container went past its 1Gi limit (500s first, then
-  the kill; back within seconds). Unrelated to the NetworkPolicies; memory
-  sat at ~500Mi before. Fixes, in order: cap Apache's prefork workers
-  (`MaxRequestWorkers` ~16, so a burst queues instead of filling memory),
-  a page cache plugin. Rate limiting per visitor in Envoy doesn't work
-  yet: node001 passes TLS through, so every request arrives from
-  46.224.26.65; that needs the PROXY protocol from node001's nginx to Envoy
+  for each (~45-60 MB each, `MaxRequestWorkers` was the default 150), and
+  the container went past its 1Gi limit. Unrelated to the
+  NetworkPolicies. Now capped at 12 workers through the chart's
+  `apachePortsConfig` (ports.conf comes after mods-enabled/*.conf), checked
+  with `apache2ctl -t` in the same image first. Replaying the burst (90
+  page requests, 40 at a time): all 200, at most 13 Apache processes and
+  572Mi, no restart; the price is waiting (4.3s median, up to ~22s at the
+  peak) instead of a crash
+- [ ] A page cache plugin for WordPress: a page takes seconds to render,
+  which is what makes a burst queue up
+- [ ] Rate limiting per visitor in Envoy needs the client's address, which
+  node001 loses: it passes TLS through, so every request arrives from
+  46.224.26.65. That needs the PROXY protocol from node001's nginx to Envoy
   (ClientTrafficPolicy `enableProxyProtocol`)
 - [x] Probes for gitea (`/api/healthz`), freshrss (TCP, since
   mod_auth_openidc answers 401 to non-browsers) and serpbear (`/login`)

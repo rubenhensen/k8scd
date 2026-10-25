@@ -50,8 +50,9 @@ group's ns2: ns1 is stuck on an old serial and still answers
 mbg.hensen.io (docs/immich-scouts-online.md).
 
 - [x] Expiry date: 2027-01-09 (whois, 2026-10-25; registrar Key-Systems)
-- [ ] Have the group's DNS host fix ns1; keep hensen.io until it answers
-  rubenhensen.nl too
+- [x] ns1 caught up on 2026-10-24 16:50 UTC; both ns1 and ns2 answer
+  `rubenhensen.nl` for foto (checked 2026-10-25), and nothing in the
+  cluster uses hensen.io anymore. hensen.io can expire
 
 ### 2. Off-site backups
 

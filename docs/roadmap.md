@@ -100,8 +100,17 @@ friend.
   ReadOnly location: data restored byte for byte (same sha256), deployment
   available, everything removed afterwards. Two pitfalls found on the way
   are in the script's header. Not yet run against the real backups:
-- [ ] Run `backup-testing/restore-test.sh` (it reads the MinIO key from
-  the cluster), then schedule it
+- [x] Ran `backup-testing/restore-test.sh` on 2026-10-25 against
+  daily-backup-20261025010027 (ntfy, freshrss, actual-budget): every pod
+  volume came back with its backed-up byte count (actual-budget 8.4 MB,
+  freshrss 293 MB, ntfy 180 KB) and all deployments became available. The
+  first run failed on a 400 from MinIO: rclone signed for us-east-1 while
+  MinIO runs region `minio`; the script now reads endpoint, region and
+  bucket from Velero's location. Copying freshrss's kopia repository took
+  14 of the ~17 minutes
+- [ ] Run it on a schedule. It needs Docker and the MinIO key, so not in
+  the cluster itself: the Mac (launchd) or node001, ideally with a
+  read-only MinIO user
 
 ### 3. authentik 2026.2.1 → 2026.8.5
 
@@ -384,6 +393,12 @@ step after that, if downtime starts to matter.
   `backup-testing/test-velero-backup.sh.bak` (an older copy); the 15
   completed kopia maintenance jobs of repositories that no longer exist
   (nextcloud, owntracks, sogo, sogo-mail, ttrss)
+- [ ] freshrss mounts `freshrss-claim2` and `freshrss-claim3` as whole
+  volumes over the file paths `data/config.custom.php` and
+  `data/config-user.custom.php`, so FreshRSS sees two empty directories
+  there and the volumes hold nothing (0 bytes in every backup). Drop both
+  mounts and the two PVCs, or make them ConfigMap files if custom config
+  is wanted
 - [ ] `kubectl delete namespace secrets`, empty since its app went
 - [ ] 41 Failed Velero backups: the dailies from 2026-09-26 to 10-21 and
   the weeklies since 08-02. Velero doesn't restore from a Failed backup;

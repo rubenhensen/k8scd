@@ -340,6 +340,8 @@ PR before Argo CD applies it.
   - #27 go-dqlite v3.0.4 for `tools/dqlite-vacuum`: builds; harmless
   - #29 yaml.v3 for the same tool: builds, but the code imports yaml.v2,
     so it only adds an unused requirement. Close
+  - #31 python 3.15.1 for `gatus/backup-check.yaml`: the check's tests
+    (made-up data for every failure) pass on that image. Merge
 
 ### 9. One node
 

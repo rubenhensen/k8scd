@@ -171,7 +171,8 @@ Findings from 2026-10-25:
 
 Nothing collects metrics or logs, not even metrics-server (`kubectl top`
 fails). The dqlite stalls were tracked down by hand from the API server's
-metrics.
+metrics, and Velero's scheduled backups failed every night from August
+until 2026-10-21 without anyone noticing.
 
 - [ ] After the second SSD (a time series database writes all the time
   and would add to today's stalls): metrics-server, then Prometheus or
@@ -244,14 +245,37 @@ step after that, if downtime starts to matter.
 
 ### 10. Repo and cluster cleanup
 
-- [ ] `disable/` (empty, untracked); `.DS_Store` into `.gitignore`
-- [ ] `secrets/hensenio-smtp.yaml` (for the removed `blog` namespace) and
-  `velero/minio-es.yaml` are commented out in full
-- [ ] `backup-testing/test-velero-backup.sh.bak`
-- [ ] `mbgwp-pre-migration-backup` in mbgwp: a 10 GiB volume and a
-  completed pod from 2026-02-22, not in git
-- [ ] Old kopia maintenance jobs in velero for repositories that no longer
-  exist (nextcloud, owntracks, sogo, sogo-mail, ttrss)
+- [x] Done 2026-10-25: `disable/` and the `.DS_Store` files, now in
+  `.gitignore`; `secrets/hensenio-smtp.yaml` and `velero/minio-es.yaml`
+  (commented out in full), and with the first the `secrets-folder` app;
+  `backup-testing/test-velero-backup.sh.bak` (an older copy); the 15
+  completed kopia maintenance jobs of repositories that no longer exist
+  (nextcloud, owntracks, sogo, sogo-mail, ttrss)
+- [ ] `kubectl delete namespace secrets`, empty since its app went
+- [ ] 41 Failed Velero backups: the dailies from 2026-09-26 to 10-21 and
+  the weeklies since 08-02. Velero doesn't restore from a Failed backup;
+  left alone they expire by 2027-01-16.
+  `kubectl -n velero exec deploy/velero -c velero -- /velero backup delete $(kubectl -n velero get backups.velero.io -o json | jq -r '.items[] | select(.status.phase=="Failed") | .metadata.name' | xargs) --confirm`
+- [ ] The mariadb-operator Backup `mbgwp-pre-migration-backup`, a dump
+  from 2026-02-22 on its own 10 GiB volume (which has a Longhorn backup
+  from 2026-10-22). The PVC has no owner, so it goes separately:
+  `kubectl -n mbgwp delete backups.k8s.mariadb.com mbgwp-pre-migration-backup && kubectl -n mbgwp delete pvc mbgwp-pre-migration-backup`
+- [ ] 50 of the 70 Longhorn backup volumes on the NAS belong to volumes
+  that no longer exist. Keep the final backups of 2026-10-22 (ghost-blog,
+  stalwart, whisper). The rest are from apps removed long ago: nextcloud
+  (2025-03), owntracks, traccar, ttrss, whisper-priv, whisper-webui,
+  ghost, sogo, sogo-mail, outrun-game, the old mbg-wordpress and
+  mbgwp-helm volumes, immich's database before CNPG. Decide per app and
+  delete in the Longhorn UI (Backup)
+- [ ] opti1, without sudo: `rm ~/calico-3.29.3.yaml ~/cni-3.25.1-backup.yaml ~/hosts.toml.docker.io.bak ~/dqlite-vacuum`,
+  rollback material for steps that can't be undone any more (the tool's
+  source is in tools/)
+- [ ] opti1, with sudo: `/root/backend-*` and `/root/dqlite-pre-*` (from
+  before 1.33, 1.34 and the VACUUM; 1.34 migrated the schema, so none of
+  them fits 1.36) and `~/containerd.bak` (root-owned, from 2025-02)
+- [ ] `~/cadir` on opti1 holds a CA key and certificate from 2026-03-21
+  that are not microk8s's current CA. Find out whether anything still
+  trusts it; if not, delete it
 
 ## wishlist.txt (2026-01-25)
 

@@ -337,18 +337,14 @@ PR before Argo CD applies it.
   fewer than 10 Renovate PRs are open (`config:recommended`'s
   `prConcurrentLimit`); until then they wait under "Rate-Limited" on the
   Dependency Dashboard (#2)
-- [ ] The open PRs, all validated on 2026-10-25 against main as it is now
-  (rebases requested, so the checks show on the PRs once Renovate has
-  pushed). Merging is yours; merging deploys:
-  - #28 cert-manager v1.21.3: security release, "All users should
-    upgrade" (drops the compromised eMudhra root, fixes an ARI renewal
-    loop and a private key copy path). Merge first
-  - #24 external-snapshotter v8.2.1 → v8.7.0: 8.6 moved VolumeGroupSnapshot
-    to v1 and 8.7 turns its feature gate on; the cluster already serves the
-    v1 CRDs. Merge; close #15
-  - #25 WordPress chart 0.15.0 → 0.16.7: the image is pinned
-    (7.1.3-php8.3-apache), so the render only changes labels and
-    checksums (a pod restart). Merge; #19 (0.15.1) is superseded
+- [x] Merged 2026-10-25 and checked after the sync: #28 cert-manager
+  v1.21.3 (security release; all three pods on v1.21.3), #24
+  external-snapshotter v8.7.0 (its manifests ship the v8.6.0 image, as
+  v8.2.1 shipped v8.2.0; both replicas up, no errors), #25 WordPress chart
+  0.16.7 (image unchanged, site 200), #31 python 3.15.1 (the cluster check
+  ran clean on it). Closed: #19, #29, and #15 by Renovate
+- [ ] Still open, all validated on 2026-10-25 against main. Merging is
+  yours; merging deploys:
   - #26 Gitea 1.27.3 → 28.2.0 (Gitea renumbered after 1.27): security
     fixes; the breaking changes are to egress host lists
     (`ALLOWED_DOMAINS` and friends), none of which are set here. Database
@@ -360,10 +356,7 @@ PR before Argo CD applies it.
     notes; every secret goes through it, so merge when there's time to
     watch a force-sync
   - #27 go-dqlite v3.0.4 for `tools/dqlite-vacuum`: builds; harmless
-  - #29 yaml.v3 for the same tool: builds, but the code imports yaml.v2,
-    so it only adds an unused requirement. Close
-  - #31 python 3.15.1 for `gatus/backup-check.yaml`: the check's tests
-    (made-up data for every failure) pass on that image. Merge
+  - #33 resource requests, see 7
 
 ### 9. One node
 

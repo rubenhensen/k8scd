@@ -169,3 +169,15 @@ external-endpoints:
     heartbeat:
       interval: 3h
     alerts: *cluster-alert
+  - name: argocd-apps
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: *cluster-alert
+  - name: postgres
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: *cluster-alert

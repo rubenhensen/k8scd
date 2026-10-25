@@ -267,12 +267,16 @@ Counted 2026-10-25 over the 73 running containers:
   external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
   default) still have none; `default` can reach the LAN and everything
   without a policy
-- [ ] Requests: PR #33 (2026-10-25, CI green, not merged) sets them for
-  everything that had none except the Vault server, from `kubectl top`
-  every 5 minutes from 03:13 to 08:40 UTC (highest memory plus 10%, CPU at
-  p95, 10m floor); about 1.2 CPU and 7 GiB together. Merging restarts most pods,
-  including both CNPG instances (half a minute without a database for
-  authentik and immich)
+- [x] Requests: PR #33, merged 2026-10-25 11:23 UTC, for everything that
+  had none except the Vault server, from `kubectl top` every 5 minutes
+  from 03:13 to 08:40 UTC (highest memory plus 10%, CPU at p95, 10m
+  floor). Rolled out in about eight minutes; both CNPG instances
+  restarted and came back healthy, the OIDC endpoints, the logins and
+  immich answered, no OOM kills. The node now has 3770m CPU (62%, of which
+  1440m is Longhorn's two instance managers) and 9158Mi memory (28%)
+  requested. Still without requests: Longhorn (22 containers, its chart),
+  the Vault servers, the LDAP outpost, immich's PG14 cluster and three in
+  kube-system
 - [ ] Memory limits, once there are daytime numbers: the night ones miss
   immich's machine learning at work (it idles at 234Mi)
 - [ ] WordPress (scoutingmbg.nl) was OOMKilled at 08:27:59 UTC on
@@ -342,21 +346,14 @@ PR before Argo CD applies it.
   external-snapshotter v8.7.0 (its manifests ship the v8.6.0 image, as
   v8.2.1 shipped v8.2.0; both replicas up, no errors), #25 WordPress chart
   0.16.7 (image unchanged, site 200), #31 python 3.15.1 (the cluster check
-  ran clean on it). Closed: #19, #29, and #15 by Renovate
-- [ ] Still open, all validated on 2026-10-25 against main. Merging is
-  yours; merging deploys:
-  - #26 Gitea 1.27.3 → 28.2.0 (Gitea renumbered after 1.27): security
-    fixes; the breaking changes are to egress host lists
-    (`ALLOWED_DOMAINS` and friends), none of which are set here. Database
-    migrations can't be undone, so merge after a fresh backup
-  - #23 ntfy v2.28.0 → v2.34.0: six releases in 17 days; 2.31.0 had a
-    database load bug that ntfy.sh rolled back (fixed in 2.31.1). No
-    breaking migrations. Fine, or wait a few days for 2.34 to settle
-  - #17 external-secrets 2.13.0 → 2.14.0: no breaking changes in the
-    notes; every secret goes through it, so merge when there's time to
-    watch a force-sync
-  - #27 go-dqlite v3.0.4 for `tools/dqlite-vacuum`: builds; harmless
-  - #33 resource requests, see 7
+  ran clean on it). Closed: #19, #29, and #15 by Renovate. Later the same
+  day: #23 ntfy v2.34.0, #27 go-dqlite v3.0.4, #33 (see 7) and #26 Gitea
+  28.2.0 (migrations up to 357 ran clean, `/api/healthz` 200; no backup of
+  its own beforehand, the nightly ones are the way back)
+- [ ] Still open: #17 external-secrets 2.13.0 → 2.14.0, no breaking
+  changes in the notes; every secret goes through it, so merge when
+  there's time to watch a force-sync. It only changes `targetRevision`, so
+  it still merges cleanly after #33 added values to the same file
 
 ### 9. One node
 

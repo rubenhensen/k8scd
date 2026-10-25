@@ -156,8 +156,8 @@ unseals it.
   - The OIDC job called `vault auth tune -listing_visibility`, a flag that
     doesn't exist, so the OIDC mount's listing visibility was never set.
     Fixed; the job now uses the 2.2.1 CLI instead of 1.15
-- [ ] There is one unseal key (1 share, threshold 1). Keep it in two
-  places outside this cluster; without it the data in Vault is lost
+- [x] There is one unseal key (1 share, threshold 1), kept safe outside
+  this cluster (2026-10-25); without it the data in Vault is lost
 - [x] Unsealing is in the SSD install steps
 - [ ] After a week without problems: delete the three snapshots
 

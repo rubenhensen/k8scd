@@ -6,3 +6,4 @@ velero-credentials
 nix-infra-machine/ssh/
 nix-infra-machine/.env
 nix-infra-machine/nix/
+.DS_Store

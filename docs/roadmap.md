@@ -370,6 +370,48 @@ step after that, if downtime starts to matter.
   microk8s's CA is the `CN=microk8s-ca` one from 19:16 that day, valid
   until 2036
 
+### 11. Known vulnerabilities
+
+A one-off scan on 2026-10-25 of all 52 images running in the cluster
+(Trivy 0.75.0, remote, linux/amd64, HIGH and CRITICAL only). Counts are
+critical / high:
+
+| Image | Crit | High | What to do |
+|---|---|---|---|
+| tensorchord/cloudnative-pgvecto.rs:14-v0.2.1 | 38 | 342 | immich's old PG14 cluster; goes with the cleanup from 2026-10-27 |
+| cloudnative-pg/postgresql:17.4 | 27 | 260 | authentik's database, a Debian 11 image. Renovate now offers 17.7; a `17.x-standard-trixie` image is more current |
+| tensorchord/cloudnative-vectorchord:17.11-1.1.1 | 17 | 136 | immich's database; look for a newer tag |
+| longhornio/longhorn-instance-manager:v1.7.3 | 11 | 159 | still serves 16 volumes, see below |
+| actualbudget/actual-server:26.6.0 | 8 | 83 | chart 1.8.9; Renovate now covers it |
+| gitea/gitea:1.27.3 | 8 | 43 | PR #26 (28.2.0) |
+| immich-server / machine-learning v3.3.5 | 7, 7 | 113, 78 | a newer immich release |
+| towfiqi/serpbear:3.1.0 | 6 | 77 | a newer release |
+| rubenhensen/bolletjestrui:main-10268f1 | 5 | 76 | rebuild on a current base image |
+| coredns/coredns:1.10.1 | 5 | 70 | see below |
+| dexidp/dex:v2.45.1, argocd v3.5.6, redis 8.2.3 | 4, 1, 2 | | come with Argo CD |
+| mariadb:11.4.5 | 4 | 65 | the newest 11.4 patch; Renovate now covers it |
+| calico v3.29.3 | 2-3 | ~50 | comes with microk8s |
+| goauthentik ldap / server 2026.8.5 | 3, 1 | 74, 65 | the next authentik patch |
+
+Nothing critical in Envoy, Vault, Velero, cert-manager, ESO, ntfy, gatus or
+metrics-server.
+
+- [ ] 16 volumes still have their engine in Longhorn 1.7.3's instance
+  manager (`instance-manager-07d66a5…`, running since March): vault ×3,
+  authentik-postgres, immich-postgres (PG14), mbgwp (mariadb and
+  wordpress), gitea, freshrss ×3, ntfy, gatus, serpbear, bolletjestrui,
+  actual-budget. On one node a pod restart never detaches the volume (the
+  new pod lands on the same node), so only a real detach moves the engine
+  to 1.13's instance manager: scale to 0, wait until Longhorn shows the
+  volume detached, scale back (Argo CD's selfHeal undoes a scale-down, so
+  pause it for the app). Vault comes back sealed; CNPG clusters want
+  `cnpg.io/hibernation=on` instead of a scale-down. The old instance
+  manager goes away by itself once it serves nothing
+- [ ] CoreDNS runs 1.10.1 from when the addon was enabled; the addon
+  repository has 1.14.3. `sudo microk8s disable dns && sudo microk8s enable dns:1.1.1.1`
+  (a short DNS outage for the whole cluster; check the Corefile after)
+- [ ] The Trivy Operator for scans that keep running (on the wishlist)
+
 ## wishlist.txt (2026-01-25)
 
 - Done: Renovate; secrets out of git (Vault and ESO); SSO through authentik

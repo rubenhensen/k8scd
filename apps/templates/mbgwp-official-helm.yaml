@@ -101,6 +101,23 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 30
 
+        # apache2.conf includes ports.conf after mods-enabled/*.conf, so the
+        # prefork settings here replace mpm_prefork.conf's MaxRequestWorkers
+        # 150. A worker takes ~45-60 MB (PSS), so 150 never fit in 1Gi: a
+        # crawler asking for 88 pages at once got the container OOMKilled on
+        # 2026-10-25. With 12 workers a burst waits in the listen backlog
+        # instead. Listen is the chart's default (containerPort).
+        apachePortsConfig: |
+          Listen 8000
+          <IfModule mpm_prefork_module>
+            StartServers            4
+            MinSpareServers         2
+            MaxSpareServers         6
+            ServerLimit             12
+            MaxRequestWorkers       12
+            MaxConnectionsPerChild  1000
+          </IfModule>
+
         # Custom PHP configuration
         customPhpConfig: |
           upload_max_filesize = 64M

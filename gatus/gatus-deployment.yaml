@@ -25,6 +25,9 @@ spec:
           envFrom:
             - secretRef:
                 name: gatus-ntfy
+            # Token for the external endpoints, see backup-check.yaml
+            - secretRef:
+                name: backup-check-token
           ports:
             - containerPort: 8080
               protocol: TCP

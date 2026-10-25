@@ -136,3 +136,36 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == UP"
     alerts: *ntfy
+
+# Pushed every hour by the backup-check CronJob (backup-check.yaml), which
+# looks at what can't be seen from outside. s2 alerts on these itself: s1
+# has no view into the cluster.
+external-endpoints:
+  - name: velero-daily
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: &cluster-alert
+      - type: ntfy
+        failure-threshold: 2
+        success-threshold: 1
+        send-on-resolved: true
+  - name: velero-weekly
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: *cluster-alert
+  - name: longhorn
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: *cluster-alert
+  - name: vault-unsealed
+    group: cluster
+    token: ${BACKUP_CHECK_TOKEN}
+    heartbeat:
+      interval: 3h
+    alerts: *cluster-alert

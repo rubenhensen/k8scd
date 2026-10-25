@@ -11,6 +11,7 @@ resources:
   - certificate.yaml
   - httproute.yaml
   - networkpolicy.yaml
+  - backup-check.yaml
 
 configMapGenerator:
   - name: gatus-config

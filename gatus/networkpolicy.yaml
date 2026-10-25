@@ -64,3 +64,22 @@ spec:
               - 169.254.0.0/16
               - 172.16.0.0/12
               - 192.168.0.0/16
+---
+# backup-check.yaml reads backups, volumes and Vault's pods from the API
+# server (the node, port 16443).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backup-check-to-api
+spec:
+  podSelector:
+    matchLabels:
+      app: backup-check
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443

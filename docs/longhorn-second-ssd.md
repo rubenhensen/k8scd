@@ -61,8 +61,10 @@ between them live.
 - [ ] Boot into the BIOS (F2): the NVMe drive shows up under storage, SATA
   operation stays AHCI, and the boot sequence still starts "ubuntu" from
   the SATA SSD.
-- [ ] Boot. `lsblk` shows `nvme0n1`; wait until everything is green again
-  (gatus on s1 and s2).
+- [ ] Boot. `lsblk` shows `nvme0n1`.
+- [ ] Unseal Vault, which comes up sealed (until then ESO can't refresh
+  secrets): `for p in vault-0 vault-1 vault-2; do kubectl -n vault exec -ti $p -- vault operator unseal; done`
+- [ ] Wait until everything is green again (gatus on s1 and s2).
 
 ## Prepare the disk (sudo on opti1)
 

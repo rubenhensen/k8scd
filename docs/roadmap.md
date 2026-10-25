@@ -87,15 +87,29 @@ April and May.
   auth.scoutingmbg.nl (immich's issuer), so find out first what the
   setting does with two hostnames
 
-### 4. Vault 1.17.2
+### 4. Vault 1.17.2 → 2.2.1
 
-The server is pinned and out of support. It unseals with Shamir keys, so
-after every reboot (the SSD install, for one) Vault stays sealed and ESO
-stops refreshing secrets until someone unseals it.
+Vault unseals with Shamir keys, so after every reboot (the SSD install,
+for one) it stays sealed and ESO stops refreshing secrets until someone
+unseals it.
 
-- [ ] Make sure the unseal keys are kept outside this cluster
-- [ ] Add unsealing to the SSD install steps
-- [ ] Upgrade the server (needs the unseal keys)
+- [x] Upgraded 2026-10-25, straight from 1.17.2 to 2.2.1. HashiCorp
+  doesn't require going through every release, and the change tracker
+  lists no breaking change that applies here: `disable_mlock` is set
+  (required for raft since 1.20), the chart sets `SKIP_SETCAP` and runs
+  Vault as uid 100 (2.0.1's IPC_LOCK requirement, dropped again in 2.0.2),
+  and ESO uses a token and KV v2. `tools/vault-roll.sh 2.2.1` restarted
+  the standbys first and the active node last, unsealing each; vault-1
+  took over as active within seconds. Safety net: Longhorn snapshots
+  `vault-{0,1,2}-pre-2-2-1`. Afterwards all three ran 2.2.1 at the same
+  raft index, and all 24 ExternalSecrets refreshed after a force-sync
+  - The OIDC job called `vault auth tune -listing_visibility`, a flag that
+    doesn't exist, so the OIDC mount's listing visibility was never set.
+    Fixed; the job now uses the 2.2.1 CLI instead of 1.15
+- [ ] There is one unseal key (1 share, threshold 1). Keep it in two
+  places outside this cluster; without it the data in Vault is lost
+- [x] Unsealing is in the SSD install steps
+- [ ] After a week without problems: delete the three snapshots
 
 ### 5. Backups: which tool keeps what
 

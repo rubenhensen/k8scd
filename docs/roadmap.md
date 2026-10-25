@@ -51,7 +51,27 @@ Both backup targets are on the same NAS, in the same house as opti1. A
 fire or burglary takes the cluster, the backups and 45,703 photos that
 belong to the group.
 
-- [ ] Check whether the NAS replicates anywhere. If not, a copy elsewhere
+There is no off-site copy (2026-10-25). The plan: swap S3 buckets with a
+friend.
+
+- [ ] Ours to his bucket: Hyper Backup on the Synology, destination "S3
+  Storage" with his endpoint as a custom server. Client-side encryption
+  on: the kopia repositories use Velero's default password
+  (`static-passw0rd`), so without it he could read everything, the
+  group's photos included. Keep the encryption key next to the Vault
+  unseal key. Source: the shared folder with MinIO's `velero-backups`
+  bucket (~150-200 GB). Daily after the Velero backup, Smart Recycle,
+  mail on failure
+- [ ] Needed from him: endpoint, which S3 server he runs, space (~200 GB
+  now, 500 GB to grow), and versioning or object lock on the bucket, so
+  whoever takes over the NAS can't delete the off-site copy as well
+- [ ] His backups with us: Garage (not MinIO, see 5) in Container Manager
+  on the Synology, in its own shared folder, with a bucket and key for him
+  and a quota. Only the S3 API public, as `s3.rubenhensen.nl` through
+  node001 and Envoy with a cert-manager certificate; the admin API stays
+  on the LAN. The cluster side (DNS, node001 tunnel, Certificate,
+  HTTPRoute) goes in git. Needed: how much space he wants, free space on
+  the NAS
 - [ ] Decide which copy of the immich library goes off-site (see 5)
 - [ ] A restore test that runs on a schedule. `backup-testing/` predates
   Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth
@@ -142,6 +162,10 @@ Findings from 2026-10-25:
 - [ ] Whether the immich library stays in Velero. It stays for now
   (2026-10-25); decide again with the off-site copy (2)
 - [ ] CNPG backups through the barman cloud plugin
+- [ ] Velero's target, MinIO on the NAS, is no longer maintained: no
+  community images since October 2025, maintenance mode since December
+  2025, and the repository is archived. Move Velero to the Garage from 2
+  and switch MinIO off
 
 ### 6. Monitoring
 

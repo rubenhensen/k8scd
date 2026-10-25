@@ -91,7 +91,14 @@ friend.
   storage class longhorn mapped to local-path, without httproutes,
   certificates, referencegrants and networkpolicies). It needs the MinIO
   key outside the cluster, which wants your go-ahead; better still, a
-  MinIO user with read-only access to `velero-backups`
+  MinIO user with read-only access to `velero-backups`.
+  Built as `backup-testing/restore-test.sh` (2026-10-25) and rehearsed
+  end to end against a backup made inside the test cluster, with a
+  ReadOnly location: data restored byte for byte (same sha256), deployment
+  available, everything removed afterwards. Two pitfalls found on the way
+  are in the script's header. Not yet run against the real backups:
+- [ ] Run `backup-testing/restore-test.sh` (it reads the MinIO key from
+  the cluster), then schedule it
 
 ### 3. authentik 2026.2.1 → 2026.8.5
 

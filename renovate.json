@@ -44,6 +44,16 @@
       "semanticCommits": "enabled",
       "commitMessageTopic": "helm chart {{depName}}",
       "separateMinorPatch": true
+    },
+    {
+      "description": "CI renders with the same Helm as Argo CD (3.5 ships Helm 4.2); move it together with Argo CD",
+      "matchFileNames": [
+        ".github/workflows/**"
+      ],
+      "matchDepNames": [
+        "helm/helm"
+      ],
+      "enabled": false
     }
   ]
 }

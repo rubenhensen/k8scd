@@ -288,7 +288,12 @@ PR before Argo CD applies it.
     `apps/templates/snapshot-controller-helm.yaml` (once with `prune: true`,
     added 2025-03-03); Argo CD kept the last one, without prune. Now listed
     once, as it ran. Prune was probably meant; turn it on deliberately if so
-- [ ] conftest for this repo's own rules
+- [x] This repo's own rules, in `tools/ci/validate.py` rather than
+  conftest (2026-10-25), on what the repo's own folders render: no Secret
+  with data in git, and every image has a tag other than latest (both
+  fail the run; tested with a planted Secret and an untagged image), plus
+  PR annotations for containers without requests or probes. freshrss's
+  `alpine/git` init container had no tag; now `v2.52.0`
 - [ ] Automerge patch versions of low-risk apps now that CI runs
 - [x] Renovate listed external-snapshotter twice (#15 and #24): its
   `argocd` manager and a custom `github-tags` regex both matched. The

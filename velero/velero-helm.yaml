@@ -27,20 +27,22 @@ spec:
               - mountPath: /target
                 name: plugins
         configuration:
+          # Garage on the NAS (nas/garage). Until 2026-10-25 this was MinIO on
+          # the same NAS; the bucket was copied over with rclone, so the
+          # existing backups and kopia repositories carried on.
           backupStorageLocation:
             - name: default
               bucket: velero-backups
               provider: aws
               config:
-                region: minio
+                region: garage
                 s3ForcePathStyle: true
-                s3Url: http://192.168.1.99:9000
-                insecureSkipTLSVerify: "true"
+                s3Url: http://192.168.1.99:3900
           volumeSnapshotLocation:
             - name: default
               provider: aws
               config:
-                region: minio
+                region: garage
           features: EnableCSI
           # Kopia maintenance ran every hour for each of the 15 repositories,
           # and once a day as a full run of several minutes that writes its
@@ -59,11 +61,8 @@ spec:
                   memoryRequest: 256Mi
                   memoryLimit: 2Gi
         credentials:
-          # Use existing secret created by External Secrets Operator
-          # existingSecret: velero-minio-credentials
-          # extraEnvVars:
-          # AWS_SHARED_CREDENTIALS_FILE: /credentials/cloud
-          existingSecret: cloud-credentials
+          # From Vault, velero/external-secret.yaml
+          existingSecret: velero-s3-credentials
         deployNodeAgent: true
         nodeAgent:
           containerSecurityContext:

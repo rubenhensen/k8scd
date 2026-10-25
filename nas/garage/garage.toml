@@ -1,0 +1,29 @@
+# One node on the Synology. Velero's kopia data is encrypted, so
+# compression would only cost CPU.
+#
+# SQLite rather than the default LMDB: LMDB can be corrupted by an unclean
+# shutdown, and a single node has no other node to repair from. With
+# metadata_fsync SQLite runs WAL with synchronous=NORMAL, which only syncs
+# at checkpoints; LMDB with metadata_fsync synced every transaction, ~270
+# writes/s on the NAS's two disks with Garage idle. Converted 2026-10-25
+# with `garage convert-db`.
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "sqlite"
+metadata_fsync = true
+data_fsync = true
+metadata_auto_snapshot_interval = "6h"
+replication_factor = 1
+compression_level = "none"
+
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "127.0.0.1:3901"
+rpc_secret = "@RPC_SECRET@"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "[::]:3900"
+
+[admin]
+api_bind_addr = "[::]:3903"
+admin_token = "@ADMIN_TOKEN@"

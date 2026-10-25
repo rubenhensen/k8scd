@@ -6,7 +6,7 @@
   ],
   "argocd": {
     "managerFilePatterns": [
-      "/apps/templates/.+\\.yaml$/"
+      "/^(?!(nix-infra-machine|backup-testing|docs|tools|\\.github)/)[^/]+/.+\\.yaml$/"
     ]
   },
   "helm-values": {
@@ -16,12 +16,7 @@
   },
   "kubernetes": {
     "managerFilePatterns": [
-      "/apps/templates/.+\\.yaml$/",
-      "/serpbear/.+\\.yaml$/",
-      "/bolletjestrui/.+\\.yaml$/",
-      "/gitea/.+\\.yaml$/",
-      "/gatus/.+\\.yaml$/",
-      "/ntfy/.+\\.yaml$/"
+      "/^(?!(nix-infra-machine|backup-testing|docs|tools|\\.github)/)[^/]+/.+\\.yaml$/"
     ]
   },
   "customManagers": [
@@ -34,6 +29,17 @@
         "repoURL: (?<registryUrl>.*?)\\n\\s+targetRevision: (?<currentValue>[^\\s]+)\\n\\s+chart: (?<depName>[^\\s]+)"
       ],
       "datasourceTemplate": "helm"
+    },
+    {
+      "customType": "regex",
+      "description": "CloudNativePG clusters name their image in imageName",
+      "managerFilePatterns": [
+        "/^[^/]+/postgresql-cluster[^/]*\\.yaml$/"
+      ],
+      "matchStrings": [
+        "imageName: (?<depName>[^:\\s]+):(?<currentValue>\\S+)"
+      ],
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
@@ -52,6 +58,18 @@
       ],
       "matchDepNames": [
         "helm/helm"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "A PostgreSQL major upgrade needs pg_upgrade or a dump, not a tag bump",
+      "matchDepNames": [
+        "ghcr.io/cloudnative-pg/postgresql",
+        "ghcr.io/tensorchord/cloudnative-vectorchord",
+        "ghcr.io/tensorchord/cloudnative-pgvecto.rs"
+      ],
+      "matchUpdateTypes": [
+        "major"
       ],
       "enabled": false
     }

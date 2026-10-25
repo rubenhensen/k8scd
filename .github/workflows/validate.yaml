@@ -1,0 +1,56 @@
+# Renders every Argo CD app the way Argo CD does and validates the result
+# (tools/ci/validate.py), so a broken manifest or a Renovate bump that no
+# longer renders shows up on the PR instead of in a failed sync.
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install helm, kustomize and kubeconform
+        env:
+          # Helm 4.2, like Argo CD 3.5.
+          # renovate: datasource=github-releases depName=helm/helm
+          HELM_VERSION: v4.2.1
+          # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
+          KUSTOMIZE_VERSION: v5.8.3
+          # renovate: datasource=github-releases depName=yannh/kubeconform
+          KUBECONFORM_VERSION: v0.8.0
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -sSfLO "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz"
+          curl -sSfL "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz.sha256sum" | sha256sum -c -
+          k="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}"
+          curl -sSfLO "$k/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL "$k/checksums.txt" | grep " kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz$" | sha256sum -c -
+          c="https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}"
+          curl -sSfLO "$c/kubeconform-linux-amd64.tar.gz"
+          curl -sSfL "$c/CHECKSUMS" | grep " kubeconform-linux-amd64.tar.gz$" | sha256sum -c -
+          mkdir -p bin
+          tar xzf "helm-${HELM_VERSION}-linux-amd64.tar.gz" -C bin --strip-components=1 linux-amd64/helm
+          tar xzf "kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" -C bin kustomize
+          tar xzf kubeconform-linux-amd64.tar.gz -C bin kubeconform
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          pip install --quiet pyyaml==6.0.3
+
+      - name: Render and validate
+        run: python3 tools/ci/validate.py

@@ -270,12 +270,6 @@ spec:
                 readOnly: true
           postgresql:
             enabled: false
-          redis:
-            enabled: true
-            master:
-              persistence:
-                storageClass: longhorn
-                size: 2Gi
     - repoURL: https://github.com/rubenhensen/k8scd.git
       targetRevision: HEAD
       path: authentik

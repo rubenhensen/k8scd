@@ -54,6 +54,16 @@ between them live.
   on immich-claim is one 233 GiB snapshot (`system-backup-0b7f8c6047294b36`,
   from the Longhorn system backup of 2026-10-22) that everything merged
   into; 148 snapshots hold 273 GiB across all volumes.
+- [ ] Delete the snapshots the Longhorn system backups left behind: 116
+  `system-backup-*` snapshots (one per volume for each system backup
+  before an upgrade step on 2026-10-22 and 23) hold 258 GiB. The system
+  backups on the NAS don't need them. The small volumes are cheap; on
+  immich-claim the 233 GiB one is the base the rest merged into, so
+  deleting it means hours of merging like on 2026-10-24: one night, or
+  after the move to the NVMe drive. Then trim (next item); deleted files
+  only free space once both are done. Next time, take system backups with
+  the volume backup policy `disabled` when the nightly backups are fresh,
+  so they create no snapshots
 - [ ] Trim immich-claim's filesystem (Longhorn UI, volume, "Trim Filesystem")
   so blocks of deleted files are released.
 - [ ] Fresh backups: let a nightly Longhorn and Velero backup run, plus a

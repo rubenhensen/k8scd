@@ -116,10 +116,13 @@ April and May.
 - [x] Log in once through each app: immich through Scouts Online, Argo CD,
   Vault, Longhorn, FreshRSS, Actual, mail
 - [ ] After a week without problems: delete the dump and the snapshot
-- [ ] Base URL (system setting or `AUTHENTIK_WEB__BASE_URL`) becomes
-  required in 2026.11. authentik answers on authentik.rubenhensen.nl and
-  auth.scoutingmbg.nl (immich's issuer), so find out first what the
-  setting does with two hostnames
+- [x] Base URL (system setting or `AUTHENTIK_WEB__BASE_URL`), required
+  from 2026.11: already `https://authentik.rubenhensen.nl`, filled in by
+  the 2026.8 migration from the embedded outpost's host. In 2026.8.5 it is
+  only stored; on main it fills itself in the same way and sets the
+  embedded outpost's host from it. OIDC issuers still come from the
+  request's host, so immich's issuer on auth.scoutingmbg.nl is unaffected
+  (checked 2026-10-25 in the source)
 
 ### 4. Vault 1.17.2 → 2.2.1
 

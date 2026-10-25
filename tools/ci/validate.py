@@ -15,6 +15,13 @@ in the app folders. Sources:
   same, with the Application's kustomize patches applied
 Every YAML file in the repo is also checked for duplicate keys, which
 YAML parsers resolve silently by keeping the last one.
+
+Repo rules, on what this repo's own folders render (not on charts or
+remote bases):
+- no Secret with data: secrets come from Vault through ESO
+- every image has a tag other than latest
+- warnings (annotations on the PR) for containers without requests or
+  probes
 """
 import fnmatch
 import os
@@ -87,7 +94,41 @@ def check_duplicate_keys():
             failures.append(f"{path.relative_to(ROOT)}: {e}")
 
 
-def validate(label, manifests):
+def pod_specs(doc):
+    spec = doc.get("spec") or {}
+    kind = doc.get("kind")
+    if kind == "Pod":
+        yield spec
+    elif kind == "CronJob":
+        yield spec.get("jobTemplate", {}).get("spec", {}).get("template", {}).get("spec", {})
+    elif kind in ("Deployment", "StatefulSet", "DaemonSet", "ReplicaSet", "Job"):
+        yield spec.get("template", {}).get("spec", {})
+
+
+def check_rules(label, docs):
+    for d in docs:
+        name = f"{d.get('kind')}/{d.get('metadata', {}).get('name')}"
+        if d.get("kind") == "Secret" and (d.get("data") or d.get("stringData")):
+            failures.append(f"{label}: {name} has data in git; put it in Vault and use an ExternalSecret")
+        for spec in pod_specs(d):
+            containers = spec.get("containers", []) + spec.get("initContainers", [])
+            for c in containers:
+                image = c.get("image", "")
+                tag = image.split("@")[0].rsplit("/", 1)[-1].partition(":")[2]
+                if "@" not in image and tag in ("", "latest"):
+                    failures.append(f"{label}: {name} container {c.get('name')} has no fixed tag ({image})")
+            for c in spec.get("containers", []):
+                missing = []
+                if not c.get("resources", {}).get("requests"):
+                    missing.append("requests")
+                if d.get("kind") in ("Deployment", "StatefulSet", "DaemonSet") and not (
+                        c.get("readinessProbe") or c.get("livenessProbe")):
+                    missing.append("probes")
+                if missing:
+                    print(f"::warning title={label}::{name} container {c.get('name')} has no {' or '.join(missing)}")
+
+
+def validate(label, manifests, rules=False):
     """kubeconform on rendered manifests; returns the parsed documents."""
     try:
         docs = [d for d in yaml.safe_load_all(manifests) if d]
@@ -112,6 +153,8 @@ def validate(label, manifests):
         for l in lines[:-1]:
             print(f"    {l}")
         failures.append(f"{label}: {summary or result.stderr.strip()}")
+    if rules and docs:
+        check_rules(label, [d for d in docs if isinstance(d, dict)])
     return docs or []
 
 
@@ -247,7 +290,9 @@ def main():
                 failures.append(f"{label}: render failed")
                 continue
             if manifests is not None:
-                validate(label, manifests)
+                own = src.get("repoURL") in OWN_REPOS and not src.get("chart") and not (
+                    ROOT / src.get("path", ".") / "Chart.yaml").exists()
+                validate(label, manifests, rules=own)
 
     if failures:
         print(f"\n{len(failures)} problem(s):")

@@ -31,16 +31,6 @@
         "/apps/templates/.+\\.yaml$/"
       ],
       "matchStrings": [
-        "repoURL: https://github.com/(?<depName>[^/]+/[^/\\.]+)\\.git\\n\\s+targetRevision: (?<currentValue>.*)"
-      ],
-      "datasourceTemplate": "github-tags"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/apps/templates/.+\\.yaml$/"
-      ],
-      "matchStrings": [
         "repoURL: (?<registryUrl>.*?)\\n\\s+targetRevision: (?<currentValue>[^\\s]+)\\n\\s+chart: (?<depName>[^\\s]+)"
       ],
       "datasourceTemplate": "helm"
@@ -53,14 +43,6 @@
       ],
       "semanticCommits": "enabled",
       "commitMessageTopic": "helm chart {{depName}}",
-      "separateMinorPatch": true
-    },
-    {
-      "matchDatasources": [
-        "github-tags"
-      ],
-      "semanticCommits": "enabled",
-      "commitMessageTopic": "{{depName}}",
       "separateMinorPatch": true
     }
   ]

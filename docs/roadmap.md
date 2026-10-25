@@ -177,6 +177,15 @@ fails). The dqlite stalls were tracked down by hand from the API server's
 metrics, and Velero's scheduled backups failed every night from August
 until 2026-10-21 without anyone noticing.
 
+- [x] A stopgap for the worst blind spots (2026-10-25,
+  `gatus/backup-check.yaml`): an hourly CronJob reads the API and pushes
+  four external endpoints to s2 (group "cluster"): the newest daily and
+  weekly Velero backup Completed and recent, every attached Longhorn
+  volume healthy with a backup younger than 26h, and no Vault pod sealed.
+  Gatus alerts through ntfy after two failed reports, or when no report
+  arrives for 3 hours. The token comes from an ESO Password generator.
+  Tested with made-up data for each failure (a Failed or old backup, a
+  degraded or unbacked-up volume, a sealed pod)
 - [ ] After the second SSD (a time series database writes all the time
   and would add to today's stalls): metrics-server, then Prometheus or
   VictoriaMetrics with Grafana, alerting to ntfy. Loki later

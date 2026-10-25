@@ -56,6 +56,19 @@ spec:
           ports:
             - containerPort: 3000
               protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
           volumeMounts:
             - mountPath: /app/data
               name: data

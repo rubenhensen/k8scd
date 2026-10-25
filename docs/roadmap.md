@@ -360,10 +360,16 @@ PR before Argo CD applies it.
   cover every app folder, a regex manager reads `imageName` in
   `*/postgresql-cluster*.yaml`, and major PostgreSQL updates are off
   (those need pg_upgrade or a dump). Expect a batch of new PRs
-  (2026-10-25; `renovate-config-validator` passes). They only come once
-  fewer than 10 Renovate PRs are open (`config:recommended`'s
-  `prConcurrentLimit`); until then they wait under "Rate-Limited" on the
-  Dependency Dashboard (#2)
+  (2026-10-25). They only come once fewer than 10 Renovate PRs are open
+  (`config:recommended`'s `prConcurrentLimit`); until then they wait
+  under "Rate-Limited" on the Dependency Dashboard (#2)
+  - The other folders were left out with a `(?!…)` lookahead. Renovate
+    compiles these patterns with RE2, which has no lookahead, so it
+    rejected the config and stopped opening PRs (#32). Each manager now
+    takes every folder and skips the others through its own
+    `ignorePaths`. Renovate 44.181.6 with RE2 loaded fails the old config
+    with #32's error and passes the new one, and its matcher picks the
+    same 166 files as the old pattern did
 - [x] Merged 2026-10-25 and checked after the sync: #28 cert-manager
   v1.21.3 (security release; all three pods on v1.21.3), #24
   external-snapshotter v8.7.0 (its manifests ship the v8.6.0 image, as

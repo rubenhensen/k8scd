@@ -5,8 +5,16 @@
     "customManagers:githubActionsVersions"
   ],
   "argocd": {
+    "description": "Every app folder; Renovate's regexes are RE2, which has no lookahead, so the other folders are skipped through ignorePaths",
     "managerFilePatterns": [
-      "/^(?!(nix-infra-machine|backup-testing|docs|tools|\\.github)/)[^/]+/.+\\.yaml$/"
+      "/^[^/]+/.+\\.yaml$/"
+    ],
+    "ignorePaths": [
+      "nix-infra-machine/**",
+      "backup-testing/**",
+      "docs/**",
+      "tools/**",
+      ".github/**"
     ]
   },
   "helm-values": {
@@ -15,8 +23,16 @@
     ]
   },
   "kubernetes": {
+    "description": "Every app folder, as for argocd",
     "managerFilePatterns": [
-      "/^(?!(nix-infra-machine|backup-testing|docs|tools|\\.github)/)[^/]+/.+\\.yaml$/"
+      "/^[^/]+/.+\\.yaml$/"
+    ],
+    "ignorePaths": [
+      "nix-infra-machine/**",
+      "backup-testing/**",
+      "docs/**",
+      "tools/**",
+      ".github/**"
     ]
   },
   "customManagers": [

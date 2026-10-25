@@ -1,5 +1,19 @@
 # Velero Backup Testing Guide
 
+**Use `restore-test.sh`.** It restores a few namespaces from a real backup
+into a throwaway k3s in Docker, from a read-only copy of the bucket, and
+checks that every volume comes back with the bytes it was backed up with:
+
+```bash
+backup-testing/restore-test.sh                          # newest daily backup; ntfy, freshrss, actual-budget
+backup-testing/restore-test.sh <backup> <namespace>...  # something else
+```
+
+How it works and why it copies instead of pointing Velero at the NAS is at
+the top of the script. The rest of this README describes the older k3d
+scripts, which predate Envoy Gateway and still expect `*.hensen.io` and
+sol-auth.
+
 This guide explains how to test your Velero backups using a temporary K3d cluster.
 
 ## Features

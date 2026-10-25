@@ -79,6 +79,19 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+          # TCP, because mod_auth_openidc answers 401 to anything that isn't a
+          # browser.
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
           volumeMounts:
             - mountPath: /var/www/FreshRSS/data
               name: data

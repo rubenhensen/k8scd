@@ -197,7 +197,21 @@ Counted 2026-10-25 over the 73 running containers:
   checked): authentik, bolletjestrui, freshrss, gatus, gitea, immich,
   ntfy, serpbear, mariadb-operator.
 
-- [ ] Default-deny NetworkPolicies, immich, mbgwp and authentik first
+- [x] NetworkPolicies for immich, mbgwp and authentik
+  (`<namespace>/networkpolicy.yaml`, 2026-10-25). Before, WordPress could
+  reach the NAS's DSM, the router, the API server, Vault and immich. Now
+  each of the three reaches only its own pods, DNS and the internet
+  (without the private ranges), plus the API server for the CNPG
+  instances and authentik's worker. Ingress only from Envoy, the CNPG and
+  MariaDB operators, the node (kubelet probes) and, for the LDAP outpost,
+  from anywhere. Checked afterwards: the sites, the OIDC endpoints and
+  logins, Longhorn's login through Envoy, the LDAP NodePort, CNPG
+  healthy, a MariaDB backup and a share-sync run. The node's addresses
+  (192.168.1.204 and Calico's 10.1.7.64) are written out, so a new node
+  means new policies
+- [ ] The same for the other namespaces that face the internet (gitea,
+  freshrss, serpbear, ntfy, actual-budget, bolletjestrui, home-assistant,
+  gatus), and limit who can reach Vault
 - [ ] Requests and memory limits, the big ones first (immich, authentik,
   Argo CD's repo-server)
 - [ ] Probes

@@ -127,6 +127,9 @@ spec:
                       TRANSFORMERS_CACHE: /cache
                       HF_XET_CACHE: /cache/huggingface-xet
                       MPLCONFIGDIR: /cache/matplotlib-config
+                      # The optimized models of v3.3.0: faster, less memory,
+                      # and the same results, so no jobs to run again.
+                      MACHINE_LEARNING_MODEL_REVISION: v2
                       # Trust store without the compromised eMudhra
                       # intermediates; requests would otherwise use certifi.
                       SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
@@ -139,11 +142,19 @@ spec:
                 globalMounts:
                   - path: /etc/ssl/certs
                     readOnly: true
+              # The models and their one-off preparation, kept across restarts.
+              # Downloaded again if lost, so no backups: the no-backup group
+              # keeps it out of Longhorn's default one (backup-daily), and
+              # Velero skips that label too (velero/skip-emptydir-policy.yaml).
               cache:
                 enabled: true
-                # Optional: to avoid downloading the ML models every start, use
-                # a persistentVolumeClaim with size, accessMode and storageClass
-                type: emptyDir
+                type: persistentVolumeClaim
+                storageClass: longhorn
+                accessMode: ReadWriteOnce
+                size: 10Gi
+                labels:
+                  recurring-job.longhorn.io/source: enabled
+                  recurring-job-group.longhorn.io/no-backup: enabled
 
   destination:
     server: https://kubernetes.default.svc

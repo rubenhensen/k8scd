@@ -56,14 +56,36 @@ belong to the group.
 - [ ] A restore test that runs on a schedule. `backup-testing/` predates
   Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth
 
-### 3. authentik 2026.2.1
+### 3. authentik 2026.2.1 → 2026.8.5
 
 Since 2026-10-24 authentik is the front door for every member of the
-group. Renovate PRs #20 (2026.2.3) and #22 (2026.8.5) have been open since
+group. Renovate PRs #20 (2026.2.3) and #22 (2026.8.5) had been open since
 April and May.
 
-- [ ] Check which releases still get security fixes and upgrade, one minor
-  at a time, reading the release notes for blueprints and outposts
+- [x] Upgraded 2026-10-25 in two hops, since releases can't be skipped:
+  chart 2026.5.6, then 2026.8.5. Each took about three minutes with no
+  downtime; the old pods kept serving until the new ones were ready.
+  Safety net: `pg_dump -Fc` in `~/authentik-pre-2026.5.dump` (15 MB) on
+  opti1 and Longhorn snapshot `authentik-pg-pre-2026-5`. Checked after
+  each hop: the seven OIDC discovery endpoints and their issuers, the
+  login page, immich, every blueprint successful, the LDAP outpost
+  checking in on the new version
+  - 2026.5 listens on `[::]` instead of `0.0.0.0`. IPv6 is on in the pods
+    (`bindv6only` 0), so IPv4 keeps working
+  - 2026.8 only believes `X-Forwarded-*` from
+    `listen.trusted_proxy_cidrs`, which defaults to the private ranges
+    (10.0.0.0/8 covers Envoy's pods); redirects stay https
+  - The managed LDAP outpost didn't follow on its own after either hop;
+    `outpost_controller.send(<outpost pk>)` in `ak shell` rolled it over
+  - The `redis:` values were left over from before authentik dropped
+    Redis; the chart has no such key, so they went
+- [ ] Log in once through each app: immich through Scouts Online, Argo CD,
+  Vault, Longhorn, FreshRSS, Actual, mail
+- [ ] After a week without problems: delete the dump and the snapshot
+- [ ] Base URL (system setting or `AUTHENTIK_WEB__BASE_URL`) becomes
+  required in 2026.11. authentik answers on authentik.rubenhensen.nl and
+  auth.scoutingmbg.nl (immich's issuer), so find out first what the
+  setting does with two hostnames
 
 ### 4. Vault 1.17.2
 

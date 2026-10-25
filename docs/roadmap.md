@@ -79,7 +79,7 @@ April and May.
     `outpost_controller.send(<outpost pk>)` in `ak shell` rolled it over
   - The `redis:` values were left over from before authentik dropped
     Redis; the chart has no such key, so they went
-- [ ] Log in once through each app: immich through Scouts Online, Argo CD,
+- [x] Log in once through each app: immich through Scouts Online, Argo CD,
   Vault, Longhorn, FreshRSS, Actual, mail
 - [ ] After a week without problems: delete the dump and the snapshot
 - [ ] Base URL (system setting or `AUTHENTIK_WEB__BASE_URL`) becomes

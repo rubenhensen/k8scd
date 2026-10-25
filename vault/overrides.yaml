@@ -14,9 +14,11 @@ injector:
 server:
    # Pinned to the running version: the chart would otherwise pull its own
    # default on the next pod restart, and with Shamir unsealing a Vault
-   # upgrade needs someone with the unseal keys at hand.
+   # upgrade needs someone with the unseal keys at hand. The StatefulSet
+   # uses OnDelete, so after a sync tools/vault-roll.sh <tag> restarts and
+   # unseals the pods one at a time.
    image:
-      tag: "1.17.2"
+      tag: "2.2.1"
    dataStorage:
       storageClass: longhorn
    standalone:

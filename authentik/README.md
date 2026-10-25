@@ -14,7 +14,11 @@ Authentik is deployed as the central identity provider, providing OIDC and LDAP 
   - `blueprint-argocd-oidc.yaml` — OIDC provider for ArgoCD
   - `blueprint-freshrss-oidc.yaml` — OIDC provider for FreshRSS
   - `blueprint-actualbudget-proxy.yaml` — Proxy provider for Actual Budget
+  - `blueprint-longhorn-oidc.yaml` — OIDC provider for Longhorn (Envoy Gateway SecurityPolicy)
+  - `blueprint-scouting.yaml` — immich's login with Scouts Online, see docs/immich-scouts-online.md
   - `blueprint-session-duration.yaml` — Session lifetime of the default authentication flow
+- **NetworkPolicies** (`networkpolicy.yaml`) — the pods reach each other, DNS and the internet,
+  not the LAN or other namespaces; the worker and the database also reach the API server
 
 ## Session lifetime
 
@@ -30,9 +34,23 @@ Apache mod_auth_openidc refreshes on every request.
 
 ## LDAP Outpost
 
-The LDAP outpost exposes Authentik's user directory over LDAP. It is used by:
-- **SOGo-mail** (in-cluster) — connects via `ak-outpost-ldap-outpost.authentik.svc.cluster.local:3389`
-- **Stalwart** (NixOS, external) — connects via `ldap.rubenhensen.nl:389`
+The LDAP outpost exposes Authentik's user directory over LDAP. It is used by
+**Stalwart** (NixOS on node001), which connects via `ldap.rubenhensen.nl:389`.
+The outpost itself talks to the server through `https://authentik.rubenhensen.nl/`.
+
+Authentik's worker deploys the outpost and keeps its version equal to the
+server's. After the upgrades to 2026.5 and 2026.8 it didn't follow on its
+own; this rolls it over:
+
+```bash
+kubectl -n authentik exec deploy/authentik-worker -- ak shell -c '
+from authentik.outposts.models import Outpost
+from authentik.outposts.tasks import outpost_controller
+outpost_controller.send(Outpost.objects.get(name="LDAP outpost").pk)'
+```
+
+Upgrades go one release at a time (2026.2 → 2026.5 → 2026.8); since 2026.8
+authentik refuses to skip one.
 
 ### NodePort Service
 
@@ -87,3 +105,8 @@ microk8s config > ~/.kube/config
 ```
 
 **Note:** This must be re-applied after MicroK8s upgrades or cert rotations, as MicroK8s may regenerate the CA without the extension. The fix needs to run on every node in the cluster.
+
+Checked 2026-10-25: the CA from this fix (`CN=microk8s-ca`, 2026-03-21, valid
+until 2036) still has the extension after the refreshes to 1.34, 1.35 and
+1.36. Check with
+`openssl x509 -in /var/snap/microk8s/current/certs/ca.crt -noout -ext keyUsage`.

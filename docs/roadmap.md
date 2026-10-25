@@ -344,9 +344,11 @@ step after that, if downtime starts to matter.
 - [ ] opti1, with sudo: `/root/backend-*` and `/root/dqlite-pre-*` (from
   before 1.33, 1.34 and the VACUUM; 1.34 migrated the schema, so none of
   them fits 1.36) and `~/containerd.bak` (root-owned, from 2025-02)
-- [ ] `~/cadir` on opti1 holds a CA key and certificate from 2026-03-21
-  that are not microk8s's current CA. Find out whether anything still
-  trusts it; if not, delete it
+- [ ] `rm -r ~/cadir` on opti1: a CA key and certificate made four minutes
+  before the real keyUsage fix on 2026-03-21 (OpenSSL's default subject
+  "Internet Widgits Pty Ltd", valid for a year) and never installed;
+  microk8s's CA is the `CN=microk8s-ca` one from 19:16 that day, valid
+  until 2036
 
 ## wishlist.txt (2026-01-25)
 

@@ -3,7 +3,7 @@ module dqlite-vacuum
 go 1.27.3
 
 require (
-	github.com/canonical/go-dqlite/v3 v3.0.1
+	github.com/canonical/go-dqlite/v3 v3.0.4
 	gopkg.in/yaml.v2 v2.4.0
 )
 

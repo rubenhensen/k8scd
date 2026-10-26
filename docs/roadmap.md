@@ -38,7 +38,8 @@ docs/longhorn-second-ssd.md:
   2026-10-25). The snap is held, so microk8s gets no updates at all until
   someone refreshes it
 - [ ] Second SSD, docs/longhorn-second-ssd.md
-- [ ] Optional: `MACHINE_LEARNING_MODEL_REVISION=v2` for immich ML
+- [x] `MACHINE_LEARNING_MODEL_REVISION=v2` for immich ML (PR #39, 2026-10-25;
+  the models are cached on a volume)
 
 ## Next, in order
 

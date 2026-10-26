@@ -38,7 +38,8 @@ docs/longhorn-second-ssd.md:
   2026-10-25). The snap is held, so microk8s gets no updates at all until
   someone refreshes it
 - [ ] Second SSD, docs/longhorn-second-ssd.md
-- [ ] Optional: `MACHINE_LEARNING_MODEL_REVISION=v2` for immich ML
+- [x] `MACHINE_LEARNING_MODEL_REVISION=v2` for immich ML (PR #39,
+  2026-10-25; the models are cached on a volume)
 
 ## Next, in order
 
@@ -82,7 +83,9 @@ friend.
   certificate; the admin API stays on the LAN. The cluster side (DNS,
   node001 tunnel, Certificate, HTTPRoute) goes in git. Needed: how much
   space he wants, free space on the NAS
-- [ ] Decide which copy of the immich library goes off-site (see 5)
+- [x] Which copy of the immich library goes off-site: Velero's, with the
+  rest of the bucket (decided 2026-10-26). It is most of the ~190 GB, so
+  ask him for room for it
 - [ ] A restore test that runs on a schedule. `backup-testing/` predates
   Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth.
   Planned on 2026-10-25, not run: a second Velero on the real bucket is
@@ -202,8 +205,8 @@ Findings from 2026-10-25:
   maintenance job pods) was fixed that afternoon by
   `velero/skip-emptydir-policy.yaml`.
 
-- [ ] Whether the immich library stays in Velero. It stays for now
-  (2026-10-25); decide again with the off-site copy (2)
+- [x] Whether the immich library stays in Velero: it stays, since
+  Velero's bucket is what goes off-site (2; decided 2026-10-26)
 - [ ] CNPG backups through the barman cloud plugin
 - [x] Velero's target, MinIO on the NAS, is no longer maintained: no
   community images since October 2025, maintenance mode since December
@@ -298,10 +301,22 @@ Counted 2026-10-25 over the 73 running containers:
   OIDC logins of Vault and FreshRSS reach authentik, all 24
   ExternalSecrets refresh, raft intact; Gitea no longer reaches the NAS
   or Vault, and a pod in `default` no longer reaches Vault or Gitea
+- [ ] Certificates couldn't renew in those 11 namespaces: Envoy may only
+  reach each app's own port, and cert-manager's HTTP-01 solver listens on
+  8089. ynab's renewal hung from 2026-10-26 17:35 UTC; a policy for the
+  solver pods, applied by hand in actual-budget that evening, let it
+  through within 20 seconds (now valid until 2027-01-24). PR #51 adds it
+  to all 11. Without it the next renewals hang too: gitea on 11-15,
+  bolletjestrui on 11-18, the rest from 12-03
 - [ ] The infrastructure namespaces (cert-manager, cnpg-system,
   external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
   default) still have none; `default` can reach the LAN and everything
-  without a policy
+  without a policy. Prepared on 2026-10-26, not yet merged: PR #53 for
+  all but Envoy (one commit per namespace; `default` denies everything),
+  PR #54 for envoy-gateway-system on its own, since a mistake there takes
+  every public host down. Merge them when someone is home to check: the
+  cert-manager, CNPG, ESO and MariaDB webhooks fail closed. Velero's
+  policy only lets it reach Garage, not MinIO's port 9000
 - [x] Requests: PR #33, merged 2026-10-25 11:23 UTC, for everything that
   had none except the Vault server, from `kubectl top` every 5 minutes
   from 03:13 to 08:40 UTC (highest memory plus 10%, CPU at p95, 10m
@@ -334,10 +349,14 @@ Counted 2026-10-25 over the 73 running containers:
   `litespeed-cache` only caches pages on a LiteSpeed server, so it does
   little here, `wordpress-importer` is usually for a one-off import, and
   `code-snippets` runs PHP from the dashboard
-- [ ] Rate limiting per visitor in Envoy needs the client's address, which
-  node001 loses: it passes TLS through, so every request arrives from
-  46.224.26.65. That needs the PROXY protocol from node001's nginx to Envoy
-  (ClientTrafficPolicy `enableProxyProtocol`)
+- [ ] Rate limiting per visitor in Envoy, on hold. Since PR #50
+  (2026-10-26) node001 passes the visitor's address on with the PROXY
+  protocol, and the apps see it: authentik logs it, Apache logs it for
+  WordPress, so Wordfence's lockout after 20 failed logins now hits one
+  visitor instead of everyone. Envoy Gateway's local rate limit can't
+  count per address (no `Distinct`); that takes its global rate limit,
+  with a Redis and a ratelimit service next to it. Not worth two more
+  components on the one node while the apps' own limits work
 - [x] Probes for gitea (`/api/healthz`), freshrss (TCP, since
   mod_auth_openidc answers 401 to non-browsers) and serpbear (`/login`)
   (2026-10-25). Liveness only after 5 failures 30s apart, to ride out the
@@ -375,7 +394,10 @@ every PR.
   fail the run; tested with a planted Secret and an untagged image), plus
   PR annotations for containers without requests or probes. freshrss's
   `alpine/git` init container had no tag; now `v2.52.0`
-- [ ] Automerge patch versions of low-risk apps now that CI runs
+- [ ] Automerge patch versions of low-risk apps now that CI runs: PR #52
+  (ntfy, gatus, freshrss, serpbear, actual-budget and CI's own tools;
+  three days after the release, only on weekday evenings and at the
+  weekend, when the cluster can be reached)
 - [x] Renovate listed external-snapshotter twice (#15 and #24): its
   `argocd` manager and a custom `github-tags` regex both matched. The
   regex is gone; Renovate should close #15 by itself
@@ -432,11 +454,10 @@ step after that, if downtime starts to matter.
   there and the volumes hold nothing (0 bytes in every backup). Drop both
   mounts and the two PVCs, or make them ConfigMap files if custom config
   is wanted
-- [ ] `kubectl delete namespace secrets`, empty since its app went
-- [ ] 41 Failed Velero backups: the dailies from 2026-09-26 to 10-21 and
-  the weeklies since 08-02. Velero doesn't restore from a Failed backup;
-  left alone they expire by 2027-01-16.
-  `kubectl -n velero exec deploy/velero -c velero -- /velero backup delete $(kubectl -n velero get backups.velero.io -o json | jq -r '.items[] | select(.status.phase=="Failed") | .metadata.name' | xargs) --confirm`
+- [x] The namespace `secrets` was already gone on 2026-10-26
+- [x] The Failed Velero backups (the dailies from 2026-09-26 to 10-21 and
+  the weeklies since 08-02; 40 by then, one had expired), deleted through
+  Velero on 2026-10-26. Left: 13 Completed, 3 PartiallyFailed
 - [ ] The mariadb-operator Backup `mbgwp-pre-migration-backup`, a dump
   from 2026-02-22 on its own 10 GiB volume (which has a Longhorn backup
   from 2026-10-22). The PVC has no owner, so it goes separately:

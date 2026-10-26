@@ -1,0 +1,23 @@
+# node001 passes TLS for the tunneled hosts through without opening it, so
+# without this every request arrives from 46.224.26.65. Wordfence locks that
+# address out after 20 failed logins (2026-10-26), and with it everyone who
+# logs in to scoutingmbg.nl. node001 puts a PROXY header with the visitor's
+# address in front of each connection; Envoy takes the address from there
+# and adds it to X-Forwarded-For.
+#
+# Optional, because s2 and ntfy2 point straight at home and their clients
+# send no header, and neither does node001's proxy on port 80. The price:
+# whoever connects to the home address directly can send a header of their
+# own and claim any address.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: proxy-protocol
+  namespace: envoy-gateway-system
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: homelab
+  proxyProtocol:
+    optional: true

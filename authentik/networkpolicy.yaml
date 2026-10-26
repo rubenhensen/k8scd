@@ -108,7 +108,8 @@ spec:
 ---
 # The CNPG operator checks each instance on its status port and connects to
 # PostgreSQL; the instance manager inside each pod watches its Cluster
-# through the API server.
+# through the API server. The barman cloud sidecar sends the WAL and the
+# base backups to Garage on the NAS (postgresql-backup.yaml).
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -135,6 +136,11 @@ spec:
             cidr: 192.168.1.204/32
       ports:
         - port: 16443
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.99/32
+      ports:
+        - port: 3900
 ---
 # cert-manager's HTTP-01 solver, which runs only while a certificate
 # renews: Let's Encrypt and cert-manager's own self check reach it on 8089

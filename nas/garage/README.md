@@ -31,5 +31,12 @@ Velero's key is in Vault as `kv/velero-s3` (`access_key_id`,
 `velero/external-secret.yaml`. Without the cluster, `$g key info velero
 --show-secret` on the NAS shows it again.
 
+CNPG's backups (`authentik/postgresql-backup.yaml`,
+`immich/postgresql-backup.yaml`) have a bucket and a key per cluster, so
+neither database can touch the other's backups. Made on 2026-10-26 the
+same way as Velero's, with `cnpg-authentik` and `cnpg-immich` as both
+bucket and key name; the keys are in Vault as `kv/cnpg-authentik-s3` and
+`kv/cnpg-immich-s3`.
+
 Renovate updates the image tag in `compose.yaml`, but nothing deploys it:
 after merging, `docker compose pull && docker compose up -d` on the NAS.

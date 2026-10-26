@@ -74,7 +74,7 @@ spec:
               value: Europe/Amsterdam
           # 1.30.3 ships PHP 8.4.27, which fixes CVE-2026-109618 and
           # CVE-2026-109619.
-          image: freshrss/freshrss:1.30.3
+          image: freshrss/freshrss:1.30.4
           name: freshrss
           ports:
             - containerPort: 80

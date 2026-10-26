@@ -10,11 +10,11 @@ One node: opti1, an OptiPlex 5060 with an i5-8600T, 32 GB and one 1 TB
 SATA SSD that is 72% full. microk8s v1.36.5 from 1.36/edge, snap held.
 35 Argo CD apps (with metrics-server), all Synced/Healthy; every Longhorn
 volume has one replica. authentik 2026.8.5, Vault 2.2.1. Backups go to the
-NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to MinIO at
-01:00 (daily kept 30 days, weekly 90 days). Gatus on s1 (node001, Hetzner)
-and s2 (home) watch each other and alert through ntfy; s2 also gets an
-hourly report from inside the cluster on the backups, Vault's seal, the
-Argo CD apps and the CNPG clusters.
+NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to Garage
+(MinIO until 2026-10-26) at 01:00 (daily kept 30 days, weekly 90 days).
+Gatus on s1 (node001, Hetzner) and s2 (home) watch each other and alert
+through ntfy; s2 also gets an hourly report from inside the cluster on the
+backups, Vault's seal, the Argo CD apps and the CNPG clusters.
 Every app namespace has NetworkPolicies, and CI renders and validates all
 apps on every PR. node001 runs mail and tunnels the public hosts home.
 
@@ -63,24 +63,25 @@ belong to the group.
 There is no off-site copy (2026-10-25). The plan: swap S3 buckets with a
 friend.
 
-- [ ] Ours to his bucket: Hyper Backup on the Synology, destination "S3
-  Storage" with his endpoint as a custom server. Client-side encryption
-  on: the kopia repositories use Velero's default password
-  (`static-passw0rd`), so without it he could read everything, the
-  group's photos included. Keep the encryption key next to the Vault
-  unseal key. Source: the shared folder with MinIO's `velero-backups`
-  bucket (~150-200 GB). Daily after the Velero backup, Smart Recycle,
-  mail on failure
+- [ ] Ours to his bucket: `rclone sync` from Garage's `velero-backups`
+  (~190 GB) to his bucket through an rclone `crypt` remote, in Docker on
+  the NAS like the copy from MinIO (see 5). Encrypted on our side: the
+  kopia repositories use Velero's default password (`static-passw0rd`),
+  so without it he could read everything, the group's photos included.
+  Keep the crypt passwords next to the Vault unseal key. Daily after the
+  Velero backup, ntfy on failure. Hyper Backup, the earlier plan, backs up
+  shared folders; Garage keeps its objects as blocks plus a metadata
+  database, and a copy of that folder taken while Garage runs is not
+  consistent
 - [ ] Needed from him: endpoint, which S3 server he runs, space (~200 GB
   now, 500 GB to grow), and versioning or object lock on the bucket, so
   whoever takes over the NAS can't delete the off-site copy as well
-- [ ] His backups with us: Garage (not MinIO, see 5) in Container Manager
-  on the Synology, in its own shared folder, with a bucket and key for him
-  and a quota. Only the S3 API public, as `s3.rubenhensen.nl` through
-  node001 and Envoy with a cert-manager certificate; the admin API stays
-  on the LAN. The cluster side (DNS, node001 tunnel, Certificate,
-  HTTPRoute) goes in git. Needed: how much space he wants, free space on
-  the NAS
+- [ ] His backups with us: a bucket and key for him, with a quota, in the
+  Garage on the NAS (`nas/garage`, see 5). Only the S3 API public, as
+  `s3.rubenhensen.nl` through node001 and Envoy with a cert-manager
+  certificate; the admin API stays on the LAN. The cluster side (DNS,
+  node001 tunnel, Certificate, HTTPRoute) goes in git. Needed: how much
+  space he wants, free space on the NAS
 - [ ] Decide which copy of the immich library goes off-site (see 5)
 - [ ] A restore test that runs on a schedule. `backup-testing/` predates
   Envoy Gateway and still rewrites `*.hensen.io` and bypasses sol-auth.
@@ -108,9 +109,12 @@ friend.
   MinIO runs region `minio`; the script now reads endpoint, region and
   bucket from Velero's location. Copying freshrss's kopia repository took
   14 of the ~17 minutes
-- [ ] Run it on a schedule. It needs Docker and the MinIO key, so not in
-  the cluster itself: the Mac (launchd) or node001, ideally with a
-  read-only MinIO user
+- [x] Ran it again on 2026-10-26 against the copy in Garage
+  (daily-backup-20261026010028, same namespaces), before Velero switched
+  over (see 5): passed, in 5 minutes instead of 17
+- [ ] Run it on a schedule. It needs Docker and an S3 key, so not in the
+  cluster itself: the Mac (launchd) or node001, ideally with a read-only
+  Garage key (`garage key create`, `garage bucket allow --read`)
 
 ### 3. authentik 2026.2.1 → 2026.8.5
 
@@ -193,7 +197,7 @@ Findings from 2026-10-25:
 - Velero copies the CNPG and MariaDB data directories file by file while
   the databases run, which is not a consistent copy. The Longhorn backups
   start from a snapshot and are crash-consistent. CNPG can back up to
-  MinIO itself (barman cloud plugin), with point-in-time recovery.
+  Garage itself (barman cloud plugin), with point-in-time recovery.
 - The PartiallyFailed daily backup of 10-23 (emptyDirs of Velero's own
   maintenance job pods) was fixed that afternoon by
   `velero/skip-emptydir-policy.yaml`.
@@ -201,10 +205,31 @@ Findings from 2026-10-25:
 - [ ] Whether the immich library stays in Velero. It stays for now
   (2026-10-25); decide again with the off-site copy (2)
 - [ ] CNPG backups through the barman cloud plugin
-- [ ] Velero's target, MinIO on the NAS, is no longer maintained: no
+- [x] Velero's target, MinIO on the NAS, is no longer maintained: no
   community images since October 2025, maintenance mode since December
-  2025, and the repository is archived. Move Velero to the Garage from 2
-  and switch MinIO off
+  2025, and the repository is archived. Since 2026-10-26 Velero backs up
+  to Garage on the same NAS (`nas/garage`, PR #35). The bucket was copied
+  with rclone (185 GiB in about 6 hours, then a catch-up sync just before
+  the switch), so the existing backups and kopia repositories carried on:
+  after the switch all 55 backups were still listed, and a manual backup
+  of ntfy found the existing repository and used the night's snapshot as
+  its parent. Two things made the NAS slow during the copy: Garage on
+  LMDB with `metadata_fsync`, ~270 disk writes/s while idle (now SQLite,
+  see `nas/garage/garage.toml`), and MinIO's scanner, which kept one disk
+  at 97% busy. The scanner is now at `slowest` (`mc admin config set local
+  scanner speed=slowest` in the MinIO container); it may have slowed
+  Velero's backups to MinIO as well
+- [ ] Switch MinIO off once Velero has run on Garage for a week (from
+  2026-11-02): stop the container, then delete `/volume1/minio` (343 GiB)
+  and the hand-made Secret `velero/cloud-credentials` (MinIO's key). Only
+  MinIO still has the kopia repositories of namespaces that are gone
+  (~156 GB: nextcloud, ttrss, whisper-priv, whisper-webui, blog, ghost,
+  mbg-wordpress, sogo, sogo-mail, outrun-game, owntracks); decide first
+  whether any of them is worth keeping
+- [ ] Garage's SQLite WAL (`meta/db.sqlite-wal`) was 1.7 GB on
+  2026-10-26 next to a 270 MB database, and going by the folders in
+  `meta/snapshots`, each 6-hourly metadata snapshot takes about 70
+  minutes. Not growing; check again after a week of normal use
 
 ### 6. Monitoring
 
@@ -323,8 +348,10 @@ Counted 2026-10-25 over the 73 running containers:
 
 ### 8. Renovate and CI
 
-10 Renovate PRs are open, the oldest from February, and nothing checks a
-PR before Argo CD applies it.
+On 2026-10-25 10 Renovate PRs were open, the oldest from February, and
+nothing checked a PR before Argo CD applied it. All of them have since been
+merged or closed (below), none are open (checked 2026-10-25), and CI checks
+every PR.
 
 - [x] `.github/workflows/validate.yaml` runs `tools/ci/validate.py` on
   every PR and push (2026-10-25): it renders all 36 apps the way Argo CD
@@ -446,7 +473,7 @@ critical / high:
 | tensorchord/cloudnative-vectorchord:17.11-1.1.1 | 17 | 136 | immich's database; look for a newer tag |
 | longhornio/longhorn-instance-manager:v1.7.3 | 11 | 159 | still serves 16 volumes, see below |
 | actualbudget/actual-server:26.6.0 | 8 | 83 | chart 1.8.9; Renovate now covers it |
-| gitea/gitea:1.27.3 | 8 | 43 | PR #26 (28.2.0) |
+| gitea/gitea:1.27.3 | 8 | 43 | now 28.2.0 (PR #26, 2026-10-25); not scanned again |
 | immich-server / machine-learning v3.3.5 | 7, 7 | 113, 78 | a newer immich release |
 | towfiqi/serpbear:3.1.0 | 6 | 77 | a newer release |
 | rubenhensen/bolletjestrui:main-10268f1 | 5 | 76 | rebuild on a current base image |

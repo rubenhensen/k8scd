@@ -1,0 +1,54 @@
+# The mariadb-operator's three pods reach each other, DNS and the API
+# server (the node, port 16443); the operator also connects to MariaDB on
+# 3306 for the databases, users and grants it manages (mbgwp's
+# mariadb-from-operator lets it in). Besides their own namespace they take
+# connections only from the node: the API server calls the webhook from
+# there and the kubelet probes come from there too (10.1.7.64 is the node's
+# Calico VXLAN address, projectcalico.org/IPv4VXLANTunnelAddr). This
+# folder's Application deploys into argocd (the operator's own
+# Applications), hence the namespace here.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+  namespace: mariadb-system
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 10.1.7.64/32
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mariadb
+      ports:
+        - port: 3306

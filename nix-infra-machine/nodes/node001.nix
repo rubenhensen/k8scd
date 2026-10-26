@@ -173,12 +173,18 @@ in
     #   - mail.rubenhensen.nl (and anything else) → local stalwart on 8443
     #   - tunneled hosts → home cluster ingress on 443
     #   - s1 / ntfy1.rubenhensen.nl → local nginx on 8444 (Gatus, ntfy)
+    #
+    # Each connection starts with a PROXY header that carries the visitor's
+    # address, so the home cluster sees who is asking instead of this box
+    # (gateway/proxy-protocol.yaml in k8scd). nginx sends the header to
+    # every upstream or none, so the local ones go through a hop on
+    # 8445/8446 that takes it off again.
     streamConfig = ''
       map $ssl_preread_server_name $tunnel_upstream {
 ${sniMapEntries}
-        s1.rubenhensen.nl 127.0.0.1:8444;
-        ntfy1.rubenhensen.nl 127.0.0.1:8444;
-        default 127.0.0.1:8443;
+        s1.rubenhensen.nl 127.0.0.1:8446;
+        ntfy1.rubenhensen.nl 127.0.0.1:8446;
+        default 127.0.0.1:8445;
       }
 
       server {
@@ -186,6 +192,17 @@ ${sniMapEntries}
         listen [::]:443;
         proxy_pass $tunnel_upstream;
         ssl_preread on;
+        proxy_protocol on;
+      }
+
+      server {
+        listen 127.0.0.1:8445 proxy_protocol;
+        proxy_pass 127.0.0.1:8443;
+      }
+
+      server {
+        listen 127.0.0.1:8446 proxy_protocol;
+        proxy_pass 127.0.0.1:8444;
       }
     '';
 

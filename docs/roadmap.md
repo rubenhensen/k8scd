@@ -207,7 +207,20 @@ Findings from 2026-10-25:
 
 - [x] Whether the immich library stays in Velero: it stays, since
   Velero's bucket is what goes off-site (2; decided 2026-10-26)
-- [ ] CNPG backups through the barman cloud plugin
+- [x] CNPG backups through the barman cloud plugin (PR #56, merged
+  2026-10-26 22:43 UTC): authentik's and immich's PostgreSQL 17 back up
+  to their own bucket in Garage (`cnpg-authentik`, `cnpg-immich`), a base
+  backup at 03:00 UTC and the WAL every 5 minutes, kept 30 days. Adding
+  the sidecar restarted both instances; authentik was down from 22:44 to
+  22:48, since the old pod waited for its connections to close. The first
+  base backups: 46 MB in 29 s and 776 MB in 3.5 minutes. immich's
+  `immediate` backup ran before the plugin was up and failed; a manual one
+  (`immich-postgres-17-first`) went through
+- [ ] Restore one of them into a new Cluster (`bootstrap.recovery` from
+  the ObjectStore, to a point in time) to see that it works. After that,
+  decide whether Velero still needs to copy the CNPG data directories
+- [ ] Take `cnpg-authentik` and `cnpg-immich` along in the off-site copy
+  (2)
 - [x] Velero's target, MinIO on the NAS, is no longer maintained: no
   community images since October 2025, maintenance mode since December
   2025, and the repository is archived. Since 2026-10-26 Velero backs up
@@ -308,15 +321,16 @@ Counted 2026-10-25 over the 73 running containers:
   through within 20 seconds (now valid until 2027-01-24). PR #51 adds it
   to all 11. Without it the next renewals hang too: gitea on 11-15,
   bolletjestrui on 11-18, the rest from 12-03
-- [ ] The infrastructure namespaces (cert-manager, cnpg-system,
+- [x] The infrastructure namespaces (cert-manager, cnpg-system,
   external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
-  default) still have none; `default` can reach the LAN and everything
-  without a policy. Prepared on 2026-10-26, not yet merged: PR #53 for
-  all but Envoy (one commit per namespace; `default` denies everything),
-  PR #54 for envoy-gateway-system on its own, since a mistake there takes
-  every public host down. Merge them when someone is home to check: the
-  cert-manager, CNPG, ESO and MariaDB webhooks fail closed. Velero's
-  policy only lets it reach Garage, not MinIO's port 9000
+  default), merged 2026-10-26: PR #54 for envoy-gateway-system (22:31
+  UTC), PR #53 for the rest (22:42 UTC; one commit per namespace, and
+  `default` denies everything). Checked afterwards: all 16 public hosts
+  answer as before; server-side dry runs reach the CNPG, ESO,
+  cert-manager and MariaDB webhooks (all fail closed); Velero's location
+  Available, every ExternalSecret synced, the dns-sync job ran, no errors
+  from the operators after the barman plugin had started. Velero's policy
+  only lets it reach Garage, not MinIO's port 9000
 - [x] Requests: PR #33, merged 2026-10-25 11:23 UTC, for everything that
   had none except the Vault server, from `kubectl top` every 5 minutes
   from 03:13 to 08:40 UTC (highest memory plus 10%, CPU at p95, 10m

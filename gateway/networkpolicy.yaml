@@ -1,0 +1,120 @@
+# Envoy Gateway: the controller and the proxy it runs (envoyproxy.yaml).
+# Both reach each other (the proxy gets its config from the controller on
+# 18000) and DNS, and take connections from each other and the node: the
+# API server calls the controller's topology webhook (9443) from there and
+# the kubelet probes come from there too (10.1.7.64 is the node's Calico
+# VXLAN address, projectcalico.org/IPv4VXLANTunnelAddr). Nothing scrapes
+# the metrics on 19001.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+  namespace: envoy-gateway-system
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 10.1.7.64/32
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+# The proxy holds the node's ports 80 and 443 (10080 and 10443 inside) and
+# takes connections there from anywhere: the internet through node001 and
+# the router, the LAN, and pods that call a public hostname. It reaches
+# every app it routes to (pods in any namespace; their own policies decide
+# which port), Home Assistant on 192.168.1.202:8123 (outside the cluster,
+# home-assistant/), and the internet on 443 for Longhorn's OIDC login
+# (authentik's token endpoint, at its public address).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: proxy
+  namespace: envoy-gateway-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: envoy
+      app.kubernetes.io/component: proxy
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - port: 10080
+        - port: 10443
+  egress:
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.202/32
+      ports:
+        - port: 8123
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 100.64.0.0/10
+              - 169.254.0.0/16
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - port: 443
+---
+# Everything but the proxy (the controller, and the chart's certgen job on
+# upgrades) reaches the API server (the node, port 16443). The controller
+# also fetches the OIDC discovery document of Longhorn's SecurityPolicy
+# from authentik's public address.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: control-plane
+  namespace: envoy-gateway-system
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: NotIn
+        values:
+          - envoy
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 100.64.0.0/10
+              - 169.254.0.0/16
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - port: 443

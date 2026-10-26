@@ -27,7 +27,7 @@ spec:
               - mountPath: /target
                 name: plugins
         configuration:
-          # Garage on the NAS (nas/garage). Until 2026-10-25 this was MinIO on
+          # Garage on the NAS (nas/garage). Until 2026-10-26 this was MinIO on
           # the same NAS; the bucket was copied over with rclone, so the
           # existing backups and kopia repositories carried on.
           backupStorageLocation:

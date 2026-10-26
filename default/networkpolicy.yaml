@@ -1,0 +1,14 @@
+# Nothing runs in default (2026-10-26: only the kubernetes Service, whose
+# endpoint is the API server on the node, which this doesn't touch). A pod
+# started here, by `kubectl run` or a manifest without a namespace, gets
+# no network at all, instead of reaching the LAN, Vault and every app.
+# Anything that needs a network gets a namespace and a policy of its own.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress

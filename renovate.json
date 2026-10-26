@@ -4,6 +4,7 @@
     "config:recommended",
     "customManagers:githubActionsVersions"
   ],
+  "timezone": "Europe/Amsterdam",
   "argocd": {
     "description": "Every app folder; Renovate's regexes are RE2, which has no lookahead, so the other folders are skipped through ignorePaths",
     "managerFilePatterns": [
@@ -88,6 +89,27 @@
         "major"
       ],
       "enabled": false
+    },
+    {
+      "description": "Patch updates of apps that hold little state and are easy to roll back, and of CI's tools, merge themselves once CI passes: three days after the release, in the evening or at the weekend, when the cluster can be reached. Not the databases, operators, Vault, authentik, Longhorn, Velero, immich, Gitea or WordPress. Renovate merges itself; the repo has no branch protection for GitHub's auto-merge to wait on",
+      "matchFileNames": [
+        "ntfy/**",
+        "gatus/**",
+        "freshrss/**",
+        "serpbear/**",
+        "actual-budget/**",
+        ".github/workflows/**"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "minimumReleaseAge": "3 days",
+      "automerge": true,
+      "platformAutomerge": false,
+      "automergeSchedule": [
+        "* 17-21 * * 1-5",
+        "* 10-21 * * 0,6"
+      ]
     }
   ]
 }

@@ -66,3 +66,29 @@ spec:
               - 169.254.0.0/16
               - 172.16.0.0/12
               - 192.168.0.0/16
+---
+# cert-manager's HTTP-01 solver, which runs only while a certificate
+# renews: Let's Encrypt and cert-manager's own self check reach it on 8089
+# through Envoy. The policies above let Envoy reach the app's port only,
+# which left the solver unreachable (found 2026-10-26, when ynab's renewal
+# hung).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: acme-http01-solver
+spec:
+  podSelector:
+    matchLabels:
+      acme.cert-manager.io/http01-solver: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: envoy
+      ports:
+        - port: 8089

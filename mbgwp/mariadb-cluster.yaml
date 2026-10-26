@@ -8,7 +8,7 @@ spec:
     name: mbgwp-mariadb-credentials
     key: root-password
 
-  image: mariadb:11.4.5
+  image: mariadb:11.8.9
   imagePullPolicy: IfNotPresent
 
   port: 3306

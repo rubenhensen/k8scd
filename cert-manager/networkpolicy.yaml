@@ -1,0 +1,73 @@
+# cert-manager's three pods reach each other, DNS and the API server (the
+# node, port 16443), and take connections only from each other and the
+# node: the API server calls the webhook from there and the kubelet probes
+# come from there too (10.1.7.64 is the node's Calico VXLAN address,
+# projectcalico.org/IPv4VXLANTunnelAddr). Nothing scrapes the metrics on
+# 9402. The HTTP-01 solver pods run in each Certificate's own namespace
+# (acme-http01-solver in <namespace>/networkpolicy.yaml), not here.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 10.1.7.64/32
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443
+---
+# The controller talks to Let's Encrypt (443), and before it lets Let's
+# Encrypt check a challenge it fetches http://<host>/.well-known/... itself
+# (80). Every certificate's host has a public address, node001's or the
+# home router's (checked 2026-10-26), so the LAN stays out.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: controller-to-internet
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+      app.kubernetes.io/component: controller
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 100.64.0.0/10
+              - 169.254.0.0/16
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - port: 80
+        - port: 443

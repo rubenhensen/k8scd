@@ -1,0 +1,56 @@
+# The CloudNativePG operator reaches DNS, the API server (the node, port
+# 16443) and the PostgreSQL instances it runs in other namespaces: the
+# instance manager's status port (8000) and PostgreSQL (5432), which the
+# instances' own policies let in (postgres-cnpg in authentik and immich).
+# Besides its own namespace it takes connections only from the node: the
+# API server calls its webhook (9443) from there and the kubelet probes
+# come from there too (10.1.7.64 is the node's Calico VXLAN address,
+# projectcalico.org/IPv4VXLANTunnelAddr). The chart's Application
+# (apps/templates/cloudnativepg-helm.yaml) only installs the chart, so
+# this folder gets an Application of its own, cloudnative-pg-folder.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 10.1.7.64/32
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchExpressions:
+              - key: cnpg.io/cluster
+                operator: Exists
+      ports:
+        - port: 8000
+        - port: 5432

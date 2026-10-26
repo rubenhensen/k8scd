@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - operator-crds-helm.yaml
   - operator-helm.yaml
+  - networkpolicy.yaml

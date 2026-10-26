@@ -1,0 +1,97 @@
+# Backups of immich's database (albums, faces, the photos' metadata; the
+# photos themselves are files on immich-claim) by CNPG itself, through the
+# barman cloud plugin (apps/templates/plugin-barman-cloud-helm.yaml): a base
+# backup every night, and every WAL segment as soon as it is full or 5
+# minutes old (archive_timeout). Both go to the bucket cnpg-immich in Garage
+# on the NAS (nas/garage), so the database can be restored to any moment of
+# the last 30 days. Velero copies the data directory while PostgreSQL runs,
+# which is not a consistent copy. Only the PostgreSQL 17 cluster; the 14
+# one is about to go.
+# The key is Garage's cnpg-immich, in Vault as kv/cnpg-immich-s3; it can
+# only reach this bucket.
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: immich-postgres-17-s3
+  namespace: immich
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  refreshInterval: 15m
+  target:
+    name: immich-postgres-17-s3
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        ACCESS_KEY_ID: "{{ .access_key_id }}"
+        ACCESS_SECRET_KEY: "{{ .secret_access_key }}"
+        # Garage rejects requests signed for another region
+        REGION: garage
+  data:
+    - secretKey: access_key_id
+      remoteRef:
+        key: kv/cnpg-immich-s3
+        property: access_key_id
+    - secretKey: secret_access_key
+      remoteRef:
+        key: kv/cnpg-immich-s3
+        property: secret_access_key
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: immich-postgres-17
+  namespace: immich
+  annotations:
+    # The CRD comes with the plugin's own app
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  retentionPolicy: 30d
+  configuration:
+    destinationPath: s3://cnpg-immich/
+    endpointURL: http://192.168.1.99:3900
+    s3Credentials:
+      accessKeyId:
+        name: immich-postgres-17-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: immich-postgres-17-s3
+        key: ACCESS_SECRET_KEY
+      region:
+        name: immich-postgres-17-s3
+        key: REGION
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    env:
+      # Newer boto3 adds checksums that S3-compatible stores can reject;
+      # the plugin's docs suggest sending them only when required.
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: immich-postgres-17-daily
+  namespace: immich
+spec:
+  cluster:
+    name: immich-postgres-17
+  # 03:00 UTC, after Longhorn's and Velero's backups; immediate: one right
+  # away, so WAL archiving has a base backup to start from.
+  schedule: "0 0 3 * * *"
+  immediate: true
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

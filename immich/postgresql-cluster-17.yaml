@@ -18,6 +18,13 @@ spec:
     shared_preload_libraries:
       - "vchord.so"
 
+  # WAL archiving and base backups to Garage, see postgresql-backup.yaml
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: immich-postgres-17
+
   # Filled once from the PostgreSQL 14 cluster (immich-postgres) after its
   # embedding columns were turned into real[] and pgvecto.rs was dropped,
   # see docs/upgrade-k8s-1.33.md.

@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plugin-barman-cloud
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    chart: plugin-barman-cloud
+    repoURL: https://cloudnative-pg.github.io/charts
+    targetRevision: 0.8.1
+    helm:
+      values: |
+        # CNPG's barman cloud plugin, which backs the PostgreSQL clusters
+        # up to Garage on the NAS (authentik/postgresql-backup.yaml,
+        # immich/postgresql-backup.yaml). It has to run in the operator's
+        # namespace; the chart gets its TLS certificates from cert-manager.
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cnpg-system
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
+    automated:
+      prune: true
+      selfHeal: true

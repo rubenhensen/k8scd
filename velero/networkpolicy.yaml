@@ -1,0 +1,52 @@
+# Velero, its node agent, and the pods it starts here (the data movers of
+# each pod volume backup or restore, kopia's maintenance jobs, the chart's
+# CRD upgrade job) reach each other, DNS, the API server (the node, port
+# 16443) and Garage on the NAS (192.168.1.99:3900, nas/garage). The node
+# agent reads volumes through its hostPath mount, not the network. Besides
+# their own namespace they take connections only from the node (kubelet
+# probes; 10.1.7.64 is the node's Calico VXLAN address,
+# projectcalico.org/IPv4VXLANTunnelAddr); nothing scrapes the metrics on
+# 8085. MinIO (the NAS, port 9000) is not allowed: going back to it means
+# adding its port here as well.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 10.1.7.64/32
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.204/32
+      ports:
+        - port: 16443
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.99/32
+      ports:
+        - port: 3900

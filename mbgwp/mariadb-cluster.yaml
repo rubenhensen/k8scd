@@ -10,6 +10,15 @@ spec:
 
   image: mariadb:11.8.9
   imagePullPolicy: IfNotPresent
+  # Every X.Y is a major MariaDB release (11.4 to 11.8 too) and needs
+  # mariadb-upgrade on the datadir, or queries on mysql.proc fail. With this
+  # the image's entrypoint runs it on start; a no-op when there is nothing
+  # to migrate, so it stays. Operator 26.10.1 sets the same variable through
+  # updateStrategy.mariadbAutoUpgradeEnabled, but CI's MariaDB schema (datree
+  # catalog) doesn't know that field yet.
+  env:
+    - name: MARIADB_AUTO_UPGRADE
+      value: "true"
 
   port: 3306
 

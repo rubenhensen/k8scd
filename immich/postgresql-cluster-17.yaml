@@ -29,7 +29,10 @@ spec:
 
   # Filled once from the PostgreSQL 14 cluster (immich-postgres) after its
   # embedding columns were turned into real[] and pgvecto.rs was dropped,
-  # see docs/upgrade-k8s-1.33.md.
+  # see docs/upgrade-k8s-1.33.md. That cluster is gone since 2026-10-28, so
+  # creating this Cluster again fails here, on purpose: an empty database
+  # would start immich with an empty library. Restore from Garage instead
+  # (bootstrap.recovery, see postgresql-backup.yaml).
   bootstrap:
     initdb:
       database: immich

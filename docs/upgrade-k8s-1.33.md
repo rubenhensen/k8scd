@@ -169,8 +169,9 @@ pgvecto.rs. Done 2026-10-24, about an hour of immich downtime:
   v2.4.1 refused to start (it only accepts VectorChord <0.6); v2.5.0 and up
   accept <2, so immich went to v2.7.5, the last 2.x. It rebuilt both
   indexes as `vchordrq` in about 1.5 minutes
-- [ ] After a few days without problems: delete the old cluster
+- [x] After a few days without problems: delete the old cluster
   (`immich/postgresql-cluster.yaml`), the snapshot/backup and the dump.
+  Done 2026-10-28 (PR #61), with the PG14 volume's Longhorn backups.
   Rolling back means reverting the old volume to the snapshot, since its
   embeddings are now `real[]` without pgvecto.rs
 - [x] immich 3.x: v2.7.5 → v3.3.5 with chart 0.10.3 → 0.13.4 on
@@ -189,8 +190,8 @@ pgvecto.rs. Done 2026-10-24, about an hour of immich downtime:
   (v3.3.0), for faster ML with less memory; numerically the same models,
   so no jobs to rerun. The model cache is an emptyDir, so the one-off
   preparation repeats on every restart
-- [ ] After a few days without problems: delete the `immich-pg17-pre-v3`
-  snapshot and dump together with the PG14 leftovers above
+- [x] After a few days without problems: delete the `immich-pg17-pre-v3`
+  snapshot and dump together with the PG14 leftovers above (2026-10-28)
 
 ## k8s-dqlite write stalls (found 2026-10-22)
 

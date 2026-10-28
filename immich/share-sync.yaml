@@ -8,6 +8,10 @@
 # - the group account's library is shared as a partner and shown in
 #   everyone's timeline, so search covers it (immich only searches your own
 #   and your timeline partners' photos);
+# - everyone is put in the group account's cluster group and gets its
+#   people (person sharing, immich 3.3): people are per user, and a partner
+#   library doesn't bring its people along. Those who may upload can name
+#   them, for everyone;
 # - the invitation notifications for albums older than a week are hidden,
 #   or a new member would get one per album;
 # - sessions of OAuth users older than SESSION_MAX_AGE_DAYS are ended, so
@@ -15,8 +19,11 @@
 #   Online.
 # Albums and partners go through the API. Joining other people's albums
 # (the API only lets an album's owner or editors share it), the timeline
-# flag (which only the receiving user can set), the notifications and the
-# sessions go straight to the database.
+# flag and the cluster group (which only the receiving user can set or
+# accept), sharing the people (the API wants person.update, which the
+# group's key lacks, and with password login off nobody can log in as the
+# group to add it), the notifications and the sessions go straight to the
+# database.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -24,6 +31,7 @@ metadata:
   namespace: immich
 data:
   sync.py: |
+    import collections
     import json
     import os
     import subprocess
@@ -129,6 +137,62 @@ data:
         'UPDATE partner SET "inTimeline" = true WHERE "sharedById" = :\'group\' AND NOT "inTimeline"',
         group=group_id,
     )
+    # What accepting an invitation to the group account's cluster group does
+    # (ClusterGroupService.acceptRequest): the person groups only the member
+    # has people in move along. Members with people in groups that others
+    # also have people in are left alone; that only happens after sharing.
+    for (email,) in sql(
+        """
+        BEGIN;
+        CREATE TEMP TABLE moving ON COMMIT DROP AS
+        SELECT u.id FROM "user" u, "user" g
+        WHERE g.id = :'group' AND u.id = ANY (:'members'::uuid[])
+          AND u."clusterGroupId" <> g."clusterGroupId"
+          AND NOT EXISTS (
+            SELECT 1 FROM person p
+            JOIN person o ON o."personGroupId" = p."personGroupId" AND o."ownerId" <> p."ownerId"
+            WHERE p."ownerId" = u.id
+          );
+        UPDATE person_group SET "clusterGroupId" = (SELECT "clusterGroupId" FROM "user" WHERE id = :'group')
+        WHERE id IN (SELECT p."personGroupId" FROM person p JOIN moving m ON m.id = p."ownerId");
+        DELETE FROM cluster_group_request
+        WHERE "userId" IN (SELECT id FROM moving)
+          AND "clusterGroupId" = (SELECT "clusterGroupId" FROM "user" WHERE id = :'group');
+        UPDATE "user" SET "clusterGroupId" = (SELECT "clusterGroupId" FROM "user" WHERE id = :'group')
+        WHERE id IN (SELECT id FROM moving)
+        RETURNING email;
+        COMMIT;
+        """,
+        group=group_id,
+        members="{" + ",".join(members) + "}",
+    ):
+        print(f"put {email} in the group's cluster group", flush=True)
+    # What PUT /people/users does for the group account: its people, with
+    # their names, in every member's people list and search filters. Write
+    # access (naming people, for everyone) for those who may upload.
+    shared = sql(
+        """
+        INSERT INTO person_user ("personGroupId", "sharedById", "sharedWithId", role)
+        SELECT p."personGroupId", p."ownerId", m.id, m.role::person_user_role_enum
+        FROM person p
+        JOIN "user" g ON g.id = p."ownerId"
+        CROSS JOIN unnest(:'ids'::uuid[], :'roles'::text[]) AS m(id, role)
+        JOIN "user" u ON u.id = m.id AND u."clusterGroupId" = g."clusterGroupId"
+        WHERE p."ownerId" = :'group' AND NOT p."isHidden"
+          AND NOT EXISTS (
+            SELECT 1 FROM person_user pu
+            WHERE pu."personGroupId" = p."personGroupId" AND pu."sharedById" = p."ownerId"
+              AND pu."sharedWithId" = m.id AND pu.role = m.role::person_user_role_enum
+          )
+        ON CONFLICT ("personGroupId", "sharedById", "sharedWithId") DO UPDATE SET role = EXCLUDED.role
+        RETURNING "sharedWithId", role
+        """,
+        group=group_id,
+        ids="{" + ",".join(wanted) + "}",
+        roles="{" + ",".join("read" if role == "viewer" else "write" for role in wanted.values()) + "}",
+    )
+    for (uid, role), count in sorted(collections.Counter(map(tuple, shared)).items()):
+        print(f"share {count} people with {members[uid]} ({role})", flush=True)
     sql(
         """
         UPDATE notification SET "deletedAt" = now()

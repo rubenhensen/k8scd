@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gatus
-          image: twinproduction/gatus:v5.37.0
+          image: twinproduction/gatus:v5.38.0
           env:
             - name: GATUS_CONFIG_PATH
               value: /config/config.yaml

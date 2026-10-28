@@ -341,8 +341,13 @@ Counted 2026-10-25 over the 73 running containers:
   requested. Still without requests: Longhorn (22 containers, its chart),
   the Vault servers, the LDAP outpost, immich's PG14 cluster and three in
   kube-system
-- [ ] Memory limits, once there are daytime numbers: the night ones miss
-  immich's machine learning at work (it idles at 234Mi)
+- [x] Memory limits: PR #58, for everything that got requests in #33.
+  About twice the highest memory from `kubectl top` every 5 minutes from
+  2026-10-26 22:29 to 2026-10-27 21:55 UTC or the night of #33, rounded
+  up; no CPU limits. No OOM kills that day. immich's machine learning
+  sat idle all day (240Mi), so on 2026-10-28 a test image went through
+  CLIP, face recognition and OCR inside the container: 884Mi with all
+  three loaded, limit 2Gi
 - [x] WordPress (scoutingmbg.nl) was OOMKilled at 08:27:59 UTC on
   2026-10-25, its third restart: a crawler asked for 88 pages and assets
   within a few seconds (normally ~6 a minute), Apache started a PHP worker

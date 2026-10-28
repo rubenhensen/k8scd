@@ -60,6 +60,8 @@ spec:
             requests:
               cpu: 10m
               memory: 160Mi
+            limits:
+              memory: 512Mi
           readinessProbe:
             httpGet:
               path: /login

@@ -71,6 +71,8 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+            limits:
+              memory: 128Mi
         # 512Mi got the server OOMKilled 314 times, including halfway
         # through a backup of ~14.7k items.
         resources:

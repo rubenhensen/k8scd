@@ -83,6 +83,8 @@ spec:
             requests:
               cpu: 50m
               memory: 176Mi
+            limits:
+              memory: 512Mi
           # TCP, because mod_auth_openidc answers 401 to anything that isn't a
           # browser.
           readinessProbe:

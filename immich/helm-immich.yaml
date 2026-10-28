@@ -67,6 +67,8 @@ spec:
                       requests:
                         cpu: 10m
                         memory: 64Mi
+                      limits:
+                        memory: 256Mi
                     image:
                       repository: docker.io/valkey/valkey
                       tag: 9.1.2-alpine@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
@@ -93,6 +95,8 @@ spec:
                       requests:
                         cpu: 100m
                         memory: 1280Mi
+                      limits:
+                        memory: 3Gi
                     # Node trusts its built-in roots, which still include the
                     # ones above the compromised eMudhra intermediates. Use
                     # patched-ca-bundle through OpenSSL until Node ships a fix.
@@ -117,12 +121,14 @@ spec:
                     image:
                       repository: ghcr.io/immich-app/immich-machine-learning
                       pullPolicy: IfNotPresent
-                    # Idle at night (234Mi); the models take over a GiB when
-                    # it works.
+                    # Idle at 240Mi; 884Mi with CLIP, face recognition and
+                    # OCR loaded (2026-10-28, a test image through each).
                     resources:
                       requests:
                         cpu: 50m
                         memory: 1Gi
+                      limits:
+                        memory: 2Gi
                     env:
                       TRANSFORMERS_CACHE: /cache
                       HF_XET_CACHE: /cache/huggingface-xet

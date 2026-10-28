@@ -82,8 +82,7 @@
       "description": "A PostgreSQL major upgrade needs pg_upgrade or a dump, not a tag bump",
       "matchDepNames": [
         "ghcr.io/cloudnative-pg/postgresql",
-        "ghcr.io/tensorchord/cloudnative-vectorchord",
-        "ghcr.io/tensorchord/cloudnative-pgvecto.rs"
+        "ghcr.io/tensorchord/cloudnative-vectorchord"
       ],
       "matchUpdateTypes": [
         "major"

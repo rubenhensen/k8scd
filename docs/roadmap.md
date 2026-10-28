@@ -26,11 +26,12 @@ docs/longhorn-second-ssd.md:
 - [x] Read `~/iosample.log` on opti1: the worst stretch was not the
   backups but 8.5 hours of Longhorn merging immich-claim's deleted
   snapshots (2026-10-24 14:30-23:15), see docs/upgrade-k8s-1.33.md
-- [ ] From 2026-10-27, if immich runs without problems: delete
-  `immich/postgresql-cluster.yaml` (the PG14 cluster still runs, 20 GiB),
-  the Longhorn snapshots and backups `immich-pg14-pre-vchord` and
-  `immich-pg17-pre-v3`, and both dumps in `~` on opti1. PostgreSQL 14
-  reaches end of life on 2026-11-12
+- [x] From 2026-10-27, if immich runs without problems: delete
+  `immich/postgresql-cluster.yaml` (the PG14 cluster, 20 GiB), the
+  Longhorn snapshots and backups `immich-pg14-pre-vchord` and
+  `immich-pg17-pre-v3`, and both dumps in `~` on opti1. Done 2026-10-28
+  (PR #61), with the PG14 volume's other Longhorn backups.
+  `immich-pg17-pre-v3` only ever was a snapshot
 - [ ] The upgrade's dqlite and backend copies in `/root/` on opti1
   (`backend-*.tar`, `dqlite-pre-*`)
 - [ ] Log in to immich as a jeugdlid (quota 0)
@@ -508,7 +509,7 @@ critical / high:
 
 | Image | Crit | High | What to do |
 |---|---|---|---|
-| tensorchord/cloudnative-pgvecto.rs:14-v0.2.1 | 38 | 342 | immich's old PG14 cluster; goes with the cleanup from 2026-10-27 |
+| tensorchord/cloudnative-pgvecto.rs:14-v0.2.1 | 38 | 342 | immich's old PG14 cluster; deleted 2026-10-28 |
 | cloudnative-pg/postgresql:17.4 | 27 | 260 | authentik's database, a Debian 11 image. Renovate now offers 17.7; a `17.x-standard-trixie` image is more current |
 | tensorchord/cloudnative-vectorchord:17.11-1.1.1 | 17 | 136 | immich's database; look for a newer tag |
 | longhornio/longhorn-instance-manager:v1.7.3 | 11 | 159 | still serves 16 volumes, see below |

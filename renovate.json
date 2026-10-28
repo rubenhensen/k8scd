@@ -91,6 +91,13 @@
       "enabled": false
     },
     {
+      "description": "MariaDB goes from one LTS to the next by hand, after a dump: there is no way back. 11.4 has community support until May 2029, longer than 11.8 (June 2028); the next step is 12.3 (June 2029). Within 11.4 the patches come through",
+      "matchDepNames": [
+        "mariadb"
+      ],
+      "allowedVersions": "<11.5"
+    },
+    {
       "description": "Patch updates of apps that hold little state and are easy to roll back, and of CI's tools, merge themselves once CI passes: three days after the release, in the evening or at the weekend, when the cluster can be reached. Not the databases, operators, Vault, authentik, Longhorn, Velero, immich, Gitea or WordPress. Renovate merges itself; the repo has no branch protection for GitHub's auto-merge to wait on",
       "matchFileNames": [
         "ntfy/**",

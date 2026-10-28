@@ -20,6 +20,8 @@ spec:
           requests:
             cpu: 10m
             memory: 48Mi
+          limits:
+            memory: 128Mi
         metrics:
           enabled: true
           serviceMonitor:
@@ -29,6 +31,8 @@ spec:
             requests:
               cpu: 10m
               memory: 32Mi
+            limits:
+              memory: 128Mi
           serviceMonitor:
             enabled: false
         certController:
@@ -36,6 +40,8 @@ spec:
             requests:
               cpu: 10m
               memory: 32Mi
+            limits:
+              memory: 128Mi
           serviceMonitor:
             enabled: false
   syncPolicy:

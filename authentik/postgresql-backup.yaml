@@ -67,6 +67,8 @@ spec:
       requests:
         cpu: 10m
         memory: 64Mi
+      limits:
+        memory: 512Mi
     env:
       # Newer boto3 adds checksums that S3-compatible stores can reject;
       # the plugin's docs suggest sending them only when required.

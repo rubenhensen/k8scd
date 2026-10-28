@@ -7,6 +7,8 @@ injector:
       requests:
          cpu: 10m
          memory: 32Mi
+      limits:
+         memory: 128Mi
    # The chart's default anti-affinity forbids two injector pods on one
    # node, so on this single node a rolling update can never start the new
    # pod while the old one runs. Recreate removes the old pod first, which

@@ -103,6 +103,8 @@ spec:
               requests:
                 cpu: 70m
                 memory: 560Mi
+              limits:
+                memory: 1536Mi
             volumes:
               - name: patched-ca-bundle
                 configMap:
@@ -192,6 +194,8 @@ spec:
               requests:
                 cpu: 100m
                 memory: 336Mi
+              limits:
+                memory: 1Gi
             volumes:
               - name: patched-ca-bundle
                 configMap:

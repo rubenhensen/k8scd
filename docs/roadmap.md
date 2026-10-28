@@ -519,7 +519,7 @@ critical / high:
 | rubenhensen/bolletjestrui:main-10268f1 | 5 | 76 | rebuild on a current base image |
 | coredns/coredns:1.10.1 | 5 | 70 | see below |
 | dexidp/dex:v2.45.1, argocd v3.5.6, redis 8.2.3 | 4, 1, 2 | | come with Argo CD |
-| mariadb:11.4.5 | 4 | 65 | the newest 11.4 patch; Renovate now covers it |
+| mariadb:11.4.5 | 4 | 65 | 11.4.13 since PR #60; Renovate stays on 11.4 (it offered 11.8, PR #42) |
 | calico v3.29.3 | 2-3 | ~50 | comes with microk8s |
 | goauthentik ldap / server 2026.8.5 | 3, 1 | 74, 65 | the next authentik patch |
 

@@ -27,7 +27,9 @@ view, and everything is shared with everyone automatically.
 - **immich has no user groups**; albums are shared per user, as viewer or
   editor. The owner and editors of an album may add users and change
   their roles. Search only covers your own photos and those of partners
-  you show in your timeline.
+  you show in your timeline. People (face recognition) are per user too,
+  and a partner's library doesn't bring its people along; since 3.3 a
+  user can share people with the users in their cluster group.
 
 ## Design
 
@@ -46,7 +48,10 @@ view, and everything is shared with everyone automatically.
   every user into every album of the group account (`fotoupload@`), as
   editor or viewer by quota; the group account's library as a partner of
   everyone, shown in the timeline; album invitations for albums older than
-  a week hidden; sessions of OAuth users older than 30 days ended. Albums
+  a week hidden; sessions of OAuth users older than 30 days ended;
+  everyone in the group account's cluster group with its people shared
+  (names editable by those who may upload, added 2026-10-28, when nobody
+  but the group account could search by face). Albums
   that kaderleden create get the group account as editor first (in the
   database, since the API only lets an album's owner or editors share
   it), so they go to everyone too; names starting with "Privé"/"Prive"

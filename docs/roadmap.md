@@ -1,22 +1,27 @@
 # Roadmap
 
-Where the cluster stands and what is left, as of 2026-10-25. Takes over
+Where the cluster stands and what is left, as of 2026-10-28. Takes over
 from wishlist.txt (January 2026, removed); its items are sorted in at the
 bottom.
 
 ## State
 
 One node: opti1, an OptiPlex 5060 with an i5-8600T, 32 GB and one 1 TB
-SATA SSD that is 72% full. microk8s v1.36.5 from 1.36/edge, snap held.
-35 Argo CD apps (with metrics-server), all Synced/Healthy; every Longhorn
-volume has one replica. authentik 2026.8.5, Vault 2.2.1. Backups go to the
-NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to Garage
-(MinIO until 2026-10-26) at 01:00 (daily kept 30 days, weekly 90 days).
+SATA SSD that is 54% full. microk8s v1.36.5 from 1.36/edge, snap held.
+39 Argo CD apps (with metrics-server), all Synced/Healthy; every Longhorn
+volume has one replica. authentik 2026.8.5, Vault 2.2.1, immich 3.3.5 on
+PostgreSQL 17, MariaDB 11.4.13. Memory requests and limits on everything
+but Longhorn, the Vault servers, calico and the LDAP outpost. Backups go
+to the NAS (192.168.1.99): Longhorn to NFS at 00:00 (7 kept), Velero to
+Garage (MinIO until 2026-10-26) at 01:00 (daily kept 30 days, weekly 90
+days), and CNPG to Garage (a base backup at 03:00, the WAL every 5
+minutes, 30 days).
 Gatus on s1 (node001, Hetzner) and s2 (home) watch each other and alert
 through ntfy; s2 also gets an hourly report from inside the cluster on the
 backups, Vault's seal, the Argo CD apps and the CNPG clusters.
-Every app namespace has NetworkPolicies, and CI renders and validates all
-apps on every PR. node001 runs mail and tunnels the public hosts home.
+Every namespace with pods but kube-system has NetworkPolicies, and CI
+renders and validates all apps on every PR. node001 runs mail and tunnels
+the public hosts home.
 
 ## Follow-ups from this week
 
@@ -34,7 +39,14 @@ docs/longhorn-second-ssd.md:
   `immich-pg17-pre-v3` only ever was a snapshot
 - [ ] The upgrade's dqlite and backend copies in `/root/` on opti1
   (`backend-*.tar`, `dqlite-pre-*`)
-- [ ] Log in to immich as a jeugdlid (quota 0)
+- [ ] Log in to immich as a jeugdlid (quota 0): no uploads, albums as
+  viewer, people searchable but not renamable
+- [x] Searching by face: people are per user in immich, and a partner's
+  library doesn't bring its people along, so since the personal accounts
+  only the group account could. share-sync now puts everyone in the
+  group account's cluster group and shares its people (immich 3.3's
+  person sharing; PR #59, 2026-10-28): 4430 people, 169 named, for each
+  of the 6 accounts, with write access for those who may upload
 - [ ] Back to 1.36/stable once it is at v1.36.5 or later (still v1.36.2 on
   2026-10-25). The snap is held, so microk8s gets no updates at all until
   someone refreshes it
@@ -216,7 +228,8 @@ Findings from 2026-10-25:
   22:48, since the old pod waited for its connections to close. The first
   base backups: 46 MB in 29 s and 776 MB in 3.5 minutes. immich's
   `immediate` backup ran before the plugin was up and failed; a manual one
-  (`immich-postgres-17-first`) went through
+  (`immich-postgres-17-first`) went through. The 03:00 base backups of
+  10-27 and 10-28 completed for both; the failed backup is deleted
 - [ ] Restore one of them into a new Cluster (`bootstrap.recovery` from
   the ObjectStore, to a point in time) to see that it works. After that,
   decide whether Velero still needs to copy the CNPG data directories
@@ -242,11 +255,13 @@ Findings from 2026-10-25:
   MinIO still has the kopia repositories of namespaces that are gone
   (~156 GB: nextcloud, ttrss, whisper-priv, whisper-webui, blog, ghost,
   mbg-wordpress, sogo, sogo-mail, outrun-game, owntracks); decide first
-  whether any of them is worth keeping
+  whether any of them is worth keeping. The dailies of 10-27 and 10-28
+  on Garage completed without errors
 - [ ] Garage's SQLite WAL (`meta/db.sqlite-wal`) was 1.7 GB on
   2026-10-26 next to a 270 MB database, and going by the folders in
   `meta/snapshots`, each 6-hourly metadata snapshot takes about 70
-  minutes. Not growing; check again after a week of normal use
+  minutes. Not growing; check again after a week of normal use. 1.8 GB
+  on 2026-10-28
 
 ### 6. Monitoring
 
@@ -315,13 +330,14 @@ Counted 2026-10-25 over the 73 running containers:
   OIDC logins of Vault and FreshRSS reach authentik, all 24
   ExternalSecrets refresh, raft intact; Gitea no longer reaches the NAS
   or Vault, and a pod in `default` no longer reaches Vault or Gitea
-- [ ] Certificates couldn't renew in those 11 namespaces: Envoy may only
+- [x] Certificates couldn't renew in those 11 namespaces: Envoy may only
   reach each app's own port, and cert-manager's HTTP-01 solver listens on
   8089. ynab's renewal hung from 2026-10-26 17:35 UTC; a policy for the
   solver pods, applied by hand in actual-budget that evening, let it
   through within 20 seconds (now valid until 2027-01-24). PR #51 adds it
-  to all 11. Without it the next renewals hang too: gitea on 11-15,
-  bolletjestrui on 11-18, the rest from 12-03
+  to all 11 (merged 2026-10-26 22:27 UTC). Without it the next renewals
+  would hang too; the first real test is gitea's on 11-15, then
+  bolletjestrui on 11-18 and the rest from 12-03
 - [x] The infrastructure namespaces (cert-manager, cnpg-system,
   external-secrets, envoy-gateway-system, velero, mariadb-system, dns,
   default), merged 2026-10-26: PR #54 for envoy-gateway-system (22:31
@@ -349,6 +365,12 @@ Counted 2026-10-25 over the 73 running containers:
   sat idle all day (240Mi), so on 2026-10-28 a test image went through
   CLIP, face recognition and OCR inside the container: 884Mi with all
   three loaded, limit 2Gi
+- [ ] authentik's server fails its liveness probe while its database is
+  away (`/-/health/live/` answers 500 when PostgreSQL is down), so each
+  database restart gets the server killed too, as on 2026-10-27 for
+  PostgreSQL 17.11. The login only comes back once the server has
+  started again. A liveness probe that doesn't touch the database would
+  leave it at not ready
 - [x] WordPress (scoutingmbg.nl) was OOMKilled at 08:27:59 UTC on
   2026-10-25, its third restart: a crawler asked for 88 pages and assets
   within a few seconds (normally ~6 a minute), Apache started a PHP worker
@@ -414,10 +436,15 @@ every PR.
   fail the run; tested with a planted Secret and an untagged image), plus
   PR annotations for containers without requests or probes. freshrss's
   `alpine/git` init container had no tag; now `v2.52.0`
-- [ ] Automerge patch versions of low-risk apps now that CI runs: PR #52
-  (ntfy, gatus, freshrss, serpbear, actual-budget and CI's own tools;
-  three days after the release, only on weekday evenings and at the
-  weekend, when the cluster can be reached)
+- [x] Automerge patch versions of low-risk apps now that CI runs: PR #52,
+  merged 2026-10-26 (ntfy, gatus, freshrss, serpbear, actual-budget and
+  CI's own tools; three days after the release, only on weekday evenings
+  and at the weekend, when the cluster can be reached). Nothing has
+  merged itself yet by 2026-10-28
+- [x] MariaDB stays on 11.4 (PR #60, 2026-10-28): Renovate offered 11.8.9
+  as a minor update (#42, closed), but 11.8 can't be rolled back and has
+  community support until June 2028, against May 2029 for 11.4. Renovate
+  now only offers 11.4 patches; the next LTS step, 12.3, is by hand
 - [x] Renovate listed external-snapshotter twice (#15 and #24): its
   `argocd` manager and a custom `github-tags` regex both matched. The
   regex is gone; Renovate should close #15 by itself
@@ -510,7 +537,7 @@ critical / high:
 | Image | Crit | High | What to do |
 |---|---|---|---|
 | tensorchord/cloudnative-pgvecto.rs:14-v0.2.1 | 38 | 342 | immich's old PG14 cluster; deleted 2026-10-28 |
-| cloudnative-pg/postgresql:17.4 | 27 | 260 | authentik's database, a Debian 11 image. Renovate now offers 17.7; a `17.x-standard-trixie` image is more current |
+| cloudnative-pg/postgresql:17.4 | 27 | 260 | authentik's database, a Debian 11 image. 17.11 since PR #40 (2026-10-27); not scanned again, a `17.x-standard-trixie` image is more current |
 | tensorchord/cloudnative-vectorchord:17.11-1.1.1 | 17 | 136 | immich's database; look for a newer tag |
 | longhornio/longhorn-instance-manager:v1.7.3 | 11 | 159 | still serves 16 volumes, see below |
 | actualbudget/actual-server:26.6.0 | 8 | 83 | chart 1.8.9; Renovate now covers it |

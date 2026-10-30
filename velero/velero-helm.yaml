@@ -8,7 +8,7 @@ spec:
   source:
     chart: velero
     repoURL: https://vmware-tanzu.github.io/helm-charts
-    targetRevision: 12.2.1
+    targetRevision: 12.2.2
     helm:
       values: |
         # Velero builds its repository maintenance jobs from a Deployment

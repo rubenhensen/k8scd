@@ -62,7 +62,7 @@ node, both PowerDNS Authoritative. PowerDNS LUA records health-check
 addresses and only return the healthy ones:
 
 ```
-@  30  IN  LUA  A  "ifurlup('https://status.rubenhensen.nl/health', {{'46.224.26.65'}, {'62.41.86.27'}})"
+@  30  IN  LUA  A  "ifurlup('https://status.rubenhensen.nl/health', {{'46.224.26.65'}, {'62.41.86.53'}})"
 ```
 
 The double braces make two groups. PowerDNS returns the first group that has
@@ -85,7 +85,7 @@ Steps:
 
 1. Parent zone (`dns/domains/rubenhensen.nl.yaml`, synced to TransIP): add
    `status NS ns-hetzner.rubenhensen.nl.` and `status NS ns-home.rubenhensen.nl.`,
-   plus A records for `ns-hetzner` (46.224.26.65) and `ns-home` (62.41.86.27).
+   plus A records for `ns-hetzner` (46.224.26.65) and `ns-home` (62.41.86.53).
    First check that TransIP accepts NS records for a subdomain.
 2. Hetzner: run PowerDNS from node001.nix with `enable-lua-records=yes` and
    the bind backend. Use the same zone file as home. Open 53/udp and 53/tcp.

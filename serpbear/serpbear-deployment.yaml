@@ -51,7 +51,7 @@ spec:
               value: --use-openssl-ca
             - name: SSL_CERT_FILE
               value: /etc/ssl/certs/ca-certificates.crt
-          image: towfiqi/serpbear:3.1.0
+          image: towfiqi/serpbear:3.1.2
           name: serpbear
           ports:
             - containerPort: 3000

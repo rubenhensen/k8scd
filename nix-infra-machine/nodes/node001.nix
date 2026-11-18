@@ -152,6 +152,7 @@ in
       extraDomainNames = [
         "autoconfig.rubenhensen.nl"
         "autodiscover.rubenhensen.nl"
+        "mta-sts.rubenhensen.nl"
         "rubenhensen.nl"
       ];
       # Keep the same key on renewal. The TLSA record in
@@ -235,6 +236,16 @@ ${sniMapEntries}
         locations."/".return = "301 https://$host$request_uri";
       };
       "autodiscover.rubenhensen.nl" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "[::]"; port = 80; }
+        ];
+        locations."/.well-known/acme-challenge/".root = "/var/lib/acme/acme-challenge";
+        locations."/".return = "301 https://$host$request_uri";
+      };
+      # Senders fetch the MTA-STS policy from here over HTTPS. Stalwart
+      # serves it, so the certificate has to carry this name too.
+      "mta-sts.rubenhensen.nl" = {
         listen = [
           { addr = "0.0.0.0"; port = 80; }
           { addr = "[::]"; port = 80; }
@@ -446,7 +457,9 @@ ${sniMapEntries}
         client-secret = "%{file:/run/credentials/stalwart-mail.service/oidc-client-secret}%";
       };
 
-      signature."rsa" = {
+      # Stalwart signs bounces and DMARC/TLS reports with the signers
+      # named rsa-<domain> and ed25519-<domain>, so keep these names.
+      signature."rsa-rubenhensen.nl" = {
         private-key = "%{file:/run/credentials/stalwart-mail.service/dkim-rsa.key}%";
         domain = "rubenhensen.nl";
         selector = "202603r2";
@@ -458,7 +471,7 @@ ${sniMapEntries}
         report = true;
       };
 
-      signature."ed25519" = {
+      signature."ed25519-rubenhensen.nl" = {
         private-key = "%{file:/run/credentials/stalwart-mail.service/dkim-ed25519.key}%";
         domain = "rubenhensen.nl";
         selector = "202603e2";
@@ -470,7 +483,7 @@ ${sniMapEntries}
       };
 
       auth.dkim.sign = [
-        { "if" = "listener != 'smtp'"; "then" = "['rsa', 'ed25519']"; }
+        { "if" = "listener != 'smtp'"; "then" = "['rsa-rubenhensen.nl', 'ed25519-rubenhensen.nl']"; }
         { "else" = false; }
       ];
 

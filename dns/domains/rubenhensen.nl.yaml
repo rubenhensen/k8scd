@@ -146,3 +146,13 @@ records:
     expire: 300
     type: TXT
     content: "v=TLSRPTv1; rua=mailto:postmaster@rubenhensen.nl"
+  # DANE for inbound mail: SHA-256 of the public key in the certificate
+  # for mail.rubenhensen.nl. Renewals keep that key (--reuse-key in
+  # nix-infra-machine/nodes/node001.nix). To check it against the server:
+  #   openssl s_client -connect mail.rubenhensen.nl:25 -starttls smtp </dev/null \
+  #     | openssl x509 -noout -pubkey | openssl pkey -pubin -outform DER \
+  #     | openssl dgst -sha256
+  - name: "_25._tcp.mail"
+    expire: 300
+    type: TLSA
+    content: "3 1 1 718809043219a89d490b97503dd176c2557fd67a15679acdfaa0ced7143ee6b8"

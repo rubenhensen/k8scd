@@ -154,6 +154,13 @@ in
         "autodiscover.rubenhensen.nl"
         "rubenhensen.nl"
       ];
+      # Keep the same key on renewal. The TLSA record in
+      # dns/domains/rubenhensen.nl.yaml pins this key, and senders that
+      # enforce DANE stop delivering when the two differ. Changing the
+      # names or the lego flags of this cert makes NixOS order a new one
+      # with a fresh key, so take the record out first and put the new
+      # hash back afterwards.
+      extraLegoRenewFlags = [ "--reuse-key" ];
     };
   };
 

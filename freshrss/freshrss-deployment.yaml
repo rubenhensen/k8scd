@@ -23,7 +23,7 @@ spec:
         io.kompose.service: freshrss
     spec:
       initContainers:
-        - image: alpine/git:v2.54.0
+        - image: alpine/git:v2.54.1
           name: git
           command:
           - git

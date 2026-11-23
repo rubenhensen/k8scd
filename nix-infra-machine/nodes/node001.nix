@@ -420,6 +420,12 @@ ${sniMapEntries}
         };
       };
 
+      # The address clients reach the https listener on. Stalwart builds
+      # the URLs it hands out (JMAP session, OAuth metadata) from the
+      # listener's own port otherwise, and 8443 is closed from outside.
+      # This is an expression, hence the inner quotes.
+      http.url = "'https://mail.rubenhensen.nl'";
+
       certificate.default = {
         cert = "%{file:/var/lib/acme/mail.rubenhensen.nl/fullchain.pem}%";
         private-key = "%{file:/var/lib/acme/mail.rubenhensen.nl/key.pem}%";

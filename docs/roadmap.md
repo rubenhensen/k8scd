@@ -67,6 +67,12 @@ mbg.hensen.io (docs/immich-scouts-online.md).
 - [x] ns1 caught up on 2026-10-24 16:50 UTC; both ns1 and ns2 answer
   `rubenhensen.nl` for foto (checked 2026-10-25), and nothing in the
   cluster uses hensen.io anymore. hensen.io can expire
+- [ ] One thing still did: FreshRSS had `https://rss.hensen.io` as
+  `base_url` in `data/config.php` on its volume (found 2026-11-24), so its
+  API page handed out an address that no longer answers. An init container
+  now sets it from git on every start; check that
+  `https://rss.rubenhensen.nl/api/` shows the new address, and point any
+  reader app that still has the old one at it
 
 ### 2. Off-site backups
 

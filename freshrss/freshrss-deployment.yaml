@@ -35,6 +35,28 @@ spec:
             mountPath: /tmp
 # cd /var/www/FreshRSS/extensions
 # git checkout main
+        # FreshRSS keeps its own address as base_url in data/config.php, on the
+        # volume, and its settings page only shows it. The API page and the
+        # WebSub callbacks are built from it, so it has to follow the hostname
+        # in httproute.yaml. Runs as root like the image's entrypoint, which
+        # hands the rewritten file back to www-data when the main container
+        # starts.
+        - image: freshrss/freshrss:1.30.4
+          name: base-url
+          command:
+          - php
+          - ./cli/reconfigure.php
+          - --base-url
+          - https://rss.rubenhensen.nl
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          volumeMounts:
+          - mountPath: /var/www/FreshRSS/data
+            name: data
       containers:
         - env:
             - name: FRESHRSS_ENV
